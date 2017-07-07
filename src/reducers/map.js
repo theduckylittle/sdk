@@ -9,12 +9,28 @@ const defaultState = {
   name: 'default',
   center: [0, 0],
   zoom: 3,
-  _sourcesVersion: 0,
+  metadata: {
+    'bnd:sources-version': 0,
+    'bnd:layers-version' : 0,
+  },
   sources: {},
-  _layersVersion: 0,
   layers: []
 };
 
+function getVersion(metadata, version) {
+  if (typeof(metadata) === 'undefined' || typeof(metadata[version]) === 'undefined') {
+    return 0;
+  }
+  return metadata[version];
+}
+
+function incrementVersion(metadata, version) {
+  const new_metadata = Object.assign({}, metadata);
+  new_metadata[version] = getVersion(metadata, version) + 1;
+  return {
+    metadata: new_metadata
+  }
+}
 
 /** Add a layer to the state.
  */
@@ -27,9 +43,8 @@ function addLayer(state, action) {
   }, action.layerDef);
 
   return Object.assign({}, state, {
-    _layersVersion: state._layersVersion + 1,
     layers: state.layers.concat([new_layer]),
-  });
+  }, incrementVersion(state.metadata, 'bnd:layers-version'));
 }
 
 /** Remove a layer from the state.
@@ -43,9 +58,8 @@ function removeLayer(state, action) {
   }
 
   return Object.assign({}, state, {
-    _layersVersion: state._layersVersion + 1,
     layers: new_layers
-  });
+  }, incrementVersion(state.metadata, 'bnd:layers-version'));
 }
 
 /** Update a layer that's in the state already.
@@ -64,10 +78,8 @@ function updateLayer(state, action) {
   }
 
   return Object.assign({}, state, {
-    _layersVersion: state._layersVersion + 1,
     layers: new_layers
-  });
-
+  }, incrementVersion(state.metadata, 'bnd:layers-version'));
 }
 
 
@@ -75,11 +87,18 @@ function updateLayer(state, action) {
  */
 function addSource(state, action) {
   const new_source = {}
-  const sourceDef = action.sourceDef.type !== 'raster' ? {data: {}, _dataVersion: 0} : {};
-  new_source[action.sourceName] = Object.assign(sourceDef, action.sourceDef);
+  new_source[action.sourceName] = Object.assign({}, action.sourceDef);
+  if (action.sourceDef.type !== 'raster') {
+    new_source[action.sourceName].data = Object.assign({}, aciton.sourceDef.data);
+    new_source[action.sourceName].metadata = Object.assign({}, action.sourceDef.metadata, {
+      'bnd:data-version' : 0
+    });
+  }
 
   const new_sources = Object.assign({}, state.sources, new_source);
-  return Object.assign({}, state, {_sourcesVersion: state._sourcesVersion + 1}, {sources: new_sources});
+  return Object.assign({}, state, {
+    sources: new_sources
+  }, incrementVersion(state.metadata, 'bnd:sources-version'));
 }
 
 /** Remove a source from the state.
@@ -87,7 +106,9 @@ function addSource(state, action) {
 function removeSource(state, action) {
   const new_sources = Object.assign({}, state.sources);
   delete new_sources[action.sourceName];
-  return Object.assign({}, state, {_sourcesVersion: state._sourcesVersion + 1}, {sources: new_sources});
+  return Object.assign({}, state, {
+    sources: new_sources
+  }, incrementVersion(state.metadata, 'bnd:sources-version'));
 }
 
 
@@ -102,9 +123,8 @@ function changeData(state, sourceName, data) {
 
   // update the individual source.
   src_mixin[sourceName] = Object.assign({}, source, {
-    _dataVersion: source._dataVersion + 1,
     data: Object.assign({}, source.data, data),
-  });
+  }, incrementVersion(source.metadata, 'bnd:data-version'));
 
   // kick back the new state.
   return Object.assign({}, state, {
@@ -210,9 +230,8 @@ function setVisibility(state, action) {
     }
   }
   return Object.assign({}, state, {
-    _layersVersion: state._layersVersion + updated,
     layers: updated_layers
-  });
+  }, incrementVersion(state.metadata, 'bnd:layers-version'));
 }
 
 /** Load a new context
