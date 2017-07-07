@@ -30,9 +30,6 @@ import VectorSource from 'ol/source/vector';
 
 import GeoJsonFormat from 'ol/format/geojson';
 
-//_ol_layer_VectorTileRenderType_.VECTOR,
-import RENDER_MODE from 'ol/layer/vectortilerendertype';
-
 const GEOJSON_FORMAT = new GeoJsonFormat();
 
 function configureXyzSource(glSource) {
