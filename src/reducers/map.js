@@ -4,15 +4,22 @@
 import { MAP } from '../action-types';
 import createFilter from '@mapbox/mapbox-gl-style-spec/feature_filter';
 
+import { LAYER_VERSION_KEY, SOURCE_VERSION_KEY, DATA_VERSION_KEY, TITLE_KEY } from '../constants';
+
+function defaultMetadata() {
+  // define the metadata.
+  const default_metadata = {};
+  default_metadata[LAYER_VERSION_KEY] = 0;
+  default_metadata[SOURCE_VERSION_KEY] = 0;
+  return default_metadata;
+}
+
 const defaultState = {
   version: 8,
   name: 'default',
   center: [0, 0],
   zoom: 3,
-  metadata: {
-    'bnd:sources-version': 0,
-    'bnd:layers-version' : 0,
-  },
+  metadata: defaultMetadata(),
   sources: {},
   layers: []
 };
@@ -45,12 +52,12 @@ function addLayer(state, action) {
 
   // add a layer name if specified in the action.
   if (action.layerTitle) {
-    new_layer.metadata['bnd:title'] = action.layerTitle;
+    new_layer.metadata[TITLE_KEY] = action.layerTitle;
   }
 
   return Object.assign({}, state, {
     layers: state.layers.concat([new_layer]),
-  }, incrementVersion(state.metadata, 'bnd:layers-version'));
+  }, incrementVersion(state.metadata, LAYER_VERSION_KEY));
 }
 
 /** Remove a layer from the state.
@@ -65,7 +72,7 @@ function removeLayer(state, action) {
 
   return Object.assign({}, state, {
     layers: new_layers
-  }, incrementVersion(state.metadata, 'bnd:layers-version'));
+  }, incrementVersion(state.metadata, LAYER_VERSION_KEY));
 }
 
 /** Update a layer that's in the state already.
@@ -93,7 +100,7 @@ function updateLayer(state, action) {
 
   return Object.assign({}, state, {
     layers: new_layers
-  }, incrementVersion(state.metadata, 'bnd:layers-version'));
+  }, incrementVersion(state.metadata, LAYER_VERSION_KEY));
 }
 
 
@@ -105,14 +112,14 @@ function addSource(state, action) {
   if (action.sourceDef.type !== 'raster') {
     new_source[action.sourceName].data = Object.assign({}, aciton.sourceDef.data);
     new_source[action.sourceName].metadata = Object.assign({}, action.sourceDef.metadata, {
-      'bnd:data-version' : 0
+      DATA_VERSION_KEY : 0
     });
   }
 
   const new_sources = Object.assign({}, state.sources, new_source);
   return Object.assign({}, state, {
     sources: new_sources
-  }, incrementVersion(state.metadata, 'bnd:sources-version'));
+  }, incrementVersion(state.metadata, SOURCE_VERSION_KEY));
 }
 
 /** Remove a source from the state.
@@ -122,7 +129,7 @@ function removeSource(state, action) {
   delete new_sources[action.sourceName];
   return Object.assign({}, state, {
     sources: new_sources
-  }, incrementVersion(state.metadata, 'bnd:sources-version'));
+  }, incrementVersion(state.metadata, SOURCE_VERSION_KEY));
 }
 
 
@@ -138,7 +145,7 @@ function changeData(state, sourceName, data) {
   // update the individual source.
   src_mixin[sourceName] = Object.assign({}, source, {
     data: Object.assign({}, source.data, data),
-  }, incrementVersion(source.metadata, 'bnd:data-version'));
+  }, incrementVersion(source.metadata, DATA_VERSION_KEY));
 
   // kick back the new state.
   return Object.assign({}, state, {
@@ -245,7 +252,7 @@ function setVisibility(state, action) {
   }
   return Object.assign({}, state, {
     layers: updated_layers
-  }, incrementVersion(state.metadata, 'bnd:layers-version'));
+  }, incrementVersion(state.metadata, LAYER_VERSION_KEY));
 }
 
 /** Load a new context

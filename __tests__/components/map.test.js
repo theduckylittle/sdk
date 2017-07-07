@@ -45,8 +45,8 @@ describe('Map component', () => {
       "source": "states-wms",
     }];
     const metadata = {
-      'bnd:sources-verison': 0,
-      'bnd:layers-version': 0,
+      'bnd:source-version': 0,
+      'bnd:layer-version': 0,
     };
 
     const center = [0, 0];
@@ -86,8 +86,8 @@ describe('Map component', () => {
     const center = [0, 0];
     const zoom = 2;
     const metadata = {
-      'bnd:sources-verison': 0,
-      'bnd:layers-version': 0,
+      'bnd:source-version': 0,
+      'bnd:layer-version': 0,
     };
     const wrapper = shallow(<Map map={{center, zoom, sources, layers, metadata}} />);
     wrapper.instance().componentDidMount();
@@ -112,8 +112,8 @@ describe('Map component', () => {
     }];
 
     const metadata = {
-      'bnd:sources-verison': 0,
-      'bnd:layers-version': 0,
+      'bnd:source-version': 0,
+      'bnd:layer-version': 0,
     };
     const center = [0, 0];
     const zoom = 2;
@@ -139,8 +139,8 @@ describe('Map component', () => {
     }];
 
     const metadata = {
-      'bnd:sources-verison': 0,
-      'bnd:layers-version': 0,
+      'bnd:source-version': 0,
+      'bnd:layer-version': 0,
     };
     const center = [0, 0];
     const zoom = 2;
@@ -155,8 +155,8 @@ describe('Map component', () => {
         center,
         zoom,
         metadata: {
-          'bnd:sources-verison': 0,
-          'bnd:layers-version': 1,
+          'bnd:source-version': 0,
+          'bnd:layer-version': 1,
         },
         sources,
         layers: [{
@@ -186,8 +186,8 @@ describe('Map component', () => {
     const center = [0, 0];
     const zoom = 2;
     const metadata = {
-      'bnd:sources-verison': 0,
-      'bnd:layers-version': 0,
+      'bnd:source-version': 0,
+      'bnd:layer-version': 0,
     };
     const wrapper = shallow(<Map map={{center, zoom, sources, layers, metadata}} />);
     const instance = wrapper.instance();
@@ -199,8 +199,8 @@ describe('Map component', () => {
         center,
         zoom,
         metadata: {
-          'bnd:sources-verison': 0,
-          'bnd:layers-version': 1,
+          'bnd:source-version': 0,
+          'bnd:layer-version': 1,
         },
         sources,
         layers: []
@@ -213,8 +213,8 @@ describe('Map component', () => {
         center,
         zoom,
         metadata: {
-          'bnd:sources-verison': 0,
-          'bnd:layers-version': 2,
+          'bnd:source-version': 0,
+          'bnd:layer-version': 2,
         },
         sources,
         layers: layers

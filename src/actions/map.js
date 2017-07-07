@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch'
  */
 
 import { MAP } from '../action-types';
+import { TITLE_KEY } from '../constants';
 
 export function setView(center, zoom) {
   return {
@@ -80,7 +81,7 @@ export function setLayerMetadata(layerId, itemName, itemValue) {
 }
 
 export function setLayerTitle(layerId, title) {
-  return setLayerMetadata(layerId, 'bnd:title', title);
+  return setLayerMetadata(layerId, TITLE_KEY, title);
 }
 
 export function receiveContext(context) {

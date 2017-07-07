@@ -11,8 +11,8 @@ describe('map reducer', () => {
       center: [0, 0],
       zoom: 3,
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       sources: {},
       layers: []
@@ -43,8 +43,8 @@ describe('map reducer', () => {
       center: [0, 0],
       zoom: 3,
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 1,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 1,
       },
       sources: {},
       layers: [{
@@ -83,8 +83,8 @@ describe('map reducer', () => {
       center: [0, 0],
       zoom: 3,
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       sources: {},
      layers: [layer]
@@ -100,8 +100,8 @@ describe('map reducer', () => {
       zoom: 3,
       sources: {},
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 1,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 1,
       },
       layers: [{
         "id": "background",
@@ -137,8 +137,8 @@ describe('map reducer', () => {
       center: [0, 0],
       zoom: 3,
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       sources: {},
      layers: [layer]
@@ -154,8 +154,8 @@ describe('map reducer', () => {
       zoom: 3,
       sources: {},
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 1,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 1,
       },
       layers: [{
         "id": "background",
@@ -190,8 +190,8 @@ describe('map reducer', () => {
       zoom: 3,
       sources: {},
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
      layers: [layer]
     };
@@ -206,8 +206,8 @@ describe('map reducer', () => {
       zoom: 3,
       sources: {},
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 1,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 1,
       },
       layers: []
     })
@@ -242,8 +242,8 @@ describe('map reducer', () => {
       zoom: 3,
       sources: {},
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
      layers: [layer]
     };
@@ -258,8 +258,8 @@ describe('map reducer', () => {
       zoom: 3,
       sources: {},
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 1,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 1,
       },
       layers: [newLayer]
     })
@@ -294,8 +294,8 @@ describe('map reducer', () => {
         'osm': source
       },
       metadata: {
-        'bnd:sources-version': 1,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 1,
+        'bnd:layer-version': 0,
       },
       layers: []
     })
@@ -326,8 +326,8 @@ describe('map reducer', () => {
         'osm': source
       },
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       layers: []
     };
@@ -342,8 +342,8 @@ describe('map reducer', () => {
       zoom: 3,
       sources: {},
       metadata: {
-        'bnd:sources-version': 1,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 1,
+        'bnd:layer-version': 0,
       },
       layers: []
     })
@@ -368,8 +368,8 @@ describe('map reducer', () => {
         'points': source
       },
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       layers: []
     };
@@ -384,8 +384,8 @@ describe('map reducer', () => {
       center: [0, 0],
       zoom: 3,
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       sources: {
         'points': newSource
@@ -412,8 +412,8 @@ describe('map reducer', () => {
         'points': source
       },
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       layers: []
     };
@@ -429,8 +429,8 @@ describe('map reducer', () => {
         'points': newSource
       },
       metadata: {
-        'bnd:sources-version': 0,
-        'bnd:layers-version': 0,
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
       },
       layers: []
     })

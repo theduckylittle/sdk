@@ -7,6 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { setView } from '../actions/map';
+import { LAYER_VERSION_KEY, SOURCE_VERSION_KEY, DATA_VERSION_KEY } from '../constants';
 
 import getStyleFunction from 'mapbox-to-ol-style';
 
@@ -89,7 +90,7 @@ function configureVectorSource(glSource) {
 
 function updateVectorSource(olSource, glSource) {
   // this indicates the data version has changed.
-  if (olSource.get('dataVersion') !== glSource.metadata['bnd:data-version']) {
+  if (olSource.get('dataVersion') !== glSource.metadata[DATA_VERSION_KEY]) {
     // parse the new features,
     // TODO: This should really check the map for the correct projection.
     const features = GEOJSON_FORMAT.readFeatures(glSource.data, {featureProjection: 'EPSG:3857'});
@@ -100,7 +101,7 @@ function updateVectorSource(olSource, glSource) {
     olSource.addFeatures(features);
 
     // update the data version in the layer.
-    olSource.set('dataVersion', glSource.metadata['bnd:data-version']);
+    olSource.set('dataVersion', glSource.metadata[DATA_VERSION_KEY]);
   }
 }
 
@@ -153,8 +154,8 @@ export class Map extends React.Component {
     });
 
     // bootstrap the map with the current configuration.
-    this.configureSources(this.props.map.sources, this.props.map.metadata['bnd:sources-version']);
-    this.configureLayers(this.props.map.sources, this.props.map.layers, this.props.map.metadata['bnd:layers-version']);
+    this.configureSources(this.props.map.sources, this.props.map.metadata[SOURCE_VERSION_KEY]);
+    this.configureLayers(this.props.map.sources, this.props.map.layers, this.props.map.metadata[LAYER_VERSION_KEY]);
   }
 
   /** Convert the GL source definitions into internal
@@ -263,13 +264,13 @@ export class Map extends React.Component {
     }
 
     // check the sources diff
-    if (this.sourcesVersion !== nextProps.map.metadata['bnd:sources-version']) {
+    if (this.sourcesVersion !== nextProps.map.metadata[SOURCE_VERSION_KEY]) {
       // go through and update the sources.
-      this.configureSources(nextProps.map.sources, nextProps.map.metadata['bnd:sources-version']);
+      this.configureSources(nextProps.map.sources, nextProps.map.metadata[SOURCE_VERSION_KEY]);
     }
-    if (this.layersVersion !== nextProps.map.metadata['bnd:layers-version']) {
+    if (this.layersVersion !== nextProps.map.metadata[LAYER_VERSION_KEY]) {
       // go through and update the layers.
-      this.configureLayers(nextProps.map.sources, nextProps.map.layers, nextProps.map.metadata['bnd:layers-version']);
+      this.configureLayers(nextProps.map.sources, nextProps.map.layers, nextProps.map.metadata[LAYER_VERSION_KEY]);
     }
 
     // check the vector sources for data changes
@@ -277,7 +278,7 @@ export class Map extends React.Component {
       const src = this.props.map.sources[src_name];
       if (src && src.type === 'geojson') {
         const next_src = nextProps.map.sources[src_name];
-        if (src.metadata['bnd:data-version'] !== next_src.metadata['bnd:data-version']) {
+        if (src.metadata[DATA_VERSION_KEY] !== next_src.metadata[DATA_VERSION_KEY]) {
           updateVectorSource(this.sources[src_name], next_src);
         }
       }
