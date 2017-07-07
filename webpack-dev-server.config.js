@@ -12,7 +12,7 @@ const config = {
   entry: {
     basic: [
       'webpack/hot/only-dev-server',
-      './examples/basic/app.js'
+      './examples/basic/app.jsx'
     ],
   },
   // Server Configuration options
