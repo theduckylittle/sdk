@@ -351,7 +351,7 @@ describe('map reducer', () => {
 
   it('should handle ADD_FEATURES', () => {
     // since we do not go through ADD_SOURCE we need to set _dataVersion
-    const source = {"metadata" : {"bnd:data-version" : 0}, "data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":2,"cat":1},"geometry":{"type":"Point","coordinates":[0.5,0.5]}},{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}}]}};
+    const source = {"data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":2,"cat":1},"geometry":{"type":"Point","coordinates":[0.5,0.5]}},{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}}]}};
     deepFreeze(source);
     const action = {
       type: MAP.ADD_FEATURES,
@@ -374,7 +374,7 @@ describe('map reducer', () => {
       layers: []
     };
     deepFreeze(state);
-    const newSource = {"metadata" : {"bnd:data-version" : 1}, "data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":2,"cat":1},"geometry":{"type":"Point","coordinates":[0.5,0.5]}},{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}},{"type":"Feature","properties":{"n":27,"cat":2},"geometry":{"type":"Point","coordinates":[2.5,5.5]}},{"type":"Feature","properties":{"n":28,"cat":1},"geometry":{"type":"Point","coordinates":[2.5,6.5]}}]}};
+    const newSource = {"data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":2,"cat":1},"geometry":{"type":"Point","coordinates":[0.5,0.5]}},{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}},{"type":"Feature","properties":{"n":27,"cat":2},"geometry":{"type":"Point","coordinates":[2.5,5.5]}},{"type":"Feature","properties":{"n":28,"cat":1},"geometry":{"type":"Point","coordinates":[2.5,6.5]}}]}};
     deepFreeze(newSource);
     expect(
       reducer(state, action)
@@ -386,6 +386,7 @@ describe('map reducer', () => {
       metadata: {
         'bnd:source-version': 0,
         'bnd:layer-version': 0,
+        'bnd:data-version:points': 1,
       },
       sources: {
         'points': newSource
@@ -395,7 +396,7 @@ describe('map reducer', () => {
   })
 
   it('should handle REMOVE_FEATURES', () => {
-    const source = {"metadata" : {"bnd:data-version": 0}, "data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":2,"cat":1},"geometry":{"type":"Point","coordinates":[0.5,0.5]}},{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}}]}};
+    const source = {"data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":2,"cat":1},"geometry":{"type":"Point","coordinates":[0.5,0.5]}},{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}}]}};
     deepFreeze(source);
     const action = {
       type: MAP.REMOVE_FEATURES,
@@ -414,10 +415,11 @@ describe('map reducer', () => {
       metadata: {
         'bnd:source-version': 0,
         'bnd:layer-version': 0,
+        'bnd:data-version:points': 0,
       },
       layers: []
     };
-    const newSource = {"metadata": {"bnd:data-version": 1}, "data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}}]}};
+    const newSource = {"data": {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"n":3,"cat":2},"geometry":{"type":"Point","coordinates":[0.5,1.5]}}]}};
     expect(
       reducer(state, action)
     ).toEqual({
@@ -431,6 +433,7 @@ describe('map reducer', () => {
       metadata: {
         'bnd:source-version': 0,
         'bnd:layer-version': 0,
+        'bnd:data-version:points': 1,
       },
       layers: []
     })

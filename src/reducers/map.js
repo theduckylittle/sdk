@@ -4,7 +4,7 @@
 import { MAP } from '../action-types';
 import createFilter from '@mapbox/mapbox-gl-style-spec/feature_filter';
 
-import { LAYER_VERSION_KEY, SOURCE_VERSION_KEY, DATA_VERSION_KEY, TITLE_KEY } from '../constants';
+import { LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TITLE_KEY, DATA_VERSION_KEY } from '../constants';
 
 function defaultMetadata() {
   // define the metadata.
@@ -37,6 +37,13 @@ function incrementVersion(metadata, version) {
   return {
     metadata: new_metadata
   }
+}
+
+/** As there is no "source" metadata, this generates a unique key
+ *  for the version of the data in the map's metadata object.
+ */
+export function dataVersionKey(sourceName) {
+  return DATA_VERSION_KEY + ':' + sourceName;
 }
 
 /** Add a layer to the state.
@@ -110,14 +117,15 @@ function addSource(state, action) {
   const new_source = {}
   new_source[action.sourceName] = Object.assign({}, action.sourceDef);
   if (action.sourceDef.type !== 'raster') {
-    new_source[action.sourceName].data = Object.assign({}, aciton.sourceDef.data);
-    new_source[action.sourceName].metadata = Object.assign({}, action.sourceDef.metadata, {
-      DATA_VERSION_KEY : 0
-    });
+    new_source[action.sourceName].data = Object.assign({}, action.sourceDef.data);
   }
+
+  const new_metadata = {};
+  new_metadata[dataVersionKey(action.sourceName)] = 0;
 
   const new_sources = Object.assign({}, state.sources, new_source);
   return Object.assign({}, state, {
+    metadata: Object.assign({}, state.metadata, new_metadata),
     sources: new_sources
   }, incrementVersion(state.metadata, SOURCE_VERSION_KEY));
 }
@@ -145,12 +153,12 @@ function changeData(state, sourceName, data) {
   // update the individual source.
   src_mixin[sourceName] = Object.assign({}, source, {
     data: Object.assign({}, source.data, data),
-  }, incrementVersion(source.metadata, DATA_VERSION_KEY));
+  });
 
   // kick back the new state.
   return Object.assign({}, state, {
     sources: Object.assign({}, state.sources, src_mixin)
-  });
+  }, incrementVersion(state.metadata, dataVersionKey(sourceName)));
 }
 
 /** Add features to a source.

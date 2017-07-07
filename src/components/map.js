@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import { setView } from '../actions/map';
 import { LAYER_VERSION_KEY, SOURCE_VERSION_KEY, DATA_VERSION_KEY } from '../constants';
 
+import { dataVersionKey } from '../reducers/map';
+
 import getStyleFunction from 'mapbox-to-ol-style';
 
 import olMap from 'ol/map';
@@ -75,7 +77,7 @@ function configureImageSource(glSource) {
  *
  * @returns ol.source.vector instance.
  */
-function configureVectorSource(glSource) {
+function configureGeojsonSouce(glSource) {
   const vector_src = new VectorSource({
     useSpatialIndex: false,
     wrapX: false
@@ -83,26 +85,20 @@ function configureVectorSource(glSource) {
 
   // see the vector source with the first update
   //  before returning it.
-  updateVectorSource(vector_src, glSource);
+  updateGeojsonSource(vector_src, glSource);
 
   return vector_src;
 }
 
-function updateVectorSource(olSource, glSource) {
-  // this indicates the data version has changed.
-  if (olSource.get('dataVersion') !== glSource.metadata[DATA_VERSION_KEY]) {
-    // parse the new features,
-    // TODO: This should really check the map for the correct projection.
-    const features = GEOJSON_FORMAT.readFeatures(glSource.data, {featureProjection: 'EPSG:3857'});
+function updateGeojsonSource(olSource, glSource) {
+  // parse the new features,
+  // TODO: This should really check the map for the correct projection.
+  const features = GEOJSON_FORMAT.readFeatures(glSource.data, {featureProjection: 'EPSG:3857'});
 
-    // clear the layer WITHOUT dispatching remove events.
-    olSource.clear(true);
-    // bulk load the feature data.
-    olSource.addFeatures(features);
-
-    // update the data version in the layer.
-    olSource.set('dataVersion', glSource.metadata[DATA_VERSION_KEY]);
-  }
+  // clear the layer WITHOUT dispatching remove events.
+  olSource.clear(true);
+  // bulk load the feature data.
+  olSource.addFeatures(features);
 }
 
 
@@ -115,7 +111,7 @@ function configureSource(glSource) {
       return configureTileJSONSource(glSource);
     }
   } else if (glSource.type === 'geojson') {
-    return configureVectorSource(glSource);
+    return configureGeojsonSouce(glSource);
   } else if (glSource.type === 'image') {
     return configureImageSource(glSource);
   }
@@ -130,6 +126,7 @@ export class Map extends React.Component {
 
     this.sourcesVersion = null;
     this.layersVersion = null;
+
     // keep a version of the sources in
     //  their OpenLayers source definition.
     this.sources = {};
@@ -277,9 +274,11 @@ export class Map extends React.Component {
     for (const src_name in nextProps.map.sources) {
       const src = this.props.map.sources[src_name];
       if (src && src.type === 'geojson') {
-        const next_src = nextProps.map.sources[src_name];
-        if (src.metadata[DATA_VERSION_KEY] !== next_src.metadata[DATA_VERSION_KEY]) {
-          updateVectorSource(this.sources[src_name], next_src);
+        const version_key = dataVersionKey(src_name);
+
+        if (this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key]) {
+          const next_src = nextProps.map.sources[src_name];
+          updateGeojsonSource(this.sources[src_name], next_src);
         }
       }
     }
