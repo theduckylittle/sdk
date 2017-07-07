@@ -57,8 +57,8 @@ function addLayer(state, action) {
  */
 function removeLayer(state, action) {
   const new_layers = [];
-  for(let i = 0, ii = state.layers.length; i < ii; i++) {
-    if(state.layers[i].id !== action.layerId) {
+  for (let i = 0, ii = state.layers.length; i < ii; i++) {
+    if (state.layers[i].id !== action.layerId) {
       new_layers.push(state.layers[i]);
     }
   }
@@ -73,9 +73,9 @@ function removeLayer(state, action) {
 function updateLayer(state, action) {
   // action.layer should be a new mix in for the layer.
   const new_layers = [];
-  for(let i = 0, ii = state.layers.length; i < ii; i++) {
+  for (let i = 0, ii = state.layers.length; i < ii; i++) {
     // if the id matches, update the layer
-    if(state.layers[i].id === action.layerId) {
+    if (state.layers[i].id === action.layerId) {
       if (action.type === MAP.SET_LAYER_METADATA) {
         const meta_update = {};
         meta_update[action.key] = action.value;
@@ -157,7 +157,7 @@ function addFeatures(state, action) {
 
   // when there is no data, use the data
   // from the action.
-  if(!data || !data.type) {
+  if (!data || !data.type) {
     // coerce this to a FeatureCollection.
     new_data = {
       type: 'FeatureCollection',
@@ -168,14 +168,14 @@ function addFeatures(state, action) {
       type: 'FeatureCollection',
       features: [data].concat(action.features)
     };
-  } else if(data.type === 'FeatureCollection') {
+  } else if (data.type === 'FeatureCollection') {
     new_data = {
       type: 'FeatureCollection',
       features: data.features.concat(action.features)
     }
   }
 
-  if(new_data !== null) {
+  if (new_data !== null) {
     return changeData(state, action.sourceName, new_data);
   }
   return state;
@@ -195,19 +195,19 @@ function removeFeatures(state, action) {
   // filter function, features which MATCH this function will be REMOVED.
   const match = createFilter(action.filter);
 
-  if(data.type === 'Feature') {
+  if (data.type === 'Feature') {
     // if the feature should be removed, return an empty
     //  FeatureCollection
-    if(match(data)) {
+    if (match(data)) {
       return changeData(state, action.sourceName, {
         type: 'FeatureCollection',
         features: [],
       });
     }
-  } else if(data.type === 'FeatureCollection') {
+  } else if (data.type === 'FeatureCollection') {
     const new_features = [];
-    for(const feature of data.features) {
-      if(!match(feature)) {
+    for (const feature of data.features) {
+      if (!match(feature)) {
         new_features.push(feature);
       }
     }
@@ -228,8 +228,8 @@ function removeFeatures(state, action) {
 function setVisibility(state, action) {
   const updated_layers = [];
   let updated = 0;
-  for(const layer of state.layers) {
-    if(layer.id === action.layerId) {
+  for (const layer of state.layers) {
+    if (layer.id === action.layerId) {
       updated_layers.push({
         ...layer,
         layout: {
