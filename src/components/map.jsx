@@ -222,7 +222,7 @@ export class Map extends React.Component {
     // TODO: Update this to check "diff" configurations
     //       of sources.  Currently, this will only detect
     //       additions and removals.
-    let src_names = Object.keys(this.props.map.sources);
+    let src_names = Object.keys(sourcesDef);
     for (let i = 0, ii = src_names.length; i < ii; i++) {
       const src_name = src_names[i];
       // Add the source because it's not in the current
@@ -354,7 +354,7 @@ export class Map extends React.Component {
 }
 
 Map.propTypes = {
-  map: PropTypes.shape.isRequired({
+  map: PropTypes.shape({
     center: PropTypes.array,
     zoom: PropTypes.number,
     metadata: PropTypes.object,
@@ -368,7 +368,7 @@ Map.defaultProps = {
   map: {
     center: [0, 0],
     zoom: 2,
-    metadata: [],
+    metadata: {},
     layers: [],
     sources: {},
   },
