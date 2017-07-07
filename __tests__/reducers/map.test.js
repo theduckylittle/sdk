@@ -20,17 +20,19 @@ describe('map reducer', () => {
   })
 
   it('should handle ADD_LAYER', () => {
+   const title = "Background";
    const layer = {
      "id": "background",
      "type": "background",
      "paint": {
        "background-color": "rgba(0,0,0,0)"
-      }
+      },
     };
     deepFreeze(layer);
     const action = {
       type: MAP.ADD_LAYER,
-      layerDef: layer
+      layerDef: layer,
+      layerTitle: title,
     };
     deepFreeze(action);
     expect(
@@ -51,10 +53,69 @@ describe('map reducer', () => {
         "paint": {
           "background-color": "rgba(0,0,0,0)"
         },
+        "metadata": {
+          "bnd:title" : title
+        },
         "filter": null
       }]
     })
   })
+
+  it('should handle SET_LAYER_METADATA', () => {
+    const title = "Background";
+    const layer = {
+     "id": "background",
+     "type": "background",
+     "paint": {
+       "background-color": "rgba(0,0,0,0)"
+      },
+    };
+    deepFreeze(layer);
+    const action = {
+      type: MAP.SET_LAYER_METADATA,
+      layerId: 'background',
+      key: 'bnd:title',
+      value: title
+    };
+    const state = {
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      metadata: {
+        'bnd:sources-version': 0,
+        'bnd:layers-version': 0,
+      },
+      sources: {},
+     layers: [layer]
+    };
+    deepFreeze(state);
+    deepFreeze(action);
+    expect(
+      reducer(state, action)
+    ).toEqual({
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      sources: {},
+      metadata: {
+        'bnd:sources-version': 0,
+        'bnd:layers-version': 1,
+      },
+      layers: [{
+        "id": "background",
+        "type": "background",
+        "paint": {
+          "background-color": "rgba(0,0,0,0)"
+        },
+        "metadata": {
+          "bnd:title": title
+        }
+      }]
+    })
+
+  });
 
   it('should handle SET_LAYER_VISIBILITY', () => {
    const layer = {

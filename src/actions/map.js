@@ -12,10 +12,10 @@ export function setView(center, zoom) {
   }
 }
 
-export function addLayer(layerDef) {
+export function addLayer(layerDef, layerTitle) {
   return {
     type: MAP.ADD_LAYER,
-    layerDef
+    layerDef, layerTitle
   }
 }
 
@@ -69,6 +69,18 @@ export function setLayerVisibility(layerId, visibility) {
     layerId,
     visibility
   }
+}
+
+export function setLayerMetadata(layerId, itemName, itemValue) {
+  return {
+    type: MAP.SET_LAYER_METADATA,
+    layerId,
+    key: itemName, value: itemValue,
+  }
+}
+
+export function setLayerTitle(layerId, title) {
+  return setLayerMetadata(layerId, 'bnd:title', title);
 }
 
 export function receiveContext(context) {

@@ -39,8 +39,14 @@ function addLayer(state, action) {
   //       order to support easier dev.
   const new_layer = Object.assign({
     filter: null,
-    paint: {}
+    paint: {},
+    metadata: {},
   }, action.layerDef);
+
+  // add a layer name if specified in the action.
+  if (action.layerTitle) {
+    new_layer.metadata['bnd:title'] = action.layerTitle;
+  }
 
   return Object.assign({}, state, {
     layers: state.layers.concat([new_layer]),
@@ -70,7 +76,15 @@ function updateLayer(state, action) {
   for(let i = 0, ii = state.layers.length; i < ii; i++) {
     // if the id matches, update the layer
     if(state.layers[i].id === action.layerId) {
-      new_layers.push(Object.assign({}, state.layers[i], action.layerDef));
+      if (action.type === MAP.SET_LAYER_METADATA) {
+        const meta_update = {};
+        meta_update[action.key] = action.value;
+        new_layers.push(Object.assign({}, state.layers[i], {
+          metadata: Object.assign({}, state.layers[i].metadata, meta_update)
+        }));
+      } else {
+        new_layers.push(Object.assign({}, state.layers[i], action.layerDef));
+      }
     // otherwise leave it the same.
     } else {
       new_layers.push(state.layers[i]);
@@ -251,6 +265,7 @@ export default function MapReducer(state = defaultState, action) {
       return addLayer(state, action);
     case MAP.REMOVE_LAYER:
       return removeLayer(state, action);
+    case MAP.SET_LAYER_METADATA:
     case MAP.UPDATE_LAYER:
       return updateLayer(state, action);
     case MAP.ADD_SOURCE:
