@@ -145,6 +145,37 @@ describe('actions', () => {
 
     expect(actions.setLayerTitle(layer_id, title)).toEqual(expectedAction);
   });
+
+  it('should issue an action to move a layer', () => {
+    const layer_a = {
+      id: 'a',
+      source: 'osm',
+    };
+
+    const layer_b = {
+      id: 'b',
+      source: 'osm',
+    };
+
+    const expectedAction = {
+      type: MAP.MOVE_LAYER,
+      layerId: layer_a.id,
+      targetId: layer_b.id,
+    };
+
+    expect(actions.moveLayer(layer_a.id, layer_b.id)).toEqual(expectedAction);
+  });
+
+  it('should issue an action to put the layer on top', () => {
+    const layer_id = 'a';
+    const expectedAction = {
+      type: MAP.MOVE_LAYER,
+      layerId: layer_id,
+      targetId: undefined,
+    };
+
+    expect(actions.moveLayer(layer_id)).toEqual(expectedAction);
+  });
 });
 
 describe('async actions', () => {
