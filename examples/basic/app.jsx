@@ -62,8 +62,8 @@ function main() {
     id: 'background',
     type: 'background',
     paint: {
-      'background-color' : '#eee'
-    }
+      'background-color': '#eee',
+    },
   }));
 
   store.dispatch(mapActions.addLayer({

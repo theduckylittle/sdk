@@ -7,7 +7,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import getStyleFunction from 'mapbox-to-ol-style';
-import glfun from '@mapbox/mapbox-gl-style-spec/function';
 
 import OlMap from 'ol/map';
 import View from 'ol/view';
@@ -40,7 +39,7 @@ const GEOJSON_FORMAT = new GeoJsonFormat();
  *  for undefined values to be returned.
  */
 function getVersion(obj, key) {
-  if(typeof obj.metadata === 'undefined') {
+  if (typeof obj.metadata === 'undefined') {
     return undefined;
   }
   return obj.metadata[key];
@@ -262,7 +261,7 @@ export class Map extends React.Component {
     //       the background-opacity attribute, there is no
     //       DOM-based backgroundOpacity CSS style and applying
     //       opacity to the element makes it all "fade".
-    if(layer.paint['background-pattern']) {
+    if (layer.paint['background-pattern']) {
       // TODO: We cannot implement the background pattern
       //       until glyphs/symbology has been implemented.
     } else {
