@@ -258,7 +258,13 @@ export class Map extends React.Component {
   /** Style the background.
    */
   configureBackground(layer) {
+    // TODO: Right now there is not a good way of using
+    //       the background-opacity attribute, there is no
+    //       DOM-based backgroundOpacity CSS style and applying
+    //       opacity to the element makes it all "fade".
     if(layer.paint['background-pattern']) {
+      // TODO: We cannot implement the background pattern
+      //       until glyphs/symbology has been implemented.
     } else {
       this.mapdiv.style.backgroundColor = layer.paint['background-color'];
     }
