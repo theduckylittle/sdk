@@ -146,7 +146,7 @@ describe('actions', () => {
     expect(actions.setLayerTitle(layer_id, title)).toEqual(expectedAction);
   });
 
-  it('should issue an action to move a layer', () => {
+  it('should issue an action to change the layer order', () => {
     const layer_a = {
       id: 'a',
       source: 'osm',
@@ -158,23 +158,23 @@ describe('actions', () => {
     };
 
     const expectedAction = {
-      type: MAP.MOVE_LAYER,
+      type: MAP.ORDER_LAYER,
       layerId: layer_a.id,
       targetId: layer_b.id,
     };
 
-    expect(actions.moveLayer(layer_a.id, layer_b.id)).toEqual(expectedAction);
+    expect(actions.orderLayer(layer_a.id, layer_b.id)).toEqual(expectedAction);
   });
 
   it('should issue an action to put the layer on top', () => {
     const layer_id = 'a';
     const expectedAction = {
-      type: MAP.MOVE_LAYER,
+      type: MAP.ORDER_LAYER,
       layerId: layer_id,
       targetId: undefined,
     };
 
-    expect(actions.moveLayer(layer_id)).toEqual(expectedAction);
+    expect(actions.orderLayer(layer_id)).toEqual(expectedAction);
   });
 });
 

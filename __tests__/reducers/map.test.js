@@ -457,14 +457,14 @@ describe('map reducer', () => {
     deepFreeze(state);
 
     const action = {
-      type: MAP.MOVE_LAYER,
+      type: MAP.ORDER_LAYER,
       layerId: layer_b.id,
       targetId: layer_a.id,
     };
     expect(reducer(state, action).layers).toEqual([layer_b, layer_a]);
 
     const top_action = {
-      type: MAP.MOVE_LAYER,
+      type: MAP.ORDER_LAYER,
       layerId: layer_a.id,
       targetId: undefined,
     };

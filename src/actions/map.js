@@ -131,9 +131,9 @@ export function setContext(options) {
  *
  * @returns action object.
  */
-export function moveLayer(layerId, targetLayerId) {
+export function orderLayer(layerId, targetLayerId) {
   return {
-    type: MAP.MOVE_LAYER,
+    type: MAP.ORDER_LAYER,
     layerId,
     targetId: targetLayerId,
   };

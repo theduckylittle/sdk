@@ -84,9 +84,9 @@ function placeLayer(state, layer, targetId) {
   }, incrementVersion(state.metadata, LAYER_VERSION_KEY));
 }
 
-/** Move a layer in the stack
+/** Change the order of the layer in the stack.
  */
-function moveLayer(state, action) {
+function orderLayer(state, action) {
   let layer = null;
   for (let i = 0, ii = state.layers.length; i < ii && layer === null; i++) {
     if (state.layers[i].id === action.layerId) {
@@ -350,8 +350,8 @@ export default function MapReducer(state = defaultState, action) {
       return setVisibility(state, action);
     case MAP.RECEIVE_CONTEXT:
       return setContext(state, action);
-    case MAP.MOVE_LAYER:
-      return moveLayer(state, action);
+    case MAP.ORDER_LAYER:
+      return orderLayer(state, action);
     default:
       return state;
   }
