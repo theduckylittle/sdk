@@ -4,12 +4,14 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import getStyleFunction from 'mapbox-to-ol-style';
 
 import OlMap from 'ol/map';
 import View from 'ol/view';
+import Overlay from 'ol/overlay';
 
 import TileLayer from 'ol/layer/tile';
 import XyzSource from 'ol/source/xyz';
@@ -159,7 +161,6 @@ function fakeStyle(layer) {
   }, layer.source);
 }
 
-
 export class Map extends React.Component {
 
   constructor(props) {
@@ -220,9 +221,50 @@ export class Map extends React.Component {
       }
     }
 
+    let popups_changed = false;
+    if (nextProps.popups.length !== this.props.popups.length) {
+      popups_changed = true;
+    } else {
+      for (let i = 0, ii = nextProps.popups.length; i < ii && !popups_changed; i++) {
+        if (nextProps.popups[i].props.key !== this.props.popups[i].props.key) {
+          popups_changed = true;
+        }
+      }
+    }
+
+    if (popups_changed) {
+      this.updatePopups(nextProps.popups);
+    }
+
     // This should always return false to keep
     // render() from being called.
     return false;
+  }
+
+  /** Update the popups based on the list of popup
+   *  components.
+   *
+   *  @param popups A list of SdkPopups
+   *
+   */
+  updatePopups(popups) {
+    const old_overlays = this.map.getOverlays();
+    for (let i = 0, ii = old_overlays.length; i < ii; i++) {
+      ReactDOM.unmountComponentAtNode(old_overlays[i].getElement());
+      this.map.removeOverlay(old_overlays[i]);
+    }
+    for (let i = 0, ii = popups.length; i < ii; i++) {
+      const overlay = new Overlay({
+        // create an empty div element for the Popup
+        element: document.createElement('div'),
+        // allow events to pass through, using the default stopevent
+        // container does not allow react to check for events.
+        stopEvent: false,
+      });
+      overlay.setPosition(this.props.popups[i].props.coordinate);
+      this.map.addOverlay(overlay);
+      ReactDOM.render(this.props.popups[i], overlay.getElement());
+    }
   }
 
   /** Convert the GL source definitions into internal
@@ -351,6 +393,16 @@ export class Map extends React.Component {
     }
   }
 
+  /** When the map is clicked, take the coordinate,
+   *  collect the list of features and then pass them to
+   *  the onClick prop function.
+   */
+  onClick(evt) {
+    const features = [];
+    // TODO: Get the list of features.
+    this.props.onClick(evt.coordinate, features);
+  }
+
   /** Initialize the map */
   configureMap() {
     this.map = new OlMap({
@@ -367,16 +419,47 @@ export class Map extends React.Component {
       this.props.setView(this.map.getView());
     });
 
+    // when the map is clicked, handle the event.
+    this.map.on('singleclick', (evt) => {
+      // send the coordinate to a prop function
+      //  and a list of features at that point.
+      this.props.onClick(evt.coordinate);
+    });
+
+
     // bootstrap the map with the current configuration.
     this.configureSources(this.props.map.sources, this.props.map.metadata[SOURCE_VERSION_KEY]);
     this.configureLayers(this.props.map.sources, this.props.map.layers,
                          this.props.map.metadata[LAYER_VERSION_KEY]);
+    this.updatePopups(this.props.popups);
+  }
+
+  renderPopups() {
+
   }
 
   render() {
+    this.popups = {};
+
     return (
-      <div ref={(c) => { this.mapdiv = c; }} className="map" />
+      <div style={{position: 'relative'}}>
+        <div key="map" ref={(c) => { this.mapdiv = c; }} className="map">
+        </div>
+      </div>
     );
+
+  /*
+
+        <div key="popups" className="popups" style={{display: 'none'}}>
+        { this.props.popups.map((popup, idx) => {
+          const p = (<div ref={(c) => { this.popups[idx] = c; }} key={idx}>{popup}</div>);
+          return p;
+        })}
+        </div>
+        <div key="popups" style={{position: 'absolute', userSelect: 'none', pointerEvents: 'none', background: 'none', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', zIndex: 10000}} className="popups">
+          { this.props.popups }
+        </div>
+        */
   }
 }
 
@@ -399,8 +482,11 @@ Map.defaultProps = {
     layers: [],
     sources: {},
   },
+  overlays: [],
   setView: () => {
     // swallow event.
+  },
+  onClick: () => {
   },
 };
 
