@@ -19,8 +19,6 @@ import ReactDOM from 'react-dom';
 
 import SdkMap from '@boundlessgeo/sdk/components/map';
 import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
-import SdkPopup from '@boundlessgeo/sdk/components/map/popup';
-
 import * as mapActions from '@boundlessgeo/sdk/actions/map';
 
 // This will have webpack include all of the SDK styles.
@@ -209,21 +207,8 @@ function main() {
     store.dispatch(mapActions.removeFeatures('points', ['==', 'isRandom', true]));
   };
 
-
-  const popups = [
-    (
-      <SdkPopup key={'mounds-and-chimis'} coordinate={[-10374281.3, 5555771.6]}>
-        <div style={{backgroundColor: 'red', color: 'white'}}>All the mounds bars.</div>
-        All the chimichangas.<br/>
-        <button className="sdk-btn" onClick={addRandomPoints}>Go Rando</button>
-      </SdkPopup>
-    )
-  ];
   // place the map on the page.
-  ReactDOM.render((
-    <SdkMap store={store} popups={popups}>
-    </SdkMap>
-  ), document.getElementById('map'));
+  ReactDOM.render(<SdkMap store={store} />, document.getElementById('map'));
 
   // add some buttons to demo some actions.
   ReactDOM.render((
