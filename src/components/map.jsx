@@ -423,9 +423,14 @@ export class Map extends React.Component {
 
     // when the map is clicked, handle the event.
     this.map.on('singleclick', (evt) => {
-      // send the coordinate to a prop function
-      //  and a list of features at that point.
-      this.props.onClick(evt.coordinate);
+      const click_features = [];
+      if (this.props.includeFeaturesOnClick) {
+        this.map.forEachFeatureAtPixel(evt.pixel, (feature) => {
+          click_features.push(GEOJSON_FORMAT.writeFeatureObject(feature));
+        });
+      }
+      // send the clicked-on coordinate and the list of features
+      this.props.onClick(evt.coordinate, click_features);
     });
 
 
@@ -453,6 +458,7 @@ Map.propTypes = {
   }),
   popups: PropTypes.arrayOf(PropTypes.element),
   setView: PropTypes.func,
+  includeFeautresOnClick: PropTypes.bool,
   onClick: PropTypes.func,
 };
 
@@ -468,6 +474,7 @@ Map.defaultProps = {
   setView: () => {
     // swallow event.
   },
+  includeFeaturesOnClick: false,
   onClick: () => {
   },
 };
