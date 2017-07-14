@@ -241,30 +241,14 @@ export class Map extends React.Component {
     return false;
   }
 
-  /** Update the popups based on the list of popup
-   *  components.
-   *
-   *  @param popups A list of SdkPopups
-   *
+  /** When the map is clicked, take the coordinate,
+   *  collect the list of features and then pass them to
+   *  the onClick prop function.
    */
-  updatePopups(popups) {
-    const old_overlays = this.map.getOverlays();
-    for (let i = 0, ii = old_overlays.length; i < ii; i++) {
-      ReactDOM.unmountComponentAtNode(old_overlays[i].getElement());
-      this.map.removeOverlay(old_overlays[i]);
-    }
-    for (let i = 0, ii = popups.length; i < ii; i++) {
-      const overlay = new Overlay({
-        // create an empty div element for the Popup
-        element: document.createElement('div'),
-        // allow events to pass through, using the default stopevent
-        // container does not allow react to check for events.
-        stopEvent: false,
-      });
-      overlay.setPosition(this.props.popups[i].props.coordinate);
-      this.map.addOverlay(overlay);
-      ReactDOM.render(this.props.popups[i], overlay.getElement());
-    }
+  onClick(evt) {
+    const features = [];
+    // TODO: Get the list of features.
+    this.props.onClick(evt.coordinate, features);
   }
 
   /** Convert the GL source definitions into internal
@@ -393,14 +377,32 @@ export class Map extends React.Component {
     }
   }
 
-  /** When the map is clicked, take the coordinate,
-   *  collect the list of features and then pass them to
-   *  the onClick prop function.
+  /** Update the popups based on the list of popup
+   *  components.
+   *
+   *  @param popups A list of SdkPopups
+   *
    */
-  onClick(evt) {
-    const features = [];
-    // TODO: Get the list of features.
-    this.props.onClick(evt.coordinate, features);
+  updatePopups(popups) {
+    // remove all the old "overlays"/popups
+    const old_overlays = this.map.getOverlays();
+    for (let i = 0, ii = old_overlays.length; i < ii; i++) {
+      ReactDOM.unmountComponentAtNode(old_overlays[i].getElement());
+      this.map.removeOverlay(old_overlays[i]);
+    }
+    // redraw the popups.
+    for (let i = 0, ii = popups.length; i < ii; i++) {
+      const overlay = new Overlay({
+        // create an empty div element for the Popup
+        element: document.createElement('div'),
+        // allow events to pass through, using the default stopevent
+        // container does not allow react to check for events.
+        stopEvent: false,
+      });
+      overlay.setPosition(this.props.popups[i].props.coordinate);
+      this.map.addOverlay(overlay);
+      ReactDOM.render(this.props.popups[i], overlay.getElement());
+    }
   }
 
   /** Initialize the map */
@@ -434,32 +436,10 @@ export class Map extends React.Component {
     this.updatePopups(this.props.popups);
   }
 
-  renderPopups() {
-
-  }
-
   render() {
-    this.popups = {};
-
     return (
-      <div style={{position: 'relative'}}>
-        <div key="map" ref={(c) => { this.mapdiv = c; }} className="map">
-        </div>
-      </div>
+      <div ref={(c) => { this.mapdiv = c; }} className="map" />
     );
-
-  /*
-
-        <div key="popups" className="popups" style={{display: 'none'}}>
-        { this.props.popups.map((popup, idx) => {
-          const p = (<div ref={(c) => { this.popups[idx] = c; }} key={idx}>{popup}</div>);
-          return p;
-        })}
-        </div>
-        <div key="popups" style={{position: 'absolute', userSelect: 'none', pointerEvents: 'none', background: 'none', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', zIndex: 10000}} className="popups">
-          { this.props.popups }
-        </div>
-        */
   }
 }
 
@@ -471,7 +451,9 @@ Map.propTypes = {
     layers: PropTypes.array,
     sources: PropTypes.object,
   }),
+  popups: PropTypes.arrayOf(PropTypes.element),
   setView: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 Map.defaultProps = {
@@ -482,7 +464,7 @@ Map.defaultProps = {
     layers: [],
     sources: {},
   },
-  overlays: [],
+  popups: [],
   setView: () => {
     // swallow event.
   },
