@@ -58,7 +58,7 @@ class MarkFeaturesPopup extends SdkPopup {
       <div>
         You clicked here:<br />
         <code>
-          { Math.floor(this.props.coordinate[0]) }, { Math.floor(this.props.coordinate[1]) }
+          { this.props.coordinate.hms }
         </code>
         <br />
         <p>

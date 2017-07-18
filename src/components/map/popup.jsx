@@ -46,7 +46,10 @@ Popup.propTypes = {
   // this unused prop warning is ignored becasue the cooredinate is
   //  a required prop to rightly render the popup on the map.
   // eslint-disable-next-line
-  coordinate: PropTypes.arrayOf(PropTypes.number).isRequired,
+  coordinate: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.number),
+    PropTypes.object,
+  ]).isRequired,
   children: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.node,

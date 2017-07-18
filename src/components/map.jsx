@@ -15,6 +15,9 @@ import OlMap from 'ol/map';
 import View from 'ol/view';
 import Overlay from 'ol/overlay';
 
+import Proj from 'ol/proj';
+import Coordinate from 'ol/coordinate';
+
 import TileLayer from 'ol/layer/tile';
 import XyzSource from 'ol/source/xyz';
 import TileJSON from 'ol/source/tilejson';
@@ -451,8 +454,9 @@ export class Map extends React.Component {
       // allow events to pass through, using the default stopevent
       // container does not allow react to check for events.
       stopEvent: false,
+      // put the popup into view
+      autoPan: true,
     });
-    this.map.addOverlay(overlay);
 
     // Editor's note:
     // I hate using the self = this construction but
@@ -470,8 +474,17 @@ export class Map extends React.Component {
     // set the popup id so we can match the component
     //  to the overlay.
     overlay.set('popupId', id);
+
     // set the position based on the props of the popup.
-    overlay.setPosition(popup.props.coordinate);
+    // assumes the popups coordinate is 4326
+    const wgs84 = [popup.props.coordinate[0], popup.props.coordinate[1]];
+    const xy = Proj.transform(wgs84, 'EPSG:4326', this.map.getView().getProjection());
+    overlay.setPosition(xy);
+
+    // Add the overlay to the map,
+    // Position must be set before adding because
+    //    otherwise autoPan: true will fail.
+    this.map.addOverlay(overlay);
 
     // do not trigger an update if silent is
     //  set to true.  Useful for bulk popup additions.
@@ -507,6 +520,8 @@ export class Map extends React.Component {
       // controls to be placed on the ol-overlaycontainer instead of
       // ol-overlaycontainer-stop-event
       if (tag_name === 'canvas') {
+        const map_prj = this.map.getView().getProjection();
+
         // if includeFeaturesOnClick is true then query for the
         //  features on the map.
         const click_features = [];
@@ -514,15 +529,24 @@ export class Map extends React.Component {
           this.map.forEachFeatureAtPixel(evt.pixel, (feature) => {
             // ship the working projection for the features back to the
             //  caller as 4326 for consistency sake.
-            // TODO: This should pull the projectionb from the map object.
             click_features.push(GEOJSON_FORMAT.writeFeatureObject(feature, {
-              featureProjection: 'EPSG:3857',
+              featureProjection: map_prj,
               dataProjection: 'EPSG:4326',
             }));
           });
         }
+
+        // ensure the coordinate is also in 4326
+        const pt = Proj.transform(evt.coordinate, map_prj, 'EPSG:4326');
+        const coordinate = {
+          0: pt[0],
+          1: pt[1],
+          xy: evt.coordinate,
+          hms: Coordinate.toStringHDMS(pt),
+        };
+
         // send the clicked-on coordinate and the list of features
-        this.props.onClick.apply(this, [evt.coordinate, click_features]);
+        this.props.onClick.apply(this, [coordinate, click_features]);
       }
     });
 
