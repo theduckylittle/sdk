@@ -511,15 +511,15 @@ export class Map extends React.Component {
 
     // when the map is clicked, handle the event.
     this.map.on('singleclick', (evt) => {
-      // check the target for the tag name
-      const tag_name = evt.originalEvent.target.tagName.toLowerCase();
       // React listens to events on the document, OpenLayers places their
       // event listeners on the element themselves. The only element
       // the map should care to listen to is the actual rendered map
       // content. This work-around allows the popups and React-based
       // controls to be placed on the ol-overlaycontainer instead of
       // ol-overlaycontainer-stop-event
-      if (tag_name === 'canvas') {
+
+      // eslint-disable-next-line no-underscore-dangle
+      if (this.map.getRenderer().canvas_ === evt.originalEvent.target) {
         const map_prj = this.map.getView().getProjection();
 
         // if includeFeaturesOnClick is true then query for the
