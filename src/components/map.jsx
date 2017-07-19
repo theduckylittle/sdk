@@ -448,14 +448,19 @@ export class Map extends React.Component {
     //  in openlayers vs what we have in the react world.
     const id = uuid.v4();
 
+    const elem = document.createElement('div');
+
     const overlay = new Overlay({
       // create an empty div element for the Popup
-      element: document.createElement('div'),
+      element: elem,
       // allow events to pass through, using the default stopevent
       // container does not allow react to check for events.
       stopEvent: false,
       // put the popup into view
       autoPan: true,
+      autoPanAnimation: {
+        duration: 250,
+      },
     });
 
     // Editor's note:
@@ -467,24 +472,26 @@ export class Map extends React.Component {
     // - https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-render-return-value.md
     const self = this;
     // render the element into the popup's DOM.
-    ReactDOM.render(popup, overlay.getElement(), (function addInstance() {
+    ReactDOM.render(popup, elem, (function addInstance() {
       self.popups[id] = this;
     }));
+
+    // move the element up a level to ensure
+    //  the rects are calculated correctly.
+    overlay.setElement(elem.firstChild);
 
     // set the popup id so we can match the component
     //  to the overlay.
     overlay.set('popupId', id);
 
-    // set the position based on the props of the popup.
+    // Add the overlay to the map,
+    this.map.addOverlay(overlay);
+
+    // reset the position after the popup has been added to the map.
     // assumes the popups coordinate is 4326
     const wgs84 = [popup.props.coordinate[0], popup.props.coordinate[1]];
     const xy = Proj.transform(wgs84, 'EPSG:4326', this.map.getView().getProjection());
     overlay.setPosition(xy);
-
-    // Add the overlay to the map,
-    // Position must be set before adding because
-    //    otherwise autoPan: true will fail.
-    this.map.addOverlay(overlay);
 
     // do not trigger an update if silent is
     //  set to true.  Useful for bulk popup additions.
@@ -546,7 +553,7 @@ export class Map extends React.Component {
         };
 
         // send the clicked-on coordinate and the list of features
-        this.props.onClick.apply(this, [coordinate, click_features]);
+        this.props.onClick(this, coordinate, click_features);
       }
     });
 
@@ -556,12 +563,17 @@ export class Map extends React.Component {
     this.configureLayers(this.props.map.sources, this.props.map.layers,
                          this.props.map.metadata[LAYER_VERSION_KEY]);
 
-    // add the initial popups from the user.
-    for (let i = 0, ii = this.props.initialPopups.length; i < ii; i++) {
-      // set silent to true since updatePopups is called after the loop
-      this.addPopup(this.props.initialPopups[i], true);
-    }
-    this.updatePopups();
+    // this is done after the map composes itself for the first time.
+    //  otherwise the map was not always ready for the initial popups.
+    this.map.once('postcompose', () => {
+      // add the initial popups from the user.
+      for (let i = 0, ii = this.props.initialPopups.length; i < ii; i++) {
+        // set silent to true since updatePopups is called after the loop
+        this.addPopup(this.props.initialPopups[i], true);
+      }
+
+      this.updatePopups();
+    });
   }
 
   render() {

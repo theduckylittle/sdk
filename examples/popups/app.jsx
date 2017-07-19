@@ -47,7 +47,7 @@ class MarkFeaturesPopup extends SdkPopup {
     store.dispatch(mapActions.removeFeatures('points', ['in', 'id'].concat(feature_ids)));
     // add the new freshly marked features.
     store.dispatch(mapActions.addFeatures('points', features));
-    // close this dialog.
+    // close this popup.
     this.close();
   }
 
@@ -112,22 +112,8 @@ function addPoints(sourceName, n_points = 10) {
   }
 }
 
-/** When the map has been clicked, add a popup representing the point.
- *
- */
-function newPopup(xy, features) {
-  if (features.length === 0) {
-    // no features, :( Let the user know nothing was there.
-    this.addPopup(<SdkPopup coordinate={xy} closeable><i>No features found.</i></SdkPopup>);
-  } else {
-    // Show the super advanced fun popup!
-    this.addPopup(<MarkFeaturesPopup coordinate={xy} features={features} closeable />);
-  }
-}
-
-
 function main() {
-  // Start with a reasonable global view of hte map.
+  // Start with a reasonable global view of the map.
   store.dispatch(mapActions.setView([-1759914.3204498321, 3236495.368492126], 1));
 
   // add the OSM source
@@ -148,12 +134,11 @@ function main() {
     source: 'osm',
   }));
 
-  // Add a geojson source ot the map.
+  // Add a geojson source to the map.
   store.dispatch(mapActions.addSource('points', {
     type: 'geojson',
     data: {},
   }));
-
 
   // add a layer for the random points
   store.dispatch(mapActions.addLayer({
@@ -189,9 +174,17 @@ function main() {
   ReactDOM.render((
     <SdkMap
       store={store}
-      includeFeaturesOnClick
-      onClick={newPopup}
       initialPopups={[<NullIslandPopup coordinate={[0, 0]} closeable={false} />]}
+      includeFeaturesOnClick
+      onClick={(map, xy, features) => {
+        if (features.length === 0) {
+          // no features, :( Let the user know nothing was there.
+          map.addPopup(<SdkPopup coordinate={xy} closeable><i>No features found.</i></SdkPopup>);
+        } else {
+          // Show the super advanced fun popup!
+          map.addPopup(<MarkFeaturesPopup coordinate={xy} features={features} closeable />);
+        }
+      }}
     />
   ), document.getElementById('map'));
 }
