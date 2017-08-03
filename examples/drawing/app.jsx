@@ -19,6 +19,7 @@ import { INTERACTIONS } from '@boundlessgeo/sdk/constants';
 // This will have webpack include all of the SDK styles.
 import '@boundlessgeo/sdk/stylesheet/sdk.scss';
 
+
 /* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer,
@@ -28,7 +29,7 @@ const store = createStore(combineReducers({
 
 function main() {
   // Start with a reasonable global view of hte map.
-  store.dispatch(mapActions.setView([-1759914.3204498321, 3236495.368492126], 2));
+  store.dispatch(mapActions.setView([-15, 30], 2));
 
   // add the OSM source
   store.dispatch(mapActions.addSource('osm', {

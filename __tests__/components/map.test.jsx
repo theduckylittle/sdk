@@ -14,6 +14,7 @@ import TileJSONSource from 'ol/source/tilejson';
 import { createStore, combineReducers } from 'redux';
 
 import ConnectedMap, { Map } from '../../src/components/map';
+import SdkPopup from '../../src/components/map/popup';
 import MapReducer from '../../src/reducers/map';
 import * as MapActions from '../../src/actions/map';
 
@@ -336,6 +337,68 @@ describe('Map component', () => {
       view.getMaxResolution(), nextProps.map.layers[0].minzoom - view.getMinZoom());
     expect(layer.getMaxResolution()).toEqual(max_rez);
     min_rez = view.constrainResolution(
+      view.getMinResolution(), nextProps.map.layers[0].maxzoom - view.getMaxZoom());
+    expect(layer.getMinResolution()).toEqual(min_rez);
+    // min/max zoom values defined on source only
+    nextProps = {
+      map: {
+        center,
+        zoom,
+        metadata: {
+          'bnd:source-version': 1,
+          'bnd:layer-version': 2,
+        },
+        sources: {
+          tilejson: {
+            type: 'raster',
+            url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            minzoom: 4,
+            maxzoom: 8,
+          },
+        },
+        layers: [{
+          id: 'tilejson-layer',
+          source: 'tilejson',
+        }],
+      },
+    };
+    instance.shouldComponentUpdate.call(instance, nextProps);
+    max_rez = view.constrainResolution(
+      view.getMaxResolution(), nextProps.map.sources.tilejson.minzoom - view.getMinZoom());
+    expect(layer.getMaxResolution()).toEqual(max_rez);
+    min_rez = view.constrainResolution(
+      view.getMinResolution(), nextProps.map.sources.tilejson.maxzoom - view.getMaxZoom());
+    expect(layer.getMinResolution()).toEqual(min_rez);
+    // min.max zoom values defined on both source and layer def
+    nextProps = {
+      map: {
+        center,
+        zoom,
+        metadata: {
+          'bnd:source-version': 2,
+          'bnd:layer-version': 3,
+        },
+        sources: {
+          tilejson: {
+            type: 'raster',
+            url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            minzoom: 1,
+            maxzoom: 7,
+          },
+        },
+        layers: [{
+          id: 'tilejson-layer',
+          source: 'tilejson',
+          minzoom: 2,
+          maxzoom: 9,
+        }],
+      },
+    };
+    instance.shouldComponentUpdate.call(instance, nextProps);
+    max_rez = view.constrainResolution(
+      view.getMaxResolution(), nextProps.map.layers[0].minzoom - view.getMinZoom());
+    expect(layer.getMaxResolution()).toEqual(max_rez);
+    min_rez = view.constrainResolution(
       view.getMinResolution(), nextProps.map.sources.tilejson.maxzoom - view.getMaxZoom());
     expect(layer.getMinResolution()).toEqual(min_rez);
   });
@@ -442,12 +505,12 @@ describe('Map component', () => {
 
     store.dispatch(MapActions.setView([-45, -45], 11));
 
-    sdk_map.map.getView().setCenter([45, 45]);
+    sdk_map.map.getView().setCenter([0, 0]);
     sdk_map.map.dispatchEvent({
       type: 'moveend',
     });
 
-    expect(store.getState().map.center).toEqual([45, 45]);
+    expect(store.getState().map.center).toEqual([0, 0]);
   });
 
   it('should trigger the popup-related callbacks', () => {
@@ -482,6 +545,29 @@ describe('Map component', () => {
 
     // onclick should get called when the map is clicked.
     expect(props.onClick).toHaveBeenCalled();
+  });
+
+  it('should create an overlay for the initialPopups', () => {
+    const store = createStore(combineReducers({
+      map: MapReducer,
+    }));
+
+    const props = {
+      store,
+      initialPopups: [(<SdkPopup coordinate={[0, 0]}><div>foo</div></SdkPopup>)],
+    };
+
+
+    const wrapper = mount(<ConnectedMap {...props} />);
+    const sdk_map = wrapper.instance().getWrappedInstance();
+
+    expect(sdk_map.map.getOverlays().getLength()).toEqual(0);
+
+    sdk_map.map.dispatchEvent({
+      type: 'postcompose',
+    });
+
+    expect(sdk_map.map.getOverlays().getLength()).toEqual(1);
   });
 
   it('should change the sprites and redraw the layer', () => {
