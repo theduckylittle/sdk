@@ -59,10 +59,11 @@ export function getMax(...args) {
 /** Reproject GeoJSON to mapbox gl style spec EPSG:4326
   * @param data - array of geoJSON features
   * @param projection - string from geoJSON crs (coordinate referance system)
-  *
-  * @return array of geoJSON feature in EPSG:4326
+  * @param destProj - ['EPSG:4326'] string of target projection for the data
+
+  * @return array of geoJSON feature in destProj
  */
-export function reprojectGeoJson(data, projection){
+export function reprojectGeoJson(data, projection, destProj='EPSG:4326'){
   const GEOJSON_FORMAT = new GeoJsonFormat();
 
   let crsName;
@@ -71,13 +72,13 @@ export function reprojectGeoJson(data, projection){
   }
 
   const readFeatureOptions = {
-    featureProjection: 'EPSG:4326',
+    featureProjection: destProj,
     dataProjection: crsName
   };
 
   const writeFeatureOptions = {
-    featureProjection: 'EPSG:4326',
-    dataProjection: 'EPSG:4326'
+    featureProjection: destProj,
+    dataProjection: destProj
   };
 
   const new_data = {

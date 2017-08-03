@@ -13,7 +13,6 @@ import ReactDOM from 'react-dom';
 
 import SdkMap from '@boundlessgeo/sdk/components/map';
 import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
-import { reprojectGeoJson } from '@boundlessgeo/sdk/util';
 import * as mapActions from '@boundlessgeo/sdk/actions/map';
 
 import fetch from 'isomorphic-fetch';
@@ -32,7 +31,7 @@ const store = createStore(combineReducers({
 
 function main() {
   // Start with a view of the sample data location
-  store.dispatch(mapActions.setView([ -7070054.9651234485,9521866.402961753], 2));
+  store.dispatch(mapActions.setView([-93, 45], 2));
 
   // add the OSM source
   store.dispatch(mapActions.addSource('osm', {
@@ -90,11 +89,11 @@ function main() {
         error => console.error('An error occured.', error),
       )
       .then(json => {
-        // Reproject feature if they are not in 4326 to mapbox gl spec 4326
-        // Add reprojected feature to the map with source name
-        store.dispatch(mapActions.addFeatures(sourceName, reprojectGeoJson(json.features, json.crs)));
+        //addFeatures with the features, source name, and crs
+        store.dispatch(mapActions.addFeatures(sourceName, json.features, json.crs));
     })
   }
+
   //This is called by the onClick, keeping the onClick HTML clean
   const runFetchGeoJSON = () => {
     var url = './data/airports.json'
