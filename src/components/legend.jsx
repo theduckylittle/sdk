@@ -56,7 +56,7 @@ export function getLegend(layer) {
 
   switch (layer.metadata['bnd:legend-type']) {
     case 'image':
-      return (<img alt="vector legend" src={content} />);
+      return (<img alt={layer.id} src={content} />);
     case 'html':
       // eslint-disable-next-line
       return (<div dangerouslySetInnerHTML={{ __html: content }} />);
@@ -130,7 +130,7 @@ export function getRasterLegend(layer, layer_src) {
           LAYER: layers[i],
         });
         const src = `${url}?${encodeQueryObject(params)}`;
-        images.push((<img alt="Legend" key={layers[i]} className="sdk-legend-image" src={src} />));
+        images.push((<img alt={layers[i]} key={layers[i]} className="sdk-legend-image" src={src} />));
       }
 
       return images;

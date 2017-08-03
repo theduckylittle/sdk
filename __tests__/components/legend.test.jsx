@@ -83,6 +83,13 @@ describe('test the Legend component', () => {
             id: 'null-test',
             source: 'other',
           },
+          {
+            id: 'bad-type-test',
+            source: 'other',
+            metadata: {
+              'bnd:legend-type': 'bad-type',
+            },
+          },
         ],
       },
     });
@@ -103,7 +110,7 @@ describe('test the Legend component', () => {
     ['x', 'y', 'z'].forEach((layer) => {
       const test_src = `/wms?SERVICE=WMS&REQUEST=GetLegendGraphic&FORMAT=image%2Fpng&EXCEPTIONS=image%2Fpng&LAYER=${layer}`;
       const expected_image = (
-        <img alt="Legend" key={layer} className="sdk-legend-image" src={test_src} />
+        <img alt={layer} key={layer} className="sdk-legend-image" src={test_src} />
       );
       expect(wrapper.contains(expected_image)).toBe(true);
     });
@@ -149,5 +156,13 @@ describe('test the Legend component', () => {
   it('should fallback from raster to vector', () => {
     const wrapper = mount(<SdkLegend layerId="osm" store={store} />);
     expect(wrapper.html().indexOf(TEST_HTML)).toBeGreaterThan(-1);
+  });
+
+  it('should return an empty legend for an invalid legend type', () => {
+    const wrapper = mount(<SdkLegend layerId="bad-type-test" store={store} />);
+    const empty_legend = (
+      <div className="sdk-legend" />
+    );
+    expect(wrapper.contains(empty_legend)).toBe(true);
   });
 });
