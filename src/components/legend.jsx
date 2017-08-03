@@ -8,7 +8,7 @@ import { parseQueryString, encodeQueryObject } from '../util';
 
 
 /** Return a div that is asynchronously populated
- *  with the content from the parmaeter href.
+ *  with the content from the parameter href.
  *
  *  @param href - The location of the content for the div.
  *
@@ -48,11 +48,13 @@ function getRemoteLegend(href) {
  *  "bnd:legend-type" : "href", "bnd:legend-content" would provide
  *   the URL for html content.
  */
-export function getVectorLegend(layer) {
-  const metadata = layer.metadata ? layer.metadata: {};
-  const content = metadata['bnd:legend-content'];
+export function getLegend(layer) {
+  if (layer.metadata === undefined) {
+    return null;
+  }
+  const content = layer.metadata['bnd:legend-content'];
 
-  switch (metadata['bnd:legend-type']) {
+  switch (layer.metadata['bnd:legend-type']) {
     case 'image':
       return (<img alt="vector legend" src={content} />);
     case 'html':
@@ -68,7 +70,7 @@ export function getVectorLegend(layer) {
 
 /** Get the legend for a raster-type layer.
  *
- *  Attempts to detect a WMS-type source and use GetFeatureInfo,
+ *  Attempts to detect a WMS-type source and use GetLegendGraphic,
  *  otherwise, uses SDK specified legend metadata.
  *
  */
@@ -77,8 +79,9 @@ export function getRasterLegend(layer, layer_src) {
     const tile_url = layer_src.tiles[0];
     // check to see if the url is a wms request.
     if (tile_url.toUpperCase().indexOf('SERVICE=WMS') >= 0) {
+      const tile_url_parts = tile_url.split('?');
       // parse the url
-      const wms_params = parseQueryString(tile_url.split('?')[1]);
+      const wms_params = parseQueryString(tile_url_parts[1]);
 
       // normalize the keys: WMS requests are sometimes allcaps,
       //  sometimes lower cased, and sometimes (evilly so) mixed case.
@@ -90,7 +93,7 @@ export function getRasterLegend(layer, layer_src) {
       }
 
       // get the WMS servers URL.
-      const url = tile_url.split('?')[0];
+      const url = tile_url_parts[0];
 
       // REQUEST, FORMAT, and LAYER are the three required GetLegendGraphic
       // parameters.  LAYER is populated after the optional keys are added.
@@ -134,7 +137,7 @@ export function getRasterLegend(layer, layer_src) {
     }
   }
 
-  return getVectorLegend(layer);
+  return getLegend(layer);
 }
 
 
@@ -175,7 +178,7 @@ class Legend extends React.Component {
       case 'video':
       case 'canvas':
       default:
-        return getVectorLegend(layer, layer_src);
+        return getLegend(layer, layer_src);
     }
   }
 

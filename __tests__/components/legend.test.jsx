@@ -1,7 +1,7 @@
 /* global it, describe, expect, afterEach, beforeEach */
 
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import nock from 'nock';
 
 import { createStore, combineReducers } from 'redux';
@@ -49,7 +49,7 @@ describe('test the Legend component', () => {
             metadata: {
               'bnd:legend-type': 'html',
               'bnd:legend-content': TEST_HTML,
-            }
+            },
           },
           {
             id: 'wms-test',
@@ -93,7 +93,7 @@ describe('test the Legend component', () => {
   });
 
   it('should render the legend without error', () => {
-    shallow(<SdkLegend layerId="wms" store={store} />);
+    mount(<SdkLegend layerId="wms-test" store={store} />);
   });
 
   it('should render a wms legend', () => {
@@ -138,8 +138,12 @@ describe('test the Legend component', () => {
     mount(<SdkLegend layerId="null-test" store={store} />);
   });
 
-  it('should fail miserably', () => {
-    mount(<SdkLegend layerId="does-not-exist" store={store} />);
+  it('should render an empty legend when id does not exist', () => {
+    const wrapper = mount(<SdkLegend layerId="does-not-exist" store={store} />);
+    const empty_legend = (
+      <div className="sdk-legend" />
+    );
+    expect(wrapper.contains(empty_legend)).toBe(true);
   });
 
   it('should fallback from raster to vector', () => {

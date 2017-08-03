@@ -1,7 +1,8 @@
-/** Very basic SDK application example.
+/** Legend Examples
  *
- *  Contains a Map and demonstrates some of the dynamics of
- *  using the store.
+ *  Creates a basic map with some features and then
+ *  demonstrates the different types of legends available
+ *  within SDK!
  *
  */
 
@@ -25,13 +26,10 @@ const store = createStore(combineReducers({
   map: SdkMapReducer,
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
    applyMiddleware(thunkMiddleware));
-window.store = store;
 
 function main() {
   // Start with a reasonable global view of the map.
   store.dispatch(mapActions.setView([-90, 0], 2));
-
-  store.dispatch(mapActions.setMapName('Basic Map Example'));
 
   // add the OSM source
   store.dispatch(mapActions.addSource('osm', {
@@ -142,7 +140,7 @@ function main() {
    // place the map on the page.
   ReactDOM.render(<SdkMap store={store} />, document.getElementById('map'));
 
-  // add some buttons to demo some actions.
+  // add some legends to the demo.
   ReactDOM.render((
     <div>
       <h4>Legends</h4>
