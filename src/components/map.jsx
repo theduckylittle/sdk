@@ -227,7 +227,7 @@ export class Map extends React.Component {
     // put the map into the DOM
     this.configureMap();
 
-    // check to see if ther are any sprites in the state.
+    // check to see if there are any sprites in the state.
     this.configureSprites(this.props.map);
   }
 
@@ -522,7 +522,8 @@ export class Map extends React.Component {
         if (current_layer !== null) {
           const diff_filter = !jsonEquals(current_layer.filter, layer.filter);
           const diff_paint = !jsonEquals(current_layer.paint, layer.paint);
-          if (diff_filter || diff_paint) {
+          const diff_layout = !jsonEquals(current_layer.layout, layer.layout);
+          if (diff_filter || diff_paint || (current_layer.type === 'symbol' && diff_layout)) {
             ol_layer.setStyle(this.fakeStyle(layer));
           }
         }

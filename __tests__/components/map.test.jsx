@@ -21,6 +21,7 @@ import * as MapActions from '../../src/actions/map';
 import * as PrintActions from '../../src/actions/print';
 
 describe('Map component', () => {
+
   it('should render without throwing an error', () => {
     expect(shallow(<Map />).contains(<div className="map" />)).toBe(true);
   });
@@ -220,6 +221,58 @@ describe('Map component', () => {
     };
     instance.shouldComponentUpdate.call(instance, nextProps);
     expect(layer.getVisible()).toBe(false);
+  });
+
+  it('WORKING TEST: should handle layout changes', () => {
+    const store = createStore(combineReducers({
+      map: MapReducer,
+    }));
+
+    const sources = {
+      geojson: {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [0, 0],
+          },
+          properties: {
+            layer: 'symbol-layer',
+          },
+        },
+      },
+    };
+    const layers = [{
+      id: 'symbol-layer',
+      source: 'geojson',
+      'source-layer': 'symbol-layer',
+      type: 'symbol',
+      layout: {
+        // 'icon-image': 'duck',
+        'circle-radius': 5,
+      },
+    }];
+
+    const metadata = {
+      'bnd:source-version': 0,
+      'bnd:layer-version': 0,
+    };
+    const center = [0, 0];
+    const zoom = 2;
+    const wrapper = shallow(<Map map={{ center, zoom, sources, layers, metadata }} />);
+
+    const instance = wrapper.instance();
+    instance.componentDidMount();
+    const map = instance.map;
+    const layer = map.getLayers().item(0);
+    const style = layer.getStyle();
+
+    // store.dispatch(MapActions.setSprites('./sprites'));
+    // console.log(store.getState().map.sprites)
+
+    const ol_style = style(layer.getSource().getFeatures()[0], map.getView().getResolution());
+    console.log(ol_style);
   });
 
   it('handles updates to source and layer min/maxzoom values', () => {

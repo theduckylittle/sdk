@@ -37,6 +37,10 @@ const config = {
       'webpack/hot/only-dev-server',
       './examples/paint-change/app.jsx',
     ],
+    'sprite-change': [
+      'webpack/hot/only-dev-server',
+      './examples/sprite-change/app.jsx',
+    ],
     'drawing': [
       'webpack/hot/only-dev-server',
       './examples/drawing/app.jsx',
