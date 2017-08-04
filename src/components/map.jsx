@@ -60,6 +60,7 @@ const WGS84_SPHERE = new Sphere(6378137);
 /** This variant of getVersion differs as it allows
  *  for undefined values to be returned.
  */
+
 function getVersion(obj, key) {
   if (obj.metadata === undefined) {
     return undefined;
@@ -122,26 +123,33 @@ function configureMvtSource(glSource) {
 }
 
 
-function updateGeojsonSource(olSource, glSource) {
+function updateGeojsonSource(olSource, glSource, mapProjection) {
   // parse the new features,
-  // TODO: This should really check the map for the correct projection.
-  const features = GEOJSON_FORMAT.readFeatures(glSource.data, { featureProjection: 'EPSG:3857' });
 
-  let vector_src = olSource;
+  if (glSource.data.features) {
+    const features = GEOJSON_FORMAT.readFeatures(glSource.data, {featureProjection: mapProjection || 'EPSG:4326'});
 
-  // if the source is clustered then
-  //  the actual data is stored on the source's source.
-  if (glSource.cluster) {
-    vector_src = olSource.getSource();
+    let vector_src = olSource;
 
-    if (glSource.clusterRadius !== olSource.getDistance()) {
-      olSource.setDistance(glSource.clusterRadius);
+    // if the source is clustered then
+    //  the actual data is stored on the source's source.
+    if (glSource.cluster) {
+      vector_src = olSource.getSource();
+
+      if (glSource.clusterRadius !== olSource.getDistance()) {
+        olSource.setDistance(glSource.clusterRadius);
+      }
     }
+
+    // clear the layer WITHOUT dispatching remove events.
+    vector_src.clear(true);
+    // bulk load the feature data
+
+    if (features !== undefined) {
+      vector_src.addFeatures(features);
+    }
+
   }
-  // clear the layer WITHOUT dispatching remove events.
-  vector_src.clear(true);
-  // bulk load the feature data.
-  vector_src.addFeatures(features);
 }
 
 /** Create a vector source based on a
@@ -267,7 +275,7 @@ export class Map extends React.Component {
 
         if (this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key]) {
           const next_src = nextProps.map.sources[src_name];
-          updateGeojsonSource(this.sources[src_name], next_src);
+          updateGeojsonSource(this.sources[src_name], next_src, this.map.getView().getProjection());
         }
       }
     }
@@ -829,7 +837,7 @@ export class Map extends React.Component {
 
   render() {
     return (
-      <div ref={(c) => { this.mapdiv = c; }} className="map" />
+      <div ref={(c) => { this.mapdiv = c; }} className="sdk-map" />
     );
   }
 }

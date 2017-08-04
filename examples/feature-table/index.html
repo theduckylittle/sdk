@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>WMS Map Example</title>
+    <title>Feature Table Example</title>
     <link rel="stylesheet" type="text/css" href="/dist/sdk.css"/>
     <link rel="stylesheet" type="text/css" href="../examples.css"/>
+    <link rel="stylesheet" type="text/css" href="app.css"/>
 </head>
 <body>
 
     <div id="header">
-        WMS Map Example
+        Feature Table Example
     </div>
 
     <div id="map">
@@ -20,13 +21,15 @@
     <div class="info">
         <h3>Features in this demo</h3>
         <ul class="info-list">
-            <li>Adding a tiled OSM layer</li>
-            <li>Adding a WMS layer</li>
-            <li>Turning the visibility of a layer on or off</li>
-            <li>Using an adhoc Component with react-redux with SDK</li>
+            <li>Adding an tiled map</li>
+            <li>Adding a GeoJSON-type layer to a map using Fetch</li>
+            <li>Displaying data in a simple table</li>
         </ul>
     </div>
 
-    <script type="text/javascript" src="./wms.bundle.js"></script>
+    <div id="table">
+    </div>
+
+    <script type="text/javascript" src="./feature-table.bundle.js"></script>
 </body>
 </html>

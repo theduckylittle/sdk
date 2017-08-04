@@ -339,6 +339,68 @@ describe('Map component', () => {
       view.getMaxResolution(), nextProps.map.layers[0].minzoom - view.getMinZoom());
     expect(layer.getMaxResolution()).toEqual(max_rez);
     min_rez = view.constrainResolution(
+      view.getMinResolution(), nextProps.map.layers[0].maxzoom - view.getMaxZoom());
+    expect(layer.getMinResolution()).toEqual(min_rez);
+    // min/max zoom values defined on source only
+    nextProps = {
+      map: {
+        center,
+        zoom,
+        metadata: {
+          'bnd:source-version': 1,
+          'bnd:layer-version': 2,
+        },
+        sources: {
+          tilejson: {
+            type: 'raster',
+            url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            minzoom: 4,
+            maxzoom: 8,
+          },
+        },
+        layers: [{
+          id: 'tilejson-layer',
+          source: 'tilejson',
+        }],
+      },
+    };
+    instance.shouldComponentUpdate.call(instance, nextProps);
+    max_rez = view.constrainResolution(
+      view.getMaxResolution(), nextProps.map.sources.tilejson.minzoom - view.getMinZoom());
+    expect(layer.getMaxResolution()).toEqual(max_rez);
+    min_rez = view.constrainResolution(
+      view.getMinResolution(), nextProps.map.sources.tilejson.maxzoom - view.getMaxZoom());
+    expect(layer.getMinResolution()).toEqual(min_rez);
+    // min.max zoom values defined on both source and layer def
+    nextProps = {
+      map: {
+        center,
+        zoom,
+        metadata: {
+          'bnd:source-version': 2,
+          'bnd:layer-version': 3,
+        },
+        sources: {
+          tilejson: {
+            type: 'raster',
+            url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            minzoom: 1,
+            maxzoom: 7,
+          },
+        },
+        layers: [{
+          id: 'tilejson-layer',
+          source: 'tilejson',
+          minzoom: 2,
+          maxzoom: 9,
+        }],
+      },
+    };
+    instance.shouldComponentUpdate.call(instance, nextProps);
+    max_rez = view.constrainResolution(
+      view.getMaxResolution(), nextProps.map.layers[0].minzoom - view.getMinZoom());
+    expect(layer.getMaxResolution()).toEqual(max_rez);
+    min_rez = view.constrainResolution(
       view.getMinResolution(), nextProps.map.sources.tilejson.maxzoom - view.getMaxZoom());
     expect(layer.getMinResolution()).toEqual(min_rez);
   });
