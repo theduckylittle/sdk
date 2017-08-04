@@ -88,7 +88,8 @@ export function reprojectGeoJson(data, projection, destProj='EPSG:4326'){
   // const features = GEOJSON_FORMAT.readFeatures(new_data, readFeatureOptions);
   const features = GEOJSON_FORMAT.writeFeaturesObject(GEOJSON_FORMAT.readFeatures(new_data, readFeatureOptions), writeFeatureOptions);
   return features.features;
-=======
+}
+
 /** Parse an arbitrary string as if it were a URL.
  *
  *  @param queryString {String} - The query string to parse.

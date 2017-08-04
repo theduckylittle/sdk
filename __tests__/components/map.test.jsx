@@ -22,7 +22,7 @@ import * as PrintActions from '../../src/actions/print';
 
 describe('Map component', () => {
   it('should render without throwing an error', () => {
-    expect(shallow(<Map />).contains(<div className="map" />)).toBe(true);
+    expect(shallow(<Map />).contains(<div className="sdk-map" />)).toBe(true);
   });
 
   it('should create a map', () => {
@@ -339,7 +339,7 @@ describe('Map component', () => {
       view.getMaxResolution(), nextProps.map.layers[0].minzoom - view.getMinZoom());
     expect(layer.getMaxResolution()).toEqual(max_rez);
     min_rez = view.constrainResolution(
-      view.getMinResolution(), nextProps.map.layers[0].maxzoom - view.getMaxZoom());
+      view.getMinResolution(), nextProps.map.sources.tilejson.maxzoom - view.getMaxZoom());
     expect(layer.getMinResolution()).toEqual(min_rez);
     // min/max zoom values defined on source only
     nextProps = {
