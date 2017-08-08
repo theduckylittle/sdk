@@ -12,6 +12,7 @@ import ImageStaticSource from 'ol/source/imagestatic';
 import TileJSONSource from 'ol/source/tilejson';
 
 import { createStore, combineReducers } from 'redux';
+import { jsonEquals } from '../../src/util';
 
 import ConnectedMap, { Map } from '../../src/components/map';
 import SdkPopup from '../../src/components/map/popup';
@@ -21,7 +22,6 @@ import * as MapActions from '../../src/actions/map';
 import * as PrintActions from '../../src/actions/print';
 
 describe('Map component', () => {
-
   it('should render without throwing an error', () => {
     expect(shallow(<Map />).contains(<div className="map" />)).toBe(true);
   });
@@ -224,10 +224,6 @@ describe('Map component', () => {
   });
 
   it('WORKING TEST: should handle layout changes', () => {
-    const store = createStore(combineReducers({
-      map: MapReducer,
-    }));
-
     const sources = {
       geojson: {
         type: 'geojson',
@@ -249,11 +245,9 @@ describe('Map component', () => {
       'source-layer': 'symbol-layer',
       type: 'symbol',
       layout: {
-        // 'icon-image': 'duck',
-        'circle-radius': 5,
+        'icon-image': 'foo',
       },
     }];
-
     const metadata = {
       'bnd:source-version': 0,
       'bnd:layer-version': 0,
@@ -261,18 +255,14 @@ describe('Map component', () => {
     const center = [0, 0];
     const zoom = 2;
     const wrapper = shallow(<Map map={{ center, zoom, sources, layers, metadata }} />);
-
     const instance = wrapper.instance();
     instance.componentDidMount();
+    const style = instance.fakeStyle(layers[0]);
     const map = instance.map;
     const layer = map.getLayers().item(0);
-    const style = layer.getStyle();
-
-    // store.dispatch(MapActions.setSprites('./sprites'));
-    // console.log(store.getState().map.sprites)
-
-    const ol_style = style(layer.getSource().getFeatures()[0], map.getView().getResolution());
-    console.log(ol_style);
+    const ol_style = layer.getStyle();
+    const results = jsonEquals(style, ol_style);
+    expect(results).toEqual(true);
   });
 
   it('handles updates to source and layer min/maxzoom values', () => {
