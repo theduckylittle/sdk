@@ -101,17 +101,11 @@ function main() {
     source: 'points-change',
     type: 'symbol',
     layout: {
-      'icon-image': 'duck',
+      'icon-image': 'grey-duck',
     },
   }));
 
-  const updateSprite = () => {
-    let icon;
-    if (store.getState().map.layers[2].layout['icon-image'] === 'duck') {
-      icon = 'goose';
-    } else {
-      icon = 'duck';
-    }
+  const updateSprite = (icon) => {
     store.dispatch(mapActions.updateLayer('symbols-change', {
       layout: {
         'icon-image': icon,
@@ -119,12 +113,21 @@ function main() {
     }));
   };
 
+  const duckToGoose = () => {
+    updateSprite('goose');
+  };
+
+  const gooseToDuck = () => {
+    updateSprite('grey-duck');
+  };
+
   // place the map on the page.
   ReactDOM.render(<SdkMap store={store} />, document.getElementById('map'));
 
   ReactDOM.render((
     <div>
-      <button className="sdk-btn" onClick={updateSprite}>Duck, Duck, Goose</button>
+      <button className="sdk-btn" onClick={duckToGoose}>Duck, Duck, Goose</button>
+      <button className="sdk-btn" onClick={gooseToDuck}>Duck, Duck, Grey Duck</button>
     </div>
   ), document.getElementById('controls'));
 }
