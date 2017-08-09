@@ -27,8 +27,8 @@ function main() {
   // Start with a reasonable global view of the map.
   store.dispatch(mapActions.setView([0, 0], 3));
 
-  // setup the map sprites.
-  store.dispatch(mapActions.setSprites('./sprites'));
+  // setup the map sprite.
+  store.dispatch(mapActions.setSprite('./sprites'));
 
   // add the OSM source
   store.dispatch(mapActions.addSource('osm', {

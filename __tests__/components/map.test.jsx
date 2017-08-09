@@ -223,7 +223,7 @@ describe('Map component', () => {
     expect(layer.getVisible()).toBe(false);
   });
 
-  it('WORKING TEST: should handle layout changes', () => {
+  it('should handle layout changes', () => {
     const sources = {
       geojson: {
         type: 'geojson',
@@ -571,7 +571,7 @@ describe('Map component', () => {
     expect(sdk_map.map.getOverlays().getLength()).toEqual(1);
   });
 
-  it('should change the sprites and redraw the layer', () => {
+  it('should change the sprite and redraw the layer', () => {
     const store = createStore(combineReducers({
       map: MapReducer,
     }));
@@ -579,9 +579,9 @@ describe('Map component', () => {
     const wrapper = mount(<ConnectedMap store={store} />);
     const map = wrapper.instance().getWrappedInstance();
 
-    spyOn(map, 'configureSprites');
-    store.dispatch(MapActions.setSprites('./sprites'));
+    spyOn(map, 'configureSprite');
+    store.dispatch(MapActions.setSprite('./sprites'));
 
-    expect(map.configureSprites).toHaveBeenCalled();
+    expect(map.configureSprite).toHaveBeenCalled();
   });
 });
