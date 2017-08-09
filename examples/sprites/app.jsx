@@ -24,9 +24,6 @@ const store = createStore(combineReducers({
    applyMiddleware(thunkMiddleware));
 
 function main() {
-  // Start with a reasonable global view of the map.
-  store.dispatch(mapActions.setView([0, 0], 3));
-
   // setup the map sprites.
   store.dispatch(mapActions.setSprite('./sprites'));
 
@@ -86,10 +83,50 @@ function main() {
   //  as the game is technically "Duck, Duck, Grey Duck"
   addSymbol(-45, 0, 'duck');
   addSymbol(0, 0, 'duck');
-  addSymbol(45, 0, 'goose');
+  // addSymbol(45, 0, 'goose');
+
+  store.dispatch(mapActions.addSource('points-change', {
+    type: 'geojson',
+    data: {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [45, 0],
+      },
+    },
+  }));
+
+  store.dispatch(mapActions.addLayer({
+    id: 'symbols-change',
+    source: 'points-change',
+    type: 'symbol',
+    layout: {
+      'icon-image': 'duck',
+    },
+  }));
+
+  const updateSprite = () => {
+    let icon;
+    if (store.getState().map.layers[2].layout['icon-image'] === 'duck') {
+      icon = 'goose';
+    } else {
+      icon = 'duck';
+    }
+    store.dispatch(mapActions.updateLayer('symbols-change', {
+      layout: {
+        'icon-image': icon,
+      },
+    }));
+  };
 
   // place the map on the page.
   ReactDOM.render(<SdkMap store={store} />, document.getElementById('map'));
+
+  ReactDOM.render((
+    <div>
+      <button className="sdk-btn" onClick={updateSprite}>Duck, Duck, Goose</button>
+    </div>
+  ), document.getElementById('controls'));
 }
 
 main();
