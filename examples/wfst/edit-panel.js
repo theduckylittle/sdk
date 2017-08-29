@@ -47,11 +47,11 @@ class EditPanel extends React.PureComponent {
     return (
       <div className='edit-panel'>
         <div>
-          <b>Feature ID:</b>
+          <span className='label'>Feature ID:</span>
           { feature_id }
         </div>
         <div>
-          <b>Color:</b>
+          <span className='label'>Color:</span>
           { color_controls }
         </div>
       </div>

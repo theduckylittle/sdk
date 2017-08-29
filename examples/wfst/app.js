@@ -18,8 +18,6 @@ import SdkDrawingReducer from '@boundlessgeo/sdk/reducers/drawing';
 import * as SdkDrawingActions from '@boundlessgeo/sdk/actions/drawing';
 import * as SdkWfsActions from '@boundlessgeo/sdk/actions/wfs';
 
-import { INTERACTIONS } from '@boundlessgeo/sdk/constants';
-
 import { WfsReducer } from '@boundlessgeo/sdk/reducers/wfs';
 
 import WfsController from '@boundlessgeo/sdk/components/wfs';
@@ -111,23 +109,18 @@ function main() {
     }));
   }
 
-
-  const startSelect = () => {
-    store.dispatch(SdkDrawingActions.startSelect('tracts'));
-  }
+  const selectFeature = (map, coordinate, feature) => {
+    edit_panel.setState({ feature });
+  };
 
   let edit_panel = null;
 
-  const selectFeature = (map, coords, feature) => {
-    edit_panel.setState({feature: feature});
-  }
-
   const updateFeature = (feature, color) => {
+    // change the color
     feature.properties.color = color;
-
-    store.dispatch(SdkDrawingActions.endSelect());
+    // clear the selected feature from the panel
     edit_panel.setState({feature: null});
-
+    // trigger a WFS update.
     store.dispatch(SdkWfsActions.updateFeature('tracts', feature));
   }
 
@@ -135,7 +128,11 @@ function main() {
     store.dispatch(SdkMapActions.updateSource(action.sourceName, {
       data: `${tracts_url}&_random=${Math.random()}`,
     }));
+    store.dispatch(SdkDrawingActions.endSelect());
+    store.dispatch(SdkDrawingActions.startSelect('tracts'));
   };
+
+  store.dispatch(SdkDrawingActions.startSelect('tracts'));
 
   // place the map on the page.
   ReactDOM.render(<SdkMap onFeatureSelected={selectFeature} store={store} />, document.getElementById('map'));
@@ -143,8 +140,10 @@ function main() {
   // add some buttons to demo some actions.
   ReactDOM.render((
     <div>
+      <p>
+        <b>Click on a Census Tract to change its color.</b><br/>
+      </p>
       <SdkHashHistory store={store} />
-      <button className={'sdk-btn'} onClick={startSelect}>Start Select</button>
 
       <EditPanel onChange={ updateFeature } colors={colors} ref={ (pnl) => { edit_panel = pnl; }} />
 

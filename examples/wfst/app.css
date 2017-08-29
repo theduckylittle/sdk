@@ -23,3 +23,9 @@ button.sdk-btn.blue {
 .color-control.selected {
     border: solid 2px black;
 }
+
+span.label {
+    font-weight: bold;
+    width: 6em;
+    display: inline-block;
+}
