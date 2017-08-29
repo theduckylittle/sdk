@@ -144,7 +144,7 @@ function main() {
   ReactDOM.render((
     <div>
       <SdkHashHistory store={store} />
-      <button className={'sdk-btn'} onClick={ () => { startSelect(); }}>Start Select</button>
+      <button className={'sdk-btn'} onClick={startSelect}>Start Select</button>
 
       <EditPanel onChange={ updateFeature } colors={colors} ref={ (pnl) => { edit_panel = pnl; }} />
 
