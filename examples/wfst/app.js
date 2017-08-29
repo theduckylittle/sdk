@@ -16,11 +16,13 @@ import SdkHashHistory from '@boundlessgeo/sdk/components/history';
 import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
 import SdkDrawingReducer from '@boundlessgeo/sdk/reducers/drawing';
 import * as SdkDrawingActions from '@boundlessgeo/sdk/actions/drawing';
+import * as SdkWfsActions from '@boundlessgeo/sdk/actions/wfs';
+
 import { INTERACTIONS } from '@boundlessgeo/sdk/constants';
 
-import { WfsReducer } from './wfst';
+import { WfsReducer } from '@boundlessgeo/sdk/reducers/wfs';
 
-import WfsController from './wfs-controller';
+import WfsController from '@boundlessgeo/sdk/components/wfs';
 
 // MapBox GL Styles does not support WFS layers.
 // import SdkWfsReducer from '@boundlessgeo/sdk/reducers/wfs';
@@ -64,12 +66,16 @@ function main() {
   store.dispatch(SdkMapActions.addSource('tracts', {
     type: 'geojson',
     data: tracts_url,
-    metadata: {
-      'bnd:ns': 'sdk',
-      'bnd:typename': 'minnesota_tracts',
-      'bnd:geometryName' : 'wkb_geometry',
-    }
   }));
+
+  // this will configure the source for WFS editing.
+  store.dispatch(SdkWfsActions.addSource('tracts',
+    '/geoserver/wfs',
+    'sdk',
+    'sdk',
+    'minnesota_tracts',
+    'wkb_geometry',
+  ));
 
   // Background layers change the background color of
   // the map. They are not attached to a source.
@@ -107,7 +113,7 @@ function main() {
 
 
   const startSelect = () => {
-    store.dispatch(SdkDrawingActions.startDrawing('tracts', INTERACTIONS.select));
+    store.dispatch(SdkDrawingActions.startSelect('tracts'));
   }
 
   let edit_panel = null;
@@ -119,18 +125,14 @@ function main() {
   const updateFeature = (feature, color) => {
     feature.properties.color = color;
 
-    store.dispatch(SdkDrawingActions.endDrawing());
+    store.dispatch(SdkDrawingActions.endSelect());
     edit_panel.setState({feature: null});
 
-    store.dispatch({
-      type: 'wfs:update',
-      sourceId: 'tracts',
-      feature,
-    });
+    store.dispatch(SdkWfsActions.updateFeature('tracts', feature));
   }
 
   const onFinish = (response, action) => {
-    store.dispatch(SdkMapActions.updateSource(action.sourceId, {
+    store.dispatch(SdkMapActions.updateSource(action.sourceName, {
       data: `${tracts_url}&_random=${Math.random()}`,
     }));
   };

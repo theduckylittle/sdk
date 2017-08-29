@@ -9,6 +9,8 @@ import WfsFormat from 'ol/format/wfs';
 import GeoJsonFormat from 'ol/format/geojson';
 import GmlFormat from 'ol/format/gml';
 
+import { WFS } from '../action-types';
+
 class WfsController extends PureComponent {
   constructor(props) {
     super(props);
@@ -27,7 +29,7 @@ class WfsController extends PureComponent {
       // add it to the queue
       this.pendingActions[id] = action;
 
-      const src = props.sources[action.sourceId];
+      const src = props.sources[action.sourceName];
 
       const wfs_format = new WfsFormat();
       const geojson_format = new GeoJsonFormat();
@@ -42,24 +44,24 @@ class WfsController extends PureComponent {
         featureProjection: working_srs,
       });
 
-      let geom_name = 'geometry';
-      if (src.metadata['bnd:geometryName'] !== undefined) {
-        geom_name = src.metadata['bnd:geometryName'];
-      }
+      let geom_name = src.geometryName;
 
       const actions = {};
-      actions[action.type.split(':')[1]] = [feature];
+      actions[action.type] = [feature];
 
       const options = {
-        featureNS: src.metadata['bnd:ns'],
-        featurePrefix: 'sdk',
-        featureType: src.metadata['bnd:typename'],
+        featureNS: src.xmlNs,
+        featurePrefix: src.featurePrefix,
+        featureType: src.typeName,
         srsName: working_srs,
       }
 
       // convert this to a WFS call.
       const xml = wfs_format.writeTransaction(
-        actions.insert, actions.update, actions.delete, options);
+        actions[WFS.INSERT],
+        actions[WFS.UPDATE],
+        actions[WFS.DELETE],
+        options);
 
       // convert the XML to a string.
       let payload = (new XMLSerializer()).serializeToString(xml);
@@ -68,7 +70,7 @@ class WfsController extends PureComponent {
       payload = payload.replace('<Name>geometry</Name>', `<Name>${geom_name}</Name>`);
 
       // get the target_url from the service
-      const target_url = src.data.split('?', 1)[0];
+      const target_url = src.onlineResource;
 
       // attempt the action,
       //  if there is a failure (offline) then add the action back
@@ -117,7 +119,7 @@ class WfsController extends PureComponent {
 function mapStateToProps(state) {
   return {
     actions: state.wfs.actions, //(state.wfs && state.wfs.actions) || null,
-    sources: state.map.sources,
+    sources: state.wfs.sources,
   };
 }
 
