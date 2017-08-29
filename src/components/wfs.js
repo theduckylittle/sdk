@@ -7,7 +7,6 @@ import { jsonClone } from '@boundlessgeo/sdk/util';
 
 import WfsFormat from 'ol/format/wfs';
 import GeoJsonFormat from 'ol/format/geojson';
-import GmlFormat from 'ol/format/gml';
 
 import { WFS } from '../action-types';
 
@@ -16,6 +15,8 @@ class WfsController extends PureComponent {
     super(props);
     this.pendingActions = {};
 
+    this.wfs_format = new WfsFormat();
+    this.geojson_format = new GeoJsonFormat();
   }
 
   execute(props, id) {
@@ -31,15 +32,13 @@ class WfsController extends PureComponent {
 
       const src = props.sources[action.sourceName];
 
-      const wfs_format = new WfsFormat();
-      const geojson_format = new GeoJsonFormat();
 
       // clone the feature, as GeoJSON features have a lot of
       //  depth this ensures all the sub-objects are cloned reasonably.
       const json_feature = jsonClone(action.feature);
       delete json_feature.properties['bbox'];
 
-      const feature = geojson_format.readFeature(json_feature, {
+      const feature = this.geojson_format.readFeature(json_feature, {
         dataProjection: 'EPSG:4326',
         featureProjection: working_srs,
       });
@@ -57,7 +56,7 @@ class WfsController extends PureComponent {
       }
 
       // convert this to a WFS call.
-      const xml = wfs_format.writeTransaction(
+      const xml = this.wfs_format.writeTransaction(
         actions[WFS.INSERT],
         actions[WFS.UPDATE],
         actions[WFS.DELETE],
@@ -83,8 +82,8 @@ class WfsController extends PureComponent {
       }).then((response) => {
         return response.text();
       }).then((text) => {
-        const response_xml = (new DOMParser()).parseFromString(text, 'text/xml');
-        this.props.onFinishTransaction(response_xml, action);
+        const wfs_response = this.wfs_format.readTransactionResponse(text);
+        this.props.onFinishTransaction(wfs_response, action);
       });
     }
   }
