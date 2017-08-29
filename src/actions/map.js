@@ -211,3 +211,15 @@ export function updateMetadata(metadata) {
     metadata,
   };
 }
+
+
+/** Manually update a source.
+ */
+export function updateSource(sourceId, update) {
+  return {
+    type: MAP.UPDATE_SOURCE,
+    sourceId,
+    sourceDef: update,
+  };
+}
+

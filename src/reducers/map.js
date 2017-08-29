@@ -389,6 +389,24 @@ function updateMetadata(state, action) {
   });
 }
 
+/** Update a source's definition.
+ *
+ *  This is a heavy-handed operation that will
+ *  just mixin whatever is in the new object.
+ *
+ */
+function updateSource(state, action) {
+  const old_source = state.sources[action.sourceId];
+  const new_source = {};
+  new_source[action.sourceId] = Object.assign({}, old_source, action.sourceDef);
+  const new_sources = Object.assign({}, state.sources, new_source);
+  //return Object.assign({}, state, {sources: new_sources});
+
+  return Object.assign({}, state, {
+    sources: Object.assign({}, state.sources, {sources: new_sources}),
+  }, incrementVersion(state.metadata, dataVersionKey(action.sourceId)));
+}
+
 /** Main reducer.
  */
 export default function MapReducer(state = defaultState, action) {
@@ -427,6 +445,8 @@ export default function MapReducer(state = defaultState, action) {
       return clusterPoints(state, action);
     case MAP.SET_METADATA:
       return updateMetadata(state, action);
+    case MAP.UPDATE_SOURCE:
+      return updateSource(state, action);
     default:
       return state;
   }
