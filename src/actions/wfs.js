@@ -18,17 +18,11 @@ export function deleteFeature(sourceName, feature) {
   return wfsAction(WFS.DELETE, sourceName, feature);
 }
 
-export function addSource(sourceName, onlineResource, xmlNs, prefix, typeName, geometryName = 'geometry') {
+export function addSource(sourceName, options) {
   return {
     type: WFS.ADD_SOURCE,
     sourceName,
-    sourceDef: {
-      onlineResource,
-      xmlNs,
-      typeName,
-      featurePrefix: prefix,
-      geometryName,
-    },
+    sourceDef: options,
   };
 }
 

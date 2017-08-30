@@ -71,7 +71,7 @@ class WfsController extends PureComponent {
       actions[action.type] = [feature];
 
       const options = {
-        featureNS: src.xmlNs,
+        featureNS: src.xmlNS,
         featurePrefix: src.featurePrefix,
         featureType: src.typeName,
         srsName: 'http://www.opengis.net/gml/srs/epsg.xml#4326',

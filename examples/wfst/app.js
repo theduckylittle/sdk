@@ -65,13 +65,13 @@ function main() {
   }));
 
   // this will configure the source for WFS editing.
-  store.dispatch(SdkWfsActions.addSource('tracts',
-    '/geoserver/wfs',
-    'sdk',
-    'sdk',
-    'minnesota_tracts',
-    'wkb_geometry',
-  ));
+  store.dispatch(SdkWfsActions.addSource('tracts', {
+    onlineResource: '/geoserver/wfs',
+    xmlNS: 'sdk',
+    featurePrefix: 'sdk',
+    typeName: 'minnesota_tracts',
+    geometryName: 'wkb_geometry',
+  }));
 
   // Background layers change the background color of
   // the map. They are not attached to a source.
