@@ -36,7 +36,6 @@ class WfsController extends PureComponent {
     this.pendingActions = {};
 
     this.wfs_format = new WfsFormat();
-    this.geojson_format = new GeoJsonFormat();
 
     this.wfs_proj = new Projection({
       code: 'http://www.opengis.net/gml/srs/epsg.xml#4326',
@@ -61,12 +60,12 @@ class WfsController extends PureComponent {
       const json_feature = jsonClone(action.feature);
       delete json_feature.properties['bbox'];
 
-      const feature = this.geojson_format.readFeature(json_feature, {
+      let geom_name = src.geometryName ? src.geometryName : 'geometry';
+      const geojson_format = new GeoJsonFormat({geometryName: geom_name});
+      const feature = geojson_format.readFeature(json_feature, {
         dataProjection: 'EPSG:4326',
         featureProjection: this.wfs_proj,
       });
-
-      let geom_name = src.geometryName;
 
       const actions = {};
       actions[action.type] = [feature];
@@ -87,9 +86,6 @@ class WfsController extends PureComponent {
 
       // convert the XML to a string.
       let payload = (new XMLSerializer()).serializeToString(xml);
-
-      // fix the geometry name...
-      payload = payload.replace('<Name>geometry</Name>', `<Name>${geom_name}</Name>`);
 
       // get the target_url from the service
       const target_url = src.onlineResource;
