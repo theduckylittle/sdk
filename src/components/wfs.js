@@ -22,6 +22,10 @@ import { connect } from 'react-redux';
 
 import WfsFormat from 'ol/format/wfs';
 import GeoJsonFormat from 'ol/format/geojson';
+import Projection from 'ol/proj/projection';
+import Proj from 'ol/proj';
+
+import { finishedAction } from '../actions/wfs';
 
 import { jsonClone } from '../util';
 import { WFS } from '../action-types';
@@ -33,6 +37,12 @@ class WfsController extends PureComponent {
 
     this.wfs_format = new WfsFormat();
     this.geojson_format = new GeoJsonFormat();
+
+    this.wfs_proj = new Projection({
+      code: 'http://www.opengis.net/gml/srs/epsg.xml#4326',
+      axisOrientation: 'enu',
+    });
+    Proj.addEquivalentProjections([Proj.get('EPSG:4326'), this.wfs_proj]);
   }
 
   execute(props, id) {
@@ -41,13 +51,10 @@ class WfsController extends PureComponent {
       // copy the action
       const action = Object.assign({}, props.actions[id]);
 
-      const working_srs = 'EPSG:3857';
-
       // add it to the queue
       this.pendingActions[id] = action;
 
       const src = props.sources[action.sourceName];
-
 
       // clone the feature, as GeoJSON features have a lot of
       //  depth this ensures all the sub-objects are cloned reasonably.
@@ -56,7 +63,7 @@ class WfsController extends PureComponent {
 
       const feature = this.geojson_format.readFeature(json_feature, {
         dataProjection: 'EPSG:4326',
-        featureProjection: working_srs,
+        featureProjection: this.wfs_proj,
       });
 
       let geom_name = src.geometryName;
@@ -68,8 +75,8 @@ class WfsController extends PureComponent {
         featureNS: src.xmlNs,
         featurePrefix: src.featurePrefix,
         featureType: src.typeName,
-        srsName: working_srs,
-      }
+        srsName: 'http://www.opengis.net/gml/srs/epsg.xml#4326',
+      };
 
       // convert this to a WFS call.
       const xml = this.wfs_format.writeTransaction(
@@ -100,6 +107,11 @@ class WfsController extends PureComponent {
       }).then((text) => {
         const wfs_response = this.wfs_format.readTransactionResponse(text);
         this.props.onFinishTransaction(wfs_response, action);
+
+        // ensure the action is removed from the state
+        this.props.dispatch(finishedAction(action.id));
+        // remove it from the pending actions
+        delete this.pendingActions[action.id];
       });
     }
   }
