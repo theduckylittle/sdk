@@ -40,7 +40,7 @@ function finishedAction(state, action) {
   return Object.assign({}, state, { actions: new_actions });
 }
 
-export function WfsReducer(state = defaultState, action) {
+export default function WfsReducer(state = defaultState, action) {
   switch(action.type) {
     // add a source to the WFS configuration
     case WFS.ADD_SOURCE:

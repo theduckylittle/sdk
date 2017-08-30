@@ -1,7 +1,7 @@
-/** Very basic SDK application example.
+/** Demonstrate working with WFS-T
  *
- *  Contains a Map and demonstrates some of the dynamics of
- *  using the store.
+ *  Uses a tracts layer served from GeoServer to
+ *  do WFS-T stuff.
  *
  */
 
@@ -15,15 +15,13 @@ import SdkMap from '@boundlessgeo/sdk/components/map';
 import SdkHashHistory from '@boundlessgeo/sdk/components/history';
 import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
 import SdkDrawingReducer from '@boundlessgeo/sdk/reducers/drawing';
+import SdkWfsReducer from '@boundlessgeo/sdk/reducers/wfs';
+
 import * as SdkDrawingActions from '@boundlessgeo/sdk/actions/drawing';
 import * as SdkWfsActions from '@boundlessgeo/sdk/actions/wfs';
 
-import { WfsReducer } from '@boundlessgeo/sdk/reducers/wfs';
 
 import WfsController from '@boundlessgeo/sdk/components/wfs';
-
-// MapBox GL Styles does not support WFS layers.
-// import SdkWfsReducer from '@boundlessgeo/sdk/reducers/wfs';
 
 import * as SdkMapActions from '@boundlessgeo/sdk/actions/map';
 
@@ -38,7 +36,7 @@ import EditPanel from './edit-panel';
 const store = createStore(combineReducers({
   map: SdkMapReducer,
   drawing: SdkDrawingReducer,
-  wfs: WfsReducer,
+  wfs: SdkWfsReducer,
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
    applyMiddleware(thunkMiddleware));
 
