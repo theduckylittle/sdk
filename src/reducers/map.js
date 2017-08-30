@@ -396,15 +396,14 @@ function updateMetadata(state, action) {
  *
  */
 function updateSource(state, action) {
-  const old_source = state.sources[action.sourceId];
+  const old_source = state.sources[action.sourceName];
   const new_source = {};
-  new_source[action.sourceId] = Object.assign({}, old_source, action.sourceDef);
+  new_source[action.sourceName] = Object.assign({}, old_source, action.sourceDef);
   const new_sources = Object.assign({}, state.sources, new_source);
-  //return Object.assign({}, state, {sources: new_sources});
 
   return Object.assign({}, state, {
-    sources: Object.assign({}, state.sources, {sources: new_sources}),
-  }, incrementVersion(state.metadata, dataVersionKey(action.sourceId)));
+    sources: Object.assign({}, state.sources, new_sources),
+  }, incrementVersion(state.metadata, dataVersionKey(action.sourceName)));
 }
 
 /** Main reducer.

@@ -215,10 +215,10 @@ export function updateMetadata(metadata) {
 
 /** Manually update a source.
  */
-export function updateSource(sourceId, update) {
+export function updateSource(sourceName, update) {
   return {
     type: MAP.UPDATE_SOURCE,
-    sourceId,
+    sourceName,
     sourceDef: update,
   };
 }
