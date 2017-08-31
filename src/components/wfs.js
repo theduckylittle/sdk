@@ -91,33 +91,38 @@ class WfsController extends PureComponent {
       const target_url = src.onlineResource;
 
       // attempt the action,
-      //  if there is a failure (offline) then add the action back
-      //   to the queue.
-      //  if there is an error (bad request, etc.) then post an error
-      //  if the request completes cleanly dispatch a refresh on that source.
       fetch(target_url, {
         method: 'POST',
         body: payload,
       }).then((response) => {
-        return response.text();
+        if (response.ok) {
+          return response.text();
+        }
+      }).catch((error) => {
+        // let the caller know the request has errored.
+        this.props.onRequestError(error, action, id);
       }).then((text) => {
+        // A 200 does not necessarily mean the
+        //  request was successful.  This attempst to
+        //  parse the transaction response and then passes
+        //  it to onFinishTransaction. Handling is left to the
+        //  user.
         const wfs_response = this.wfs_format.readTransactionResponse(text);
-        this.props.onFinishTransaction(wfs_response, action);
 
         // ensure the action is removed from the state
-        this.props.dispatch(finishedAction(action.id));
+        this.props.dispatch(finishedAction(id));
         // remove it from the pending actions
-        delete this.pendingActions[action.id];
+        delete this.pendingActions[id];
+
+        this.props.onFinishTransaction(wfs_response, action);
       });
     }
   }
 
   executeActions(props) {
-    if (props && props.actions && props.sources) {
-      const action_ids = Object.keys(props.actions);
-      for (let i = 0, ii = action_ids.length; i < ii; i++) {
-        this.execute(props, action_ids[i]);
-      }
+    const action_ids = Object.keys(props.actions);
+    for (let i = 0, ii = action_ids.length; i < ii; i++) {
+      this.execute(props, action_ids[i]);
     }
   }
 
@@ -128,7 +133,6 @@ class WfsController extends PureComponent {
     return false;
   }
 
-
   componentDidMount() {
     this.executeActions(this.props);
   }
@@ -137,6 +141,14 @@ class WfsController extends PureComponent {
     // never render anything.
     return false;
   }
+}
+
+
+WfsController.defaultProps = {
+  actions: {},
+  sources: {},
+  onFinishTransaction: () => {},
+  onRequestError: () => {},
 }
 
 function mapStateToProps(state) {
