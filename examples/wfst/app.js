@@ -40,8 +40,6 @@ const store = createStore(combineReducers({
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
    applyMiddleware(thunkMiddleware));
 
-window.store = store;
-
 function main() {
   // Start with a reasonable global view of the map.
   store.dispatch(SdkMapActions.setView([-93, 45], 2));
@@ -67,7 +65,7 @@ function main() {
   // this will configure the source for WFS editing.
   store.dispatch(SdkWfsActions.addSource('tracts', {
     onlineResource: '/geoserver/wfs',
-    xmlNS: 'sdk',
+    featureNS: 'sdk',
     featurePrefix: 'sdk',
     typeName: 'minnesota_tracts',
     geometryName: 'wkb_geometry',

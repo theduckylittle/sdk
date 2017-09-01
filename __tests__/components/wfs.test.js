@@ -69,14 +69,14 @@ describe('WfsController component.', () => {
 
     store.dispatch(actions.addSource('test', {
       onlineResource: 'http://example.com/wfs',
-      xmlNS: 'http://example.com/sdk',
+      featureNS: 'http://example.com/sdk',
       featurePrefix: 'sdk',
       typeName: 'super-features',
     }));
 
     store.dispatch(actions.addSource('test2', {
       onlineResource: 'http://example.com/wfs',
-      xmlNS: 'http://example.com/sdk',
+      featureNS: 'http://example.com/sdk',
       featurePrefix: 'sdk',
       typeName: 'super-features',
       geometryName: 'wkb_geometry',
@@ -84,7 +84,7 @@ describe('WfsController component.', () => {
 
     store.dispatch(actions.addSource('fail-source', {
       onlineResource: 'http://fail.com/wfs',
-      xmlNS: 'http://example.com/sdk',
+      featureNS: 'http://example.com/sdk',
       featurePrefix: 'sdk',
       typeName: 'super-features',
       geometryName: 'wkb_geometry',
@@ -114,7 +114,7 @@ describe('WfsController component.', () => {
     setTimeout(() => {
       // if everything has gone well the action will no longer be in the queue
       expect(store.getState().wfs.actions).toEqual({});
-      // ensuire the error handler was called.
+      // ensure the error handler was called.
       expect(props.onRequestError).toHaveBeenCalled();
       done();
     }, 200);

@@ -49,7 +49,7 @@ describe('test that wfs actions are properly created', () => {
 
   it('should issue an action to configure a source', () => {
     const source_meta = {
-      xmlNS: 'http://example.com/',
+      featureNS: 'http://example.com/',
       featurePrefix: 'exmpl',
       typeName: 'examples',
       onlineResource: 'http://example.com/wfs',

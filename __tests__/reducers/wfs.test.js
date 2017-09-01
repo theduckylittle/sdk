@@ -16,7 +16,7 @@ describe('wfs reducer', () => {
   });
 
   const SOURCE_CONF = {
-    xmlNS: 'http://example.com/',
+    featureNS: 'http://example.com/',
     featurePrefix: 'exmpl',
     typeName: 'examples',
     onlineResource: 'http://example.com/wfs',
