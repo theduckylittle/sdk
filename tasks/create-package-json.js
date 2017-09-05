@@ -1,7 +1,7 @@
 var path = require('path');
 var fsx = require('fs-extra');
 
-/** Make a reduced veersion of the package.json file
+/** Make a reduced version of the package.json file
  *  that is more appropriate for distribution.
  */
 
