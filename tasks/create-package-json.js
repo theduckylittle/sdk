@@ -49,7 +49,7 @@ function main() {
       const data = JSON.stringify(minimalPackage, null, 2);
       fsx.writeFile(buildPath, data, (err) => {
         if (err) throw (err);
-        console.log(`Created package.json in ${buildPath}`);
+        process.stdout.write(`Created package.json in ${buildPath}\n`);
         resolve();
       });
     });
