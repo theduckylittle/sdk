@@ -75,6 +75,7 @@ import { parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians
 const GEOJSON_FORMAT = new GeoJsonFormat();
 const WGS84_SPHERE = new Sphere(6378137);
 const MAPBOX_PROTOCOL = 'mapbox://';
+const BBOX_STRING = '{bbox-epsg-3857}';
 
 /** This variant of getVersion differs as it allows
  *  for undefined values to be returned.
@@ -120,9 +121,9 @@ function configureTileSource(glSource, mapProjection, time) {
   source.setTileLoadFunction((tile, src) => {
     // copy the src string.
     let img_src = src.slice();
-    if (src.indexOf('{bbox-epsg-3857}') !== -1) {
+    if (src.indexOf(BBOX_STRING) !== -1) {
       const bbox = source.getTileGrid().getTileCoordExtent(tile.getTileCoord());
-      img_src = src.replace('{bbox-epsg-3857}', bbox.toString());
+      img_src = src.replace(BBOX_STRING, bbox.toString());
     }
     // disabled the linter below as this is how
     //  OpenLayers documents this operation.
@@ -176,17 +177,15 @@ function configureMvtSource(glSource, accessToken) {
 }
 
 
-function getLoaderFunction(mapProjection, baseUrl) {
+function getLoaderFunction(glSource, mapProjection, baseUrl) {
   return function(bbox, resolution, projection) {
-    const gl_source = this.get('_glSource');
-
     // setup a feature promise to handle async loading
     // of features.
     let features_promise;
 
-    // if the data is a string, assume its a url
-    if (typeof gl_source.data === 'string') {
-      let url = gl_source.data;
+    // if the data is a string, assume it's a url
+    if (typeof glSource.data === 'string') {
+      let url = glSource.data;
 
       // if the baseUrl is present and the url does not
       // start with http:// or "/" then assume the path is
@@ -198,18 +197,17 @@ function getLoaderFunction(mapProjection, baseUrl) {
         url = baseUrl + url;
       }
 
-      // check to see if the bbox stratgy should be employed
+      // check to see if the bbox strategy should be employed
       //  for this source.
-      const bbox_string = '{bbox-epsg-3857}';
-      if (url.indexOf(bbox_string) >= 0) {
-        url = url.replace(bbox_string, bbox.toString());
+      if (url.indexOf(BBOX_STRING) >= 0) {
+        url = url.replace(BBOX_STRING, bbox.toString());
       }
 
       features_promise = fetch(url).then(response => response.json());
-    } else if (typeof gl_source.data === 'object'
-      && (gl_source.data.type === 'Feature' || gl_source.data.type === 'FeatureCollection')) {
+    } else if (typeof glSource.data === 'object'
+      && (glSource.data.type === 'Feature' || glSource.data.type === 'FeatureCollection')) {
       features_promise = new Promise((resolve) => {
-        resolve(gl_source.data);
+        resolve(glSource.data);
       });
     }
 
@@ -235,14 +233,16 @@ function getLoaderFunction(mapProjection, baseUrl) {
   }
 }
 
-function updateGeojsonSource(olSource, glSource, mapView) {
+function updateGeojsonSource(olSource, glSource, mapView, baseUrl) {
   let src = olSource;
   if (glSource.cluster) {
     src = olSource.getSource();
   }
 
+  src.set('loader', getLoaderFunction(glSource, mapView.getProjection, baseUrl));
+
   // update the glSource definition for the loader
-  src.set('_glSource', glSource);
+  // src.set('_glSource', glSource);
 
   // clear the layer WITHOUT dispatching remove events.
   src.clear(true);
@@ -260,10 +260,10 @@ function updateGeojsonSource(olSource, glSource, mapView) {
  * @returns ol.source.vector instance.
  */
 function configureGeojsonSource(glSource, mapView, baseUrl, wrapX) {
-  const use_bbox = (typeof glSource.data === 'string' && glSource.data.indexOf('bbox-epsg-3857') >= 0);
+  const use_bbox = (typeof glSource.data === 'string' && glSource.data.indexOf(BBOX_STRING) >= 0);
   const vector_src = new VectorSource({
     strategy: use_bbox ? LoadingStrategy.bbox : LoadingStrategy.all,
-    loader: getLoaderFunction(mapView.getProjection(), baseUrl),
+    loader: getLoaderFunction(glSource, mapView.getProjection(), baseUrl),
     useSpatialIndex: true,
     wrapX: wrapX,
   });
