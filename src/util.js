@@ -146,3 +146,16 @@ export function getKey(dictionary, key) {
   }
   return dictionary[key];
 }
+
+/** Check the visibility of a layer.
+ *
+ *  @param layer The layer to check.
+ *
+ * @returns Boolean, true when visible, false when not.
+ */
+export function isLayerVisible(layer) {
+  if (layer !== undefined && layer.layout !== undefined) {
+    return layer.layout.visibility !== 'none';
+  }
+  return true;
+}
