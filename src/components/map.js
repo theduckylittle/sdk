@@ -239,10 +239,8 @@ function updateGeojsonSource(olSource, glSource, mapView, baseUrl) {
     src = olSource.getSource();
   }
 
+  // update the loader function based on the glSource definition
   src.set('loader', getLoaderFunction(glSource, mapView.getProjection, baseUrl));
-
-  // update the glSource definition for the loader
-  // src.set('_glSource', glSource);
 
   // clear the layer WITHOUT dispatching remove events.
   src.clear(true);
