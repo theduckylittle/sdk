@@ -141,4 +141,21 @@ describe('tests for the geojson-type map sources', () => {
 
     testGeojsonData(done, 'http://example.com/bad.geojson', 0);
   });
+
+  it('fetches by bbox then by relative url', (done) => {
+
+    // mock up the url to call
+    nock('http://example.com')
+      .get('/base/bbox.geojson?BBOX=-978393.9620502561,-978393.9620502568,978393.9620502561,978393.9620502554')
+      .reply(200, JSON.stringify(feature_collection));
+
+    const next_fetch = () => {
+      nock('http://example.com')
+        .get('/base/test2.geojson')
+        .reply(200, JSON.stringify(feature_collection));
+      testGeojsonData(done, './test2.geojson', 2);
+    };
+
+    testGeojsonData(done, '/bbox.geojson?BBOX={bbox-epsg-3857}', 2);
+  });
 });
