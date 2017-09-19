@@ -15,7 +15,7 @@ import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
 import * as mapActions from '@boundlessgeo/sdk/actions/map';
 
 import SdkLayerList from '@boundlessgeo/sdk/components/layer-list';
-import { LayerListItem as SdkLayerListItem } from '@boundlessgeo/sdk/components/layer-list';
+import { SdkLayerListItem } from '@boundlessgeo/sdk/components/layer-list';
 
 import { Provider } from 'react-redux';
 

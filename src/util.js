@@ -159,3 +159,20 @@ export function isLayerVisible(layer) {
   }
   return true;
 }
+
+
+/** Get the z-index of a layer.
+ *
+ *  @param layers The list of layers.
+ *  @param id     The id of the layer to find.
+ *
+ * @returns integer index of the layer, or -1 if not found.
+ */
+export function getLayerIndexById(layers, id) {
+  for (let i = layers.length - 1, ii = 0; i >= ii; i--) {
+    if (layers[i].id === id) {
+      return i;
+    }
+  }
+  return -1;
+}
