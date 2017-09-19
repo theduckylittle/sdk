@@ -7,6 +7,7 @@ import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 
 import MapReducer from '../../src/reducers/map';
+import { isLayerVisible } from '../../src/util';
 
 import SdkLayerList, { SdkLayerListItem } from '../../src/components/layer-list';
 
@@ -90,9 +91,71 @@ describe('test the LayerList component', () => {
   });
 
   it('should render the layer list without error', () => {
-    mount(<Provider store={store}><SdkLayerList layerClass={TestLayerListItem} /></Provider>);
+    mount(<Provider store={store}><SdkLayerList /></Provider>);
   });
 
+  function getCustomLayerList() {
+    return mount(<Provider store={store}><SdkLayerList layerClass={TestLayerListItem} /></Provider>);
+  }
+
   it('should render with a custom layer list class', () => {
+    getCustomLayerList();
+  });
+
+
+  it('should remove a layer', () => {
+    const n_layers = store.getState().map.layers.length;
+
+    const wrapper = getCustomLayerList();
+    wrapper.find('.btn-remove').first().simulate('click');
+
+    expect(store.getState().map.layers.length).toBe(n_layers - 1);
+  });
+
+  it('should move a layer up', () => {
+    const layers = store.getState().map.layers;
+
+    const wrapper = getCustomLayerList();
+    wrapper.find('.btn-up').last().simulate('click');
+
+    let new_layers = store.getState().map.layers;
+    expect(new_layers[0].id).toBe(layers[1].id);
+
+    // try to move a layer up that's alreaday at the top
+    wrapper.find('.btn-up').first().simulate('click');
+
+    const last_layer = layers.length - 1;
+    new_layers = store.getState().map.layers;
+
+    expect(new_layers[last_layer].id).toBe(layers[last_layer].id);
+  });
+
+  it('should move a layer down', () => {
+    const layers = store.getState().map.layers;
+    const n_layers = layers.length;
+
+    const wrapper = getCustomLayerList();
+    wrapper.find('.btn-down').first().simulate('click');
+
+    let new_layers = store.getState().map.layers;
+    expect(new_layers[n_layers - 1].id).toBe(layers[n_layers - 2].id);
+
+    // try to move a layer down that's alreaday at the bottom
+    wrapper.find('.btn-down').last().simulate('click');
+    new_layers = store.getState().map.layers;
+    expect(new_layers[0].id).toBe(layers[0].id);
+  });
+
+  it('should toggle layer visibility', () => {
+    const wrapper = mount(<Provider store={store}><SdkLayerList /></Provider>);
+
+    expect(isLayerVisible(store.getState().map.layers[0])).toBe(true);
+
+    const checkbox = wrapper.find('input').last();
+    checkbox.simulate('change', { target: { checked: false }});
+
+    expect(isLayerVisible(store.getState().map.layers[0])).toBe(false);
+    checkbox.simulate('change', { target: { checked: true }});
+    expect(isLayerVisible(store.getState().map.layers[0])).toBe(true);
   });
 });
