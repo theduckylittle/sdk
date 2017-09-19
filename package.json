@@ -5,7 +5,7 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack-dev-server.config.js --open --open-page 'build/examples'",
     "serve": "webpack-dev-server --config webpack-dev-server.config.js",
-    "test": "jest && npm run lint",
+    "test": "jest --silent && npm run lint",
     "test:only": "jest",
     "test:watch": "npm test -- --watch",
     "lint": "eslint __tests__ src examples tasks",
@@ -41,6 +41,7 @@
     "eslint-plugin-jsx-a11y": "^5.0.2",
     "eslint-plugin-react": "^7.1.0",
     "extract-text-webpack-plugin": "^2.1.2",
+    "fs-extra": "^4.0.2",
     "handlebars": "^4.0.10",
     "jest": "^20.0.4",
     "marked": "^0.3.6",
