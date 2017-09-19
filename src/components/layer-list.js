@@ -103,7 +103,7 @@ class SdkLayerList extends React.Component {
 }
 
 SdkLayerList.propTypes = {
-  layerClass: PropTypes.instanceOf(SdkLayerListItem),
+  layerClass: PropTypes.func,
   layers: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
   })).isRequired,
