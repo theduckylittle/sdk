@@ -27,8 +27,8 @@ class TestLayerListItem extends SdkLayerListItem {
 describe('test the LayerList component', () => {
   let store = null;
 
-  // this is the same setup as used in legends but intead
-  //  of listing layers this lists the layers in a list.
+  // this is the same setup as used in legends but instead
+  //  of listing legends this lists the layers in a list.
   beforeEach(() => {
     store = createStore(combineReducers({
       map: MapReducer,
@@ -121,7 +121,7 @@ describe('test the LayerList component', () => {
     let new_layers = store.getState().map.layers;
     expect(new_layers[0].id).toBe(layers[1].id);
 
-    // try to move a layer up that's alreaday at the top
+    // try to move a layer up that's already at the top
     wrapper.find('.btn-up').first().simulate('click');
 
     const last_layer = layers.length - 1;
@@ -140,7 +140,7 @@ describe('test the LayerList component', () => {
     let new_layers = store.getState().map.layers;
     expect(new_layers[n_layers - 1].id).toBe(layers[n_layers - 2].id);
 
-    // try to move a layer down that's alreaday at the bottom
+    // try to move a layer down that's already at the bottom
     wrapper.find('.btn-down').last().simulate('click');
     new_layers = store.getState().map.layers;
     expect(new_layers[0].id).toBe(layers[0].id);
