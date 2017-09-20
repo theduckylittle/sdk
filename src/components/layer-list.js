@@ -64,13 +64,20 @@ export class SdkLayerListItem extends React.Component {
     );
   }
 
+  getTitle() {
+    if (this.props.layer.metadata && this.props.layer.metadata['bnd:title']) {
+      return this.props.layer.metadata['bnd:title'];
+    }
+    return this.props.layer.id;
+  }
+
   render() {
     const layer = this.props.layer;
     const checkbox = this.getVisibilityControl(layer);
     return (
       <li className="sdk-layer" key={layer.id}>
         <span className="sdk-checkbox">{checkbox}</span>
-        <span className="sdk-name">{layer.id}</span>
+        <span className="sdk-name">{this.getTitle()}</span>
       </li>
     );
   }

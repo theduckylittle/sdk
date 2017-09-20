@@ -84,6 +84,9 @@ describe('test the LayerList component', () => {
           {
             id: 'bad-type-test',
             source: 'other',
+            metadata: {
+              'bnd:title': 'custom-layer-title',
+            },
           },
         ],
       },
@@ -102,6 +105,10 @@ describe('test the LayerList component', () => {
     getCustomLayerList();
   });
 
+  it('should check that the custom title was rendered', () => {
+    const wrapper = mount(<Provider store={store}><SdkLayerList /></Provider>);
+    expect(wrapper.html().indexOf('custom-layer-title')).toBeGreaterThan(-1);
+  });
 
   it('should remove a layer', () => {
     const n_layers = store.getState().map.layers.length;
