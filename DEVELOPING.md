@@ -58,5 +58,8 @@ of tests will be skipped.
 6. Serving content.
 
     After the watch task has been setup the `build/` directory will need to be
-    served using a HTTP server.
- 
+    served using a HTTP server. The create-react-app documentation recommends using
+    `serve` but this can be problematic as `serve` does not support proxying.
+
+    As an alternative, [http-server](https://github.com/indexzero/http-server) does support
+    proxying and is also a light weight install.
