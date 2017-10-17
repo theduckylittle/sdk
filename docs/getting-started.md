@@ -183,3 +183,32 @@ yarn start
 ## Fin!
 
 Congratulations! You should have a fully operational Boundless SDK React app!
+
+
+### Ejecting Create React App
+
+1. `yarn eject`
+2. `yarn add webpack-cli`
+3. Modify `config/webpack.config.prod.js`, change 149 from:
+    ```
+    include: paths.appSrc,
+    ```
+    To:
+    ```
+    include: [paths.appSrc, '../node_modules'],
+    ```
+4. Modify `config/webpack.config.dev.js`, comment out line 46,
+   hot reloading will not work inside of a served environment.
+
+5. Modify `package.json` by ading the following line after `"scripts": {`:
+    ```
+    "watch": "NODE_ENV=development webpack --watch --config ./config/webpack.config.dev.js",
+    ```
+6. Serving content.
+
+    After the watch task has been setup the `build/` directory will need to be
+    served using a HTTP server. The create-react-app documentation recommends using
+    `serve` but this can be problematic as `serve` does not support proxying.
+
+    As an alternative, [http-server](https://github.com/indexzero/http-server) does support
+    proxying and is also a light weight install.
