@@ -229,7 +229,7 @@ Congratulations! You should have a fully operational Boundless SDK React app!
 
    ```
 
-5. Modify `package.json` by ading the following line after `"scripts": {`:
+5. Modify `package.json` by adding the following line after `"scripts": {`:
     ```
     "watch": "NODE_ENV=development webpack --watch --config ./config/webpack.config.dev.js",
     ```
