@@ -122,7 +122,12 @@ export class SdkLayerListGroup extends React.Component {
 }
 
 SdkLayerListGroup.PropTypes = {
-  layerClass: PropTypes.func,
+  groupId: PropTypes.string.isRequired,
+  group: PropTypes.shape({
+    name: PropTypes.string,
+    exclusive: PropTypes.bool,
+  }).isRequired,
+  layerClass: PropTypes.func.isRequired,
   layers: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
   })).isRequired,
@@ -185,6 +190,7 @@ class SdkLayerList extends React.Component {
 }
 
 SdkLayerList.propTypes = {
+  groupClass: PropTypes.func,
   layerClass: PropTypes.func,
   layers: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
