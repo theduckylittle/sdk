@@ -215,18 +215,20 @@ function configureMvtSource(glSource, accessToken) {
     urls = [url];
   }
 
+  // predefine the source in-case it is needed
+  //  for the tile_url_fn
+  let source;
+
   // check to see if the url uses bounding box or Z,X,Y
-  let tile_url_fn = undefined;
+  let tile_url_fn;
   if (url.indexOf(BBOX_STRING) !== -1) {
     tile_url_fn = function(urlTileCoord, pixelRatio, projection) {
-      let img_src = url.slice();
       const bbox = source.getTileGrid().getTileCoordExtent(urlTileCoord);
-      img_src = img_src.replace(BBOX_STRING, bbox.toString());
-      return img_src;
-    }
+      return url.replace(BBOX_STRING, bbox.toString());
+    };
   }
 
-  const source = new VectorTileSource({
+  source = new VectorTileSource({
     urls,
     tileGrid: TileGrid.createXYZ({maxZoom: 22}),
     tilePixelRatio: 16,
