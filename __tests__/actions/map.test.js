@@ -462,7 +462,7 @@ describe('async actions', () => {
     expect(actions.setMapTime(time)).toEqual(expectedAction);
   });
 
-  it('should crete an action to move a group', () => {
+  it('should create an action to move a group', () => {
     expect(actions.moveGroup('xyz', 'x')).toEqual({
       type: MAP.MOVE_GROUP,
       placeAt: 'x',

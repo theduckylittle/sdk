@@ -81,4 +81,25 @@ describe('test reordering groups in the map', () => {
     testOrder(['A', 'D', 'E', 'F', 'B', 'C']);
   });
 
+  function createWithAllGroups() {
+    createLayer('A', 'x');
+    createLayer('B', 'x');
+    createLayer('C', 'y');
+    createLayer('D', 'y');
+    createLayer('E', 'z');
+    createLayer('F', 'z');
+  }
+
+  it('with all groups - move middle to the start', () => {
+    createWithAllGroups();
+    store.dispatch(MapActions.moveGroup('y', 'A'));
+    testOrder(['C', 'D', 'A', 'B', 'E', 'F']);
+  });
+
+  it('with all groups - move the middle to the end', () => {
+    createWithAllGroups();
+    store.dispatch(MapActions.moveGroup('x', 'E'));
+    testOrder(['C', 'D', 'E', 'F', 'A', 'B']);
+  });
+
 });

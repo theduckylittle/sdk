@@ -201,29 +201,34 @@ function moveGroup(state, action) {
     }
   }
 
+
   // get the real index of the next spot for the group,
   // if the placeAt index is mid group then place_at should
   // be the index of the FIRST member of that group.
   let place_start = place_at;
   const place_group = getGroup(state.layers[place_at]);
+  const place_ahead = (place_at > group_start);
 
+  // when placing a group before or after another group
+  // the bounds of the target group needs to be found and the
+  // appropriate index chosen based on the direction of placement.
   if (place_group) {
-    // find the first index of the place group
     let new_place = -1;
-    for (let i = 0, ii = n_layers; i < ii && new_place < 0; i++) {
-      if (getGroup(state.layers[i]) === place_group) {
-        new_place = i;
+    if (place_ahead) {
+      for (let i = n_layers - 1; i >= 0 && new_place < 0; i--) {
+        if (getGroup(state.layers[i]) === place_group) {
+          new_place = i;
+        }
+      }
+    } else {
+      for (let i = 0, ii = n_layers; i < ii && new_place < 0; i++) {
+        if (getGroup(state.layers[i]) === place_group) {
+          new_place = i;
+        }
       }
     }
     place_start = new_place;
   }
-
-  // this indicates an "end" placement and
-  //  should be adjusted to ensure that behaviour.
-  if (place_start === n_layers - 1) {
-    place_start = n_layers;
-  }
-
 
   // build a new array for the layers.
   let new_layers = [];
@@ -233,19 +238,17 @@ function moveGroup(state, action) {
 
   for (let i = 0, ii = n_layers; i < ii; i++) {
     const layer = state.layers[i];
+    const in_group = (getGroup(layer) === action.group);
+
+    if (place_ahead && !in_group) {
+      new_layers.push(layer);
+    }
     if (i === place_start) {
       new_layers = new_layers.concat(group_layers);
     }
-    // filter out the layer from the group.
-    if (getGroup(layer) !== action.group) {
+    if (!place_ahead && !in_group) {
       new_layers.push(layer);
     }
-  }
-  // the above loop will only work for placing a layer BEFORE
-  // a particular index. To put the group at the end it needs
-  // to point the end of the list.
-  if (place_start === n_layers) {
-    new_layers = new_layers.concat(group_layers);
   }
 
   return Object.assign({}, state, {
@@ -643,9 +646,6 @@ function setZoom(state, action) {
   zoom = Math.max(DEFAULT_ZOOM.MIN, zoom);
   return Object.assign({}, state, {zoom});
 }
-
-/** Move an entire group of layers in the stack
- *
 
 /** Main reducer.
  *  @param {Object} state The redux state.
