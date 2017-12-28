@@ -148,7 +148,7 @@ describe('tests for the geojson-type map sources', () => {
     testGeojsonData(done, 'http://example.com/bad.geojson', 0);
   });
 
-  it('fetches by bbox then by relative url', (done) => {
+  xit('fetches by bbox then by relative url', (done) => {
 
     // mock up the url to call
     nock('http://example.com')
