@@ -18,7 +18,7 @@
 import createFilter from '@mapbox/mapbox-gl-style-spec/feature_filter';
 import {getGroup, getLayerIndexById, reprojectGeoJson, getResolutionForExtent, getZoomForResolution} from '../util';
 import {MAP} from '../action-types';
-import {DEFAULT_ZOOM, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TITLE_KEY, DATA_VERSION_KEY, GROUP_KEY} from '../constants';
+import {DEFAULT_ZOOM, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TITLE_KEY, DATA_VERSION_KEY, GROUP_KEY, GROUPS_KEY} from '../constants';
 
 function defaultMetadata() {
   // define the metadata.
@@ -639,6 +639,38 @@ function updateMetadata(state, action) {
   });
 }
 
+/** Add a group to the map's metadata section.
+ *  @param {Object} state The redux state.
+ *  @param {Object} action The action object.
+ *
+ *  @returns {Object} The new state object.
+ */
+function addGroup(state, action) {
+  const groups = state.metadata ? Object.assign({}, state.metadata[GROUPS_KEY]) : {};
+  groups[action.id] = action.config;
+  const metadata = {};
+  metadata[GROUPS_KEY] = groups;
+  return Object.assign({}, state, {
+    metadata: Object.assign({}, state.metadata, metadata),
+  });
+}
+
+/** Remove a group from the map's metadata section.
+ *  @param {Object} state The redux state.
+ *  @param {Object} action The action object.
+ *
+ *  @returns {Object} The new state object.
+ */
+function removeGroup(state, action) {
+  const groups = state.metadata ? Object.assign({}, state.metadata[GROUPS_KEY]) : {};
+  delete groups[action.id];
+  const metadata = {};
+  metadata[GROUPS_KEY] = groups;
+  return Object.assign({}, state, {
+    metadata: Object.assign({}, state.metadata, metadata),
+  });
+}
+
 /** Update a source's definition.
  *  This is a heavy-handed operation that will
  *  just mixin whatever is in the new object.
@@ -750,6 +782,10 @@ export default function MapReducer(state = defaultState, action) {
       return clusterPoints(state, action);
     case MAP.UPDATE_METADATA:
       return updateMetadata(state, action);
+    case MAP.ADD_GROUP:
+      return addGroup(state, action);
+    case MAP.REMOVE_GROUP:
+      return removeGroup(state, action);
     case MAP.UPDATE_SOURCE:
       return updateSource(state, action);
     case MAP.MOVE_GROUP:
