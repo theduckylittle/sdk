@@ -431,6 +431,34 @@ export function updateMetadata(metadata) {
   };
 }
 
+/** Add a group to the map's metadata.
+ *
+ * @param {string} id Identifier of the group.
+ * @param {Object} config Configuration of the group.
+ *
+ * @returns {Object} An action object.
+ */
+export function addGroup(id, config) {
+  return {
+    type: MAP.ADD_GROUP,
+    id,
+    config,
+  };
+}
+
+/** Remove a group from the map's metadata.
+ *
+ * @param {string} id Identifier of the group.
+ *
+ * @returns {Object} An action object.
+ */
+export function removeGroup(id) {
+  return {
+    type: MAP.REMOVE_GROUP,
+    id,
+  };
+}
+
 /** Manually update a source.
  *
  *  @param {string} sourceName The name of the source to be updated.

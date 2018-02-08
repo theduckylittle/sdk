@@ -328,6 +328,30 @@ describe('actions', () => {
 
     expect(actions.setGlyphs(glyphs)).toEqual(expectedAction);
   });
+
+  it('should create an action to add a group', () => {
+    const id = 'my_group';
+    const config = {
+      name: 'My Group',
+      exclusive: false,
+    };
+    const expectedAction = {
+      type: MAP.ADD_GROUP,
+      id,
+      config,
+    };
+    expect(actions.addGroup(id, config)).toEqual(expectedAction);
+  });
+
+  it('should create an action to remove a group', () => {
+    const id = 'my_group';
+    const expectedAction = {
+      type: MAP.REMOVE_GROUP,
+      id,
+    };
+    expect(actions.removeGroup(id)).toEqual(expectedAction);
+  });
+
 });
 
 describe('async actions', () => {
@@ -607,4 +631,5 @@ describe('async actions', () => {
       sourceDef,
     });
   });
+
 });

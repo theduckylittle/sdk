@@ -24,6 +24,53 @@ describe('map reducer', () => {
     });
   });
 
+  it('should handle ADD_GROUP and REMOVE_GROUP', () => {
+    const action = {
+      type: MAP.ADD_GROUP,
+      id: 'my_group',
+      config: {name: 'My Group'},
+    };
+    deepFreeze(action);
+    const state = reducer(undefined, action);
+    deepFreeze(state);
+    expect(state).toEqual({
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      bearing: 0,
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
+        'mapbox:groups': {
+          'my_group': {
+            name: 'My Group',
+          },
+        },
+      },
+      sources: {},
+      layers: [],
+    });
+    const removeAction = {
+      type: MAP.REMOVE_GROUP,
+      id: 'my_group',
+    };
+    expect(reducer(state, removeAction)).toEqual({
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      bearing: 0,
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
+        'mapbox:groups': {},
+      },
+      sources: {},
+      layers: [],
+    });
+  });
+
   it('should handle ADD_LAYER', () => {
     const title = 'Background';
     const layer = {
