@@ -696,6 +696,17 @@ export class Map extends React.Component {
     //       additions and removals.
     let src_names = Object.keys(sourcesDef);
     const map_view = this.map.getView();
+    const addSource = function(src_name, source) {
+      if (source) {
+        this.sources[src_name] = source;
+      }
+    };
+    const addAndUpdateSource = function(src_name, source) {
+      if (source) {
+        this.sources[src_name] = source;
+        this.updateLayerSource(src_name);
+      }
+    };
     for (let i = 0, ii = src_names.length; i < ii; i++) {
       const src_name = src_names[i];
       // Add the source because it's not in the current
@@ -704,12 +715,7 @@ export class Map extends React.Component {
         const time = getKey(this.props.map.metadata, TIME_KEY);
         promises.push(configureSource(sourcesDef[src_name], map_view,
           this.props.mapbox.accessToken, this.props.mapbox.baseUrl, time, this.props.wrapX)
-          .then((source) => {
-            if (source) {
-              this.sources[src_name] = source;
-            }
-          })
-        );
+          .then(addSource.bind(this, src_name)));
       }
       const src = this.props.map.sources[src_name];
       if (src && src.type !== 'geojson' && !jsonEquals(src, sourcesDef[src_name])) {
@@ -722,12 +728,7 @@ export class Map extends React.Component {
           undefined,
           this.props.wrapX
         )
-          .then((source) => {
-            if (source) {
-              this.sources[src_name] = source;
-              this.updateLayerSource(src_name);
-            }
-          }));
+          .then(addAndUpdateSource.bind(this, src_name)));
       }
 
       // Check to see if there was a clustering change.
@@ -744,13 +745,7 @@ export class Map extends React.Component {
           this.props.mapbox.baseUrl,
           undefined,
           this.props.wrapX
-        ).then((source) => {
-          if (source) {
-            this.sources[src_name] = source;
-            // tell all the layers about it.
-            this.updateLayerSource(src_name);
-          }
-        }));
+        ).then(addAndUpdateSource.bind(this, src_name)));
       }
     }
 
