@@ -141,12 +141,15 @@ export class MapboxGL extends React.Component {
         const version_key = dataVersionKey(src_name);
         if (this.props.map.metadata !== undefined &&
             this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key] && this.map) {
-          this.map.getSource(src_name).setData(nextProps.map.sources[src_name].data);
-          if (this.draw) {
-            if (nextProps.map.sources[src_name].type === 'geojson') {
-              nextProps.map.sources[src_name].data.features.forEach((feature) => {
-                this.draw.add(feature);
-              });
+          const source = this.map.getSource(src_name);
+          if (source && typeof source !== 'undefined') {
+            source.setData(nextProps.map.sources[src_name].data);
+            if (this.draw) {
+              if (nextProps.map.sources[src_name].type === 'geojson') {
+                nextProps.map.sources[src_name].data.features.forEach((feature) => {
+                  this.draw.add(feature);
+                });
+              }
             }
           }
         }
