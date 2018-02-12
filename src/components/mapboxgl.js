@@ -107,6 +107,12 @@ export class MapboxGL extends React.Component {
    * @returns {boolean} should the component re-render?
    */
   shouldComponentUpdate(nextProps) {
+    // This should always return false to keep
+    // render() from being called.
+    return false;
+  }
+
+  componentWillReceiveProps(nextProps) {
     // check if the sources or layers diff
     const next_sources_version = getVersion(nextProps.map, SOURCE_VERSION_KEY);
     const next_layer_version = getVersion(nextProps.map, LAYER_VERSION_KEY);
@@ -160,9 +166,6 @@ export class MapboxGL extends React.Component {
         || nextProps.drawing.sourceName !== this.props.drawing.sourceName)) {
       this.updateInteraction(nextProps.drawing);
     }
-    // This should always return false to keep
-    // render() from being called.
-    return false;
   }
 
   onMapClick(e) {
