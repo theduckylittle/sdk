@@ -2,6 +2,9 @@
 
 ### Next Release
 
+#### onFeatureDrawn, onFeatureModified
+To sync with the behaviour of the Map component, the MapboxGL component has also been adapted so that the onFeatureDrawn and onFeatureModified callbacks now get a collection of features instead of a single feature.
+
 ### v2.3.0
 
 #### onFeatureDrawn, onFeatureModified, onFeatureSelected
