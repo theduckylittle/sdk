@@ -136,7 +136,7 @@ describe('MapboxGL component', () => {
     const removeControl = () => {};
     map.map.removeControl = removeControl;
     spyOn(map.map, 'removeControl');
-    map.shouldComponentUpdate(nextProps);
+    map.componentWillReceiveProps(nextProps);
     expect(types).toEqual(['draw.create', 'draw.update']);
     expect(map.map.setStyle).toHaveBeenCalled();
     expect(map.map.setCenter).toHaveBeenCalled();
@@ -148,11 +148,11 @@ describe('MapboxGL component', () => {
       interaction: 'Polygon',
       sourceName: 'geojson',
     };
-    map.shouldComponentUpdate(nextProps);
+    map.componentWillReceiveProps(nextProps);
     expect(map.updateInteraction).toHaveBeenCalled();
     delete nextProps.map.metadata;
     nextProps.map.sources = {};
-    map.shouldComponentUpdate(nextProps);
+    map.componentWillReceiveProps(nextProps);
     expect(map.sourcesVersion).not.toBeDefined();
     expect(map.layersVersion).not.toBeDefined();
   });
