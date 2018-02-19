@@ -28,8 +28,12 @@ export const GROUP_KEY = 'mapbox:group';
 export const LAYERLIST_HIDE_KEY = 'bnd:hide-layerlist';
 export const QUERYABLE_KEY = 'bnd:queryable';
 export const QUERY_ENDPOINT_KEY = 'bnd:query-endpoint';
+export const QUERY_TYPE_KEY = 'bnd:query-type';
+export const QUERY_PARAMS_KEY = 'bnd:query-params';
 export const MIN_ZOOM_KEY = 'bnd:minzoom';
 export const MAX_ZOOM_KEY = 'bnd:maxzoom';
+
+export const QUERY_TYPE_WFS = 'WFS';
 
 export const DEFAULT_ZOOM = {
   MIN: 0,

@@ -75,7 +75,7 @@ import LoadingStrategy from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
-import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY} from '../constants';
+import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS} from '../constants';
 import {dataVersionKey} from '../reducers/map';
 
 import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '../actions/drawing';
@@ -1173,41 +1173,89 @@ export class Map extends React.Component {
             });
         }));
       } else if (layer.metadata[QUERY_ENDPOINT_KEY]) {
-        const map_size = map.getSize();
-        promises.push(new Promise((resolve) => {
-          features_by_layer = {};
-          const params = {
-            geometryType: 'esriGeometryPoint',
-            geometry: evt.coordinate.join(','),
-            sr: map_prj.getCode().split(':')[1],
-            tolerance: 2,
-            mapExtent: view.calculateExtent(map_size).join(','),
-            imageDisplay: map_size.join(',') + ',90',
-            f: 'json',
-            pretty: 'false'
-          };
-          url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
-          fetchJsonp(url).then(
-            response => response.json(),
-          ).then((json) => {
-            layer_name = layer.id;
-            const features = [];
-            for (let i = 0, ii = json.results.length; i < ii; ++i) {
-              features.push(ESRIJSON_FORMAT.readFeature(json.results[i]));
-            }
-            features_by_layer[layer_name] = GEOJSON_FORMAT.writeFeaturesObject(
-              features, {
-                featureProjection: map_prj,
-                dataProjection: 'EPSG:4326',
-              },
-            ).features;
-            resolve(features_by_layer);
-          }).catch(function(error) {
-            console.error('An error occured.', error);
-          });
-        }));
+        features_by_layer = {};
+        if (layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS) {
+          promises.push(new Promise((resolve) => {
+            const lngLat = Proj.toLonLat(evt.coordinate);
+            // TODO make distance configurable
+            const params = Object.assign({}, {
+              request: 'GetFeature',
+              version: '1.0.0',
+              typename: layer.source,
+              outputformat: 'JSON',
+              srs: 'EPSG:4326',
+              'cql_filter': `DWITHIN(wkb_geometry,Point(${lngLat[0]} ${lngLat[1]}),0.05,kilometers)`,
+            }, layer.metadata[QUERY_PARAMS_KEY]);
+            const url = `/geoserver/wfs?${encodeQueryObject(params)}`;
+            fetch(url).then(
+              response => response.json(),
+              error => console.error('An error occured.', error),
+            )
+              .then((json) => {
+                features_by_layer[layer.source] = GEOJSON_FORMAT.writeFeaturesObject(
+                  GEOJSON_FORMAT.readFeatures(json), {
+                    featureProjection: GEOJSON_FORMAT.readProjection(json),
+                    dataProjection: 'EPSG:4326',
+                  },
+                ).features;
+                resolve(features_by_layer);
+              });
+          }));
+        } else {
+          const map_size = map.getSize();
+          promises.push(new Promise((resolve) => {
+            const params = {
+              geometryType: 'esriGeometryPoint',
+              geometry: evt.coordinate.join(','),
+              sr: map_prj.getCode().split(':')[1],
+              tolerance: 2,
+              mapExtent: view.calculateExtent(map_size).join(','),
+              imageDisplay: map_size.join(',') + ',90',
+              f: 'json',
+              pretty: 'false'
+            };
+            url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
+            fetchJsonp(url).then(
+              response => response.json(),
+            ).then((json) => {
+              layer_name = layer.id;
+              const features = [];
+              for (let i = 0, ii = json.results.length; i < ii; ++i) {
+                features.push(ESRIJSON_FORMAT.readFeature(json.results[i]));
+              }
+              features_by_layer[layer_name] = GEOJSON_FORMAT.writeFeaturesObject(
+                features, {
+                  featureProjection: map_prj,
+                  dataProjection: 'EPSG:4326',
+                },
+              ).features;
+              resolve(features_by_layer);
+            }).catch(function(error) {
+              console.error('An error occured.', error);
+            });
+          }));
+        }
       }
     }
+  }
+
+  /** Should we skip the layer for local query (forEachFeatureAtPixel)?
+   *
+   *  @param {Object} olLayer The openlayers layer object.
+   *
+   *  @returns {boolean} True if layer should be skipped in the local query.
+   */
+  shouldSkipForQuery(olLayer) {
+    const mapboxLayers = olLayer.get('mapbox-layers');
+    if (mapboxLayers) {
+      for (let i = 0, ii = mapboxLayers.length; i < ii; ++i) {
+        const layer = getLayerById(this.props.map.layers, mapboxLayers[i]);
+        if (layer && layer.metadata && (layer.metadata[QUERYABLE_KEY] === false || layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /** Query the map and the appropriate layers.
@@ -1219,7 +1267,6 @@ export class Map extends React.Component {
   queryMap(evt) {
     // get the map projection
     const map_prj = this.map.getView().getProjection();
-
     // this is the standard "get features when clicking"
     //  business.
     const features_promise = new Promise((resolve) => {
@@ -1247,8 +1294,9 @@ export class Map extends React.Component {
             dataProjection: 'EPSG:4326',
           }));
         }
-      });
-
+      }, {layerFilter: (candidate) => {
+        return !this.shouldSkipForQuery(candidate);
+      }});
       resolve(features_by_layer);
     });
 
