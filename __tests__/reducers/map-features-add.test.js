@@ -54,7 +54,6 @@ describe('map reducer add features', () => {
     }
   ];
 
-
   it('should handle ADD_FEATURES to add action features to a source featureCollection', () => {
     // since we do not go through ADD_SOURCE we need to set _dataVersion
     deepFreeze(SOURCE);
@@ -102,6 +101,7 @@ describe('map reducer add features', () => {
       layers: [],
     });
   });
+
   it('should handle ADD_FEATURES with position, placing new features in source features array using position', () => {
     deepFreeze(SOURCE);
     const action = {
@@ -150,6 +150,7 @@ describe('map reducer add features', () => {
       layers: [],
     });
   });
+
   it('should handle ADD_FEATURES with unknown type', () => {
     // since we do not go through ADD_SOURCE we need to set _dataVersion
     const source = {data: {type: 'Foo'}};
@@ -330,4 +331,55 @@ describe('map reducer add features', () => {
       layers: [],
     });
   });
+
+  it('should handle ADD_FEATURES with clear', () => {
+    deepFreeze(SOURCE);
+    const action = {
+      type: MAP.ADD_FEATURES,
+      sourceName: 'points',
+      features: FEATURES,
+      position: -1,
+      clear: true,
+    };
+    deepFreeze(action);
+    const state = {
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      sources: {
+        points: SOURCE,
+      },
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
+      },
+      layers: [],
+    };
+    deepFreeze(state);
+    const newSource = Object.assign({}, SOURCE, {
+      data: Object.assign({}, SOURCE.data, {
+        crs: SOURCE.crs,
+        features: FEATURES
+      })
+    });
+
+    deepFreeze(newSource);
+    expect(reducer(state, action)).toEqual({
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
+        'bnd:data-version:points': 1,
+      },
+      sources: {
+        points: newSource,
+      },
+      layers: [],
+    });
+  });
+
 });

@@ -433,7 +433,7 @@ function addFeatures(state, action) {
   if (!source) {
     return state;
   }
-  const data = source.data;
+  const data = action.clear ? undefined : source.data;
 
   // placeholder for the new data
   let new_data = null;
