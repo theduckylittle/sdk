@@ -82,7 +82,7 @@ import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '..
 
 import ClusterSource from '../source/cluster';
 
-import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject} from '../util';
+import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject, isLayerVisible} from '../util';
 
 import fetchJsonp from 'fetch-jsonp';
 
@@ -831,7 +831,7 @@ export class Map extends React.Component {
       if (layer.metadata && layer.metadata['bnd:animate-sprite']) {
         spriteLayers.push(layer);
       }
-      const is_visible = layer.layout ? layer.layout.visibility !== 'none' : true;
+      const is_visible = isLayerVisible(layer);
       if (is_visible) {
         render_layers.push(layer);
       }
@@ -1146,7 +1146,7 @@ export class Map extends React.Component {
     const view = map.getView();
     const map_prj = view.getProjection();
     let url, features_by_layer, layer_name;
-    if (layer.metadata[QUERYABLE_KEY] && (!layer.layout || (layer.layout.visibility && layer.layout.visibility !== 'none'))) {
+    if (layer.metadata[QUERYABLE_KEY] && isLayerVisible(layer)) {
       const map_resolution = view.getResolution();
       const source = this.sources[layer.source];
       if (source instanceof TileWMSSource) {
@@ -1174,17 +1174,24 @@ export class Map extends React.Component {
         }));
       } else if (layer.metadata[QUERY_ENDPOINT_KEY]) {
         features_by_layer = {};
+        const map_size = map.getSize();
+        const map_extent = view.calculateExtent(map_size);
         if (layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS) {
+          const projUnits = Proj.get(this.props.projection).getUnits();
+          let units;
+          if (projUnits === 'm') {
+            units = 'meters';
+          } // TODO handle other units when needed
           promises.push(new Promise((resolve) => {
+            const tolerance = ((map_extent[3] - map_extent[1]) / map_size[1]) * this.props.tolerance;
             const lngLat = Proj.toLonLat(evt.coordinate);
-            // TODO make distance configurable
             const params = Object.assign({}, {
               request: 'GetFeature',
               version: '1.0.0',
               typename: layer.source,
               outputformat: 'JSON',
               srs: 'EPSG:4326',
-              'cql_filter': `DWITHIN(wkb_geometry,Point(${lngLat[0]} ${lngLat[1]}),0.05,kilometers)`,
+              'cql_filter': `DWITHIN(wkb_geometry,Point(${lngLat[0]} ${lngLat[1]}),${tolerance},${units})`,
             }, layer.metadata[QUERY_PARAMS_KEY]);
             const url = `/geoserver/wfs?${encodeQueryObject(params)}`;
             fetch(url).then(
@@ -1202,14 +1209,13 @@ export class Map extends React.Component {
               });
           }));
         } else {
-          const map_size = map.getSize();
           promises.push(new Promise((resolve) => {
             const params = {
               geometryType: 'esriGeometryPoint',
               geometry: evt.coordinate.join(','),
               sr: map_prj.getCode().split(':')[1],
               tolerance: 2,
-              mapExtent: view.calculateExtent(map_size).join(','),
+              mapExtent: map_extent.join(','),
               imageDisplay: map_size.join(',') + ',90',
               f: 'json',
               pretty: 'false'
@@ -1574,6 +1580,8 @@ Map.propTypes = {
   hover: PropTypes.bool,
   /** Projection of the map, normally an EPSG code. */
   projection: PropTypes.string,
+  /** Tolerance in pixels for WFS DWITHIN type queries */
+  tolerance: PropTypes.number,
   /** Map configuration, modelled after the Mapbox Style specification. */
   map: PropTypes.shape({
     /** Center of the map. */
@@ -1649,6 +1657,7 @@ Map.propTypes = {
 };
 
 Map.defaultProps = {
+  tolerance: 5,
   declutter: false,
   wrapX: true,
   hover: true,
