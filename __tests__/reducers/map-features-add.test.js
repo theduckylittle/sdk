@@ -54,7 +54,6 @@ describe('map reducer add features', () => {
     }
   ];
 
-
   it('should handle ADD_FEATURES to add action features to a source featureCollection', () => {
     // since we do not go through ADD_SOURCE we need to set _dataVersion
     deepFreeze(SOURCE);
@@ -102,6 +101,7 @@ describe('map reducer add features', () => {
       layers: [],
     });
   });
+
   it('should handle ADD_FEATURES with position, placing new features in source features array using position', () => {
     deepFreeze(SOURCE);
     const action = {
@@ -150,6 +150,7 @@ describe('map reducer add features', () => {
       layers: [],
     });
   });
+
   it('should handle ADD_FEATURES with unknown type', () => {
     // since we do not go through ADD_SOURCE we need to set _dataVersion
     const source = {data: {type: 'Foo'}};
@@ -330,4 +331,5 @@ describe('map reducer add features', () => {
       layers: [],
     });
   });
+
 });

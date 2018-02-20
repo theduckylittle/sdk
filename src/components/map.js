@@ -75,14 +75,14 @@ import LoadingStrategy from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
-import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY} from '../constants';
+import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
 
 import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '../actions/drawing';
 
 import ClusterSource from '../source/cluster';
 
-import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject} from '../util';
+import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject, isLayerVisible} from '../util';
 
 import fetchJsonp from 'fetch-jsonp';
 
@@ -831,7 +831,7 @@ export class Map extends React.Component {
       if (layer.metadata && layer.metadata['bnd:animate-sprite']) {
         spriteLayers.push(layer);
       }
-      const is_visible = layer.layout ? layer.layout.visibility !== 'none' : true;
+      const is_visible = isLayerVisible(layer);
       if (is_visible) {
         render_layers.push(layer);
       }
@@ -1146,7 +1146,7 @@ export class Map extends React.Component {
     const view = map.getView();
     const map_prj = view.getProjection();
     let url, features_by_layer, layer_name;
-    if (layer.metadata[QUERYABLE_KEY] && (!layer.layout || (layer.layout.visibility && layer.layout.visibility !== 'none'))) {
+    if (layer.metadata[QUERYABLE_KEY] && isLayerVisible(layer)) {
       const map_resolution = view.getResolution();
       const source = this.sources[layer.source];
       if (source instanceof TileWMSSource) {
@@ -1173,41 +1173,96 @@ export class Map extends React.Component {
             });
         }));
       } else if (layer.metadata[QUERY_ENDPOINT_KEY]) {
+        features_by_layer = {};
         const map_size = map.getSize();
-        promises.push(new Promise((resolve) => {
-          features_by_layer = {};
-          const params = {
-            geometryType: 'esriGeometryPoint',
-            geometry: evt.coordinate.join(','),
-            sr: map_prj.getCode().split(':')[1],
-            tolerance: 2,
-            mapExtent: view.calculateExtent(map_size).join(','),
-            imageDisplay: map_size.join(',') + ',90',
-            f: 'json',
-            pretty: 'false'
-          };
-          url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
-          fetchJsonp(url).then(
-            response => response.json(),
-          ).then((json) => {
-            layer_name = layer.id;
-            const features = [];
-            for (let i = 0, ii = json.results.length; i < ii; ++i) {
-              features.push(ESRIJSON_FORMAT.readFeature(json.results[i]));
-            }
-            features_by_layer[layer_name] = GEOJSON_FORMAT.writeFeaturesObject(
-              features, {
-                featureProjection: map_prj,
-                dataProjection: 'EPSG:4326',
-              },
-            ).features;
-            resolve(features_by_layer);
-          }).catch(function(error) {
-            console.error('An error occured.', error);
-          });
-        }));
+        const map_extent = view.calculateExtent(map_size);
+        if (layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS) {
+          const geomName = layer.metadata[GEOMETRY_NAME_KEY];
+          const projUnits = Proj.get(this.props.projection).getUnits();
+          let units;
+          if (projUnits === 'm') {
+            units = 'meters';
+          } // TODO handle other units when needed
+          promises.push(new Promise((resolve) => {
+            const tolerance = ((map_extent[3] - map_extent[1]) / map_size[1]) * this.props.tolerance;
+            const lngLat = Proj.toLonLat(evt.coordinate);
+            const params = Object.assign({}, {
+              request: 'GetFeature',
+              version: '1.0.0',
+              typename: layer.source,
+              outputformat: 'JSON',
+              srs: 'EPSG:4326',
+              'cql_filter': `DWITHIN(${geomName},Point(${lngLat[0]} ${lngLat[1]}),${tolerance},${units})`,
+            }, layer.metadata[QUERY_PARAMS_KEY]);
+            const url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
+            fetch(url).then(
+              response => response.json(),
+              error => console.error('An error occured.', error),
+            )
+              .then((json) => {
+                features_by_layer[layer.source] = GEOJSON_FORMAT.writeFeaturesObject(
+                  GEOJSON_FORMAT.readFeatures(json), {
+                    featureProjection: GEOJSON_FORMAT.readProjection(json),
+                    dataProjection: 'EPSG:4326',
+                  },
+                ).features;
+                resolve(features_by_layer);
+              });
+          }));
+        } else {
+          promises.push(new Promise((resolve) => {
+            const params = {
+              geometryType: 'esriGeometryPoint',
+              geometry: evt.coordinate.join(','),
+              sr: map_prj.getCode().split(':')[1],
+              tolerance: 2,
+              mapExtent: map_extent.join(','),
+              imageDisplay: map_size.join(',') + ',90',
+              f: 'json',
+              pretty: 'false'
+            };
+            url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
+            fetchJsonp(url).then(
+              response => response.json(),
+            ).then((json) => {
+              layer_name = layer.id;
+              const features = [];
+              for (let i = 0, ii = json.results.length; i < ii; ++i) {
+                features.push(ESRIJSON_FORMAT.readFeature(json.results[i]));
+              }
+              features_by_layer[layer_name] = GEOJSON_FORMAT.writeFeaturesObject(
+                features, {
+                  featureProjection: map_prj,
+                  dataProjection: 'EPSG:4326',
+                },
+              ).features;
+              resolve(features_by_layer);
+            }).catch(function(error) {
+              console.error('An error occured.', error);
+            });
+          }));
+        }
       }
     }
+  }
+
+  /** Should we skip the layer for local query (forEachFeatureAtPixel)?
+   *
+   *  @param {Object} olLayer The openlayers layer object.
+   *
+   *  @returns {boolean} True if layer should be skipped in the local query.
+   */
+  shouldSkipForQuery(olLayer) {
+    const mapboxLayers = olLayer.get('mapbox-layers');
+    if (mapboxLayers) {
+      for (let i = 0, ii = mapboxLayers.length; i < ii; ++i) {
+        const layer = getLayerById(this.props.map.layers, mapboxLayers[i]);
+        if (layer && layer.metadata && (layer.metadata[QUERYABLE_KEY] === false || layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /** Query the map and the appropriate layers.
@@ -1219,7 +1274,6 @@ export class Map extends React.Component {
   queryMap(evt) {
     // get the map projection
     const map_prj = this.map.getView().getProjection();
-
     // this is the standard "get features when clicking"
     //  business.
     const features_promise = new Promise((resolve) => {
@@ -1247,8 +1301,9 @@ export class Map extends React.Component {
             dataProjection: 'EPSG:4326',
           }));
         }
-      });
-
+      }, {layerFilter: (candidate) => {
+        return !this.shouldSkipForQuery(candidate);
+      }});
       resolve(features_by_layer);
     });
 
@@ -1526,6 +1581,8 @@ Map.propTypes = {
   hover: PropTypes.bool,
   /** Projection of the map, normally an EPSG code. */
   projection: PropTypes.string,
+  /** Tolerance in pixels for WFS DWITHIN type queries */
+  tolerance: PropTypes.number,
   /** Map configuration, modelled after the Mapbox Style specification. */
   map: PropTypes.shape({
     /** Center of the map. */
@@ -1601,6 +1658,7 @@ Map.propTypes = {
 };
 
 Map.defaultProps = {
+  tolerance: 5,
   declutter: false,
   wrapX: true,
   hover: true,

@@ -190,10 +190,11 @@ describe('actions', () => {
       type: MAP.ADD_FEATURES,
       sourceName,
       features,
-      position
+      position,
     };
     expect(actions.addFeatures(sourceName, features)).toEqual(expectedAction);
   });
+
   it('should create an action to add features at select position', () => {
     const sourceName = 'tegola';
     const features = [
@@ -213,7 +214,7 @@ describe('actions', () => {
       type: MAP.ADD_FEATURES,
       sourceName,
       features,
-      position
+      position,
     };
     expect(actions.addFeatures(sourceName, features, position)).toEqual(expectedAction);
   });
