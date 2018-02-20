@@ -1194,7 +1194,7 @@ export class Map extends React.Component {
               srs: 'EPSG:4326',
               'cql_filter': `DWITHIN(${geomName},Point(${lngLat[0]} ${lngLat[1]}),${tolerance},${units})`,
             }, layer.metadata[QUERY_PARAMS_KEY]);
-            const url = `/geoserver/wfs?${encodeQueryObject(params)}`;
+            const url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
             fetch(url).then(
               response => response.json(),
               error => console.error('An error occured.', error),
