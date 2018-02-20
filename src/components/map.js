@@ -75,7 +75,7 @@ import LoadingStrategy from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
-import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS} from '../constants';
+import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
 
 import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '../actions/drawing';
@@ -1177,6 +1177,7 @@ export class Map extends React.Component {
         const map_size = map.getSize();
         const map_extent = view.calculateExtent(map_size);
         if (layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS) {
+          const geomName = layer.metadata[GEOMETRY_NAME_KEY];
           const projUnits = Proj.get(this.props.projection).getUnits();
           let units;
           if (projUnits === 'm') {
@@ -1191,7 +1192,7 @@ export class Map extends React.Component {
               typename: layer.source,
               outputformat: 'JSON',
               srs: 'EPSG:4326',
-              'cql_filter': `DWITHIN(wkb_geometry,Point(${lngLat[0]} ${lngLat[1]}),${tolerance},${units})`,
+              'cql_filter': `DWITHIN(${geomName},Point(${lngLat[0]} ${lngLat[1]}),${tolerance},${units})`,
             }, layer.metadata[QUERY_PARAMS_KEY]);
             const url = `/geoserver/wfs?${encodeQueryObject(params)}`;
             fetch(url).then(

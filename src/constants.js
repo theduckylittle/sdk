@@ -30,6 +30,7 @@ export const QUERYABLE_KEY = 'bnd:queryable';
 export const QUERY_ENDPOINT_KEY = 'bnd:query-endpoint';
 export const QUERY_TYPE_KEY = 'bnd:query-type';
 export const QUERY_PARAMS_KEY = 'bnd:query-params';
+export const GEOMETRY_NAME_KEY = 'bnd:geometry-name';
 export const MIN_ZOOM_KEY = 'bnd:minzoom';
 export const MAX_ZOOM_KEY = 'bnd:maxzoom';
 
