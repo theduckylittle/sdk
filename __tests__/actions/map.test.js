@@ -191,7 +191,6 @@ describe('actions', () => {
       sourceName,
       features,
       position,
-      clear: false,
     };
     expect(actions.addFeatures(sourceName, features)).toEqual(expectedAction);
   });
@@ -216,7 +215,6 @@ describe('actions', () => {
       sourceName,
       features,
       position,
-      clear: false,
     };
     expect(actions.addFeatures(sourceName, features, position)).toEqual(expectedAction);
   });
