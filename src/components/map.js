@@ -1183,21 +1183,17 @@ export class Map extends React.Component {
         const map_extent = view.calculateExtent(map_size);
         if (layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS) {
           const geomName = layer.metadata[GEOMETRY_NAME_KEY];
-          const projUnits = Proj.get(this.props.projection).getUnits();
-          let units;
-          if (projUnits === 'm') {
-            units = 'meters';
-          } // TODO handle other units when needed
           promises.push(new Promise((resolve) => {
             const tolerance = ((map_extent[3] - map_extent[1]) / map_size[1]) * this.props.tolerance;
-            const lngLat = Proj.toLonLat(evt.coordinate);
+            const lngLat = evt.coordinate;
+            const bbox = [lngLat[0] - tolerance, lngLat[1] - tolerance, lngLat[0] + tolerance, lngLat[1] + tolerance];
             const params = Object.assign({}, {
               request: 'GetFeature',
               version: '1.0.0',
               typename: layer.source,
               outputformat: 'JSON',
-              srs: 'EPSG:4326',
-              'cql_filter': `DWITHIN(${geomName},Point(${lngLat[0]} ${lngLat[1]}),${tolerance},${units})`,
+              srsName: 'EPSG:4326',
+              'cql_filter': `BBOX(${geomName},${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]},'${this.props.projection}')`,
             }, layer.metadata[QUERY_PARAMS_KEY]);
             const url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
             fetch(url).then(
@@ -1581,7 +1577,7 @@ Map.propTypes = {
 
 Map.defaultProps = {
   ...MapCommon.defaultProps,
-  tolerance: 5,
+  tolerance: 2,
   declutter: false,
   onFeatureSelected: () => {
   },
