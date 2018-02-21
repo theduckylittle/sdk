@@ -30,7 +30,13 @@ export function MapRender() {
   );
 }
 
-export const MapPropTypes = {
+/**
+ * @module components/map-common
+ */
+export default class MapCommon extends React.Component {
+}
+
+MapCommon.propTypes = {
   /** Should we wrap the world? If yes, data will be repeated in all worlds. */
   wrapX: PropTypes.bool,
   /** Should we handle map hover to show mouseposition? */
@@ -101,7 +107,7 @@ export const MapPropTypes = {
   clearMeasureFeature: PropTypes.func,
 };
 
-export const MapDefaultProps = {
+MapCommon.defaultProps = {
   wrapX: true,
   hover: true,
   projection: 'EPSG:3857',

@@ -19,7 +19,7 @@ import {connect} from 'react-redux';
 import {setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
 import {getResolutionForZoom, getKey} from '../util';
-import {MapPropTypes, MapDefaultProps, MapRender} from './map-common';
+import MapCommon, {MapRender} from './map-common';
 
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import {dataVersionKey} from '../reducers/map';
@@ -44,7 +44,7 @@ const SIMPLE_SELECT_MODE = 'simple_select';
 const DIRECT_SELECT_MODE = 'direct_select';
 const STATIC_MODE = 'static';
 
-/** @module components/map
+/** @module components/mapboxgl
  *
  * @desc Provide a Mapbox GL map which reflects the
  *       state of the Redux store.
@@ -454,12 +454,15 @@ export class MapboxGL extends React.Component {
   }
 }
 
-MapboxGL.propTypes = Object.assign({}, {
+MapboxGL.propTypes = {
+  ...MapCommon.propTypes,
   /** Initial drawing modes that are available for drawing */
   drawingModes: PropTypes.arrayOf(PropTypes.object),
-}, MapPropTypes);
+};
 
-MapboxGL.defaultProps = Object.assign({}, MapDefaultProps);
+MapboxGL.defaultProps = {
+  ...MapCommon.defaultProps,
+};
 
 function mapStateToProps(state) {
   return {

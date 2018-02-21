@@ -51,6 +51,15 @@ exports.handlers = {
         if (info) {
           doclet.properties = [];
           for (let i = 0, ii = info.length; i < ii; ++i) {
+            if (info[i].composes) {
+              const parentClass = info[i].composes[0].replace('./', 'module:components/');
+              const parentInfo = componentInfo[parentClass];
+              for (let p = 0, pp = parentInfo.length; p < pp; ++p) {
+                if (parentInfo[p].props) {
+                  info[i].props = Object.assign(info[i].props || {}, parentInfo[p].props);
+                }
+              }
+            }
             if (info[i].props) {
               for (let key in info[i].props) {
                 const prop = info[i].props[key];

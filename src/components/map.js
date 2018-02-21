@@ -77,7 +77,7 @@ import {updateLayer, setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
 import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
-import {MapPropTypes, MapDefaultProps, MapRender} from './map-common';
+import MapCommon, {MapRender} from './map-common';
 
 import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '../actions/drawing';
 
@@ -1559,7 +1559,8 @@ export class Map extends React.Component {
   }
 }
 
-Map.propTypes = Object.assign({}, {
+Map.propTypes = {
+  ...MapCommon.propTypes,
   /** Should we declutter labels and symbols? */
   declutter: PropTypes.bool,
   /** Tolerance in pixels for WFS DWITHIN type queries */
@@ -1574,9 +1575,10 @@ Map.propTypes = Object.assign({}, {
   finalizeMeasureFeature: PropTypes.func,
   /** Callback function that should generate a TIME based filter. */
   createLayerFilter: PropTypes.func,
-}, MapPropTypes);
+};
 
-Map.defaultProps = Object.assign({}, {
+Map.defaultProps = {
+  ...MapCommon.defaultProps,
   tolerance: 5,
   declutter: false,
   onFeatureSelected: () => {
@@ -1589,7 +1591,7 @@ Map.defaultProps = Object.assign({}, {
   },
   createLayerFilter: () => {
   }
-}, MapDefaultProps);
+};
 
 function mapStateToProps(state) {
   return {
