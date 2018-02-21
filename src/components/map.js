@@ -33,6 +33,9 @@ import plugins from 'ol/plugins';
 import PluginType from 'ol/plugintype';
 import TileLayerRenderer from 'ol/renderer/canvas/tilelayer';
 
+import PolygonGeom from 'ol/geom/polygon';
+import MultiPolygonGeom from 'ol/geom/multipolygon';
+
 import Observable from 'ol/observable';
 
 import Proj from 'ol/proj';
@@ -1185,8 +1188,8 @@ export class Map extends React.Component {
           const geomName = layer.metadata[GEOMETRY_NAME_KEY];
           promises.push(new Promise((resolve) => {
             const tolerance = ((map_extent[3] - map_extent[1]) / map_size[1]) * this.props.tolerance;
-            const lngLat = evt.coordinate;
-            const bbox = [lngLat[0] - tolerance, lngLat[1] - tolerance, lngLat[0] + tolerance, lngLat[1] + tolerance];
+            const coord = evt.coordinate;
+            const bbox = [coord[0] - tolerance, coord[1] - tolerance, coord[0] + tolerance, coord[1] + tolerance];
             const params = Object.assign({}, {
               request: 'GetFeature',
               version: '1.0.0',
@@ -1201,8 +1204,21 @@ export class Map extends React.Component {
               error => console.error('An error occured.', error),
             )
               .then((json) => {
+                const features = GEOJSON_FORMAT.readFeatures(json);
+                const intersection = [];
+                for (let i = 0, ii = features.length; i < ii; ++i) {
+                  const feature = features[i];
+                  const geom = feature.getGeometry();
+                  if (geom instanceof PolygonGeom || geom instanceof MultiPolygonGeom) {
+                    if (geom.intersectsCoordinate(Proj.toLonLat(coord))) {
+                      intersection.push(feature);
+                    }
+                  } else {
+                    intersection.push(feature);
+                  }
+                }
                 features_by_layer[layer.source] = GEOJSON_FORMAT.writeFeaturesObject(
-                  GEOJSON_FORMAT.readFeatures(json), {
+                  intersection, {
                     featureProjection: GEOJSON_FORMAT.readProjection(json),
                     dataProjection: 'EPSG:4326',
                   },
@@ -1561,7 +1577,7 @@ Map.propTypes = {
   ...MapCommon.propTypes,
   /** Should we declutter labels and symbols? */
   declutter: PropTypes.bool,
-  /** Tolerance in pixels for WFS DWITHIN type queries */
+  /** Tolerance in pixels for WFS BBOX type queries */
   tolerance: PropTypes.number,
   /** onFeatureSelected callback, triggered on select event of the select interaction. */
   onFeatureSelected: PropTypes.func,
@@ -1577,7 +1593,7 @@ Map.propTypes = {
 
 Map.defaultProps = {
   ...MapCommon.defaultProps,
-  tolerance: 2,
+  tolerance: 4,
   declutter: false,
   onFeatureSelected: () => {
   },
