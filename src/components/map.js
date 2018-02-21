@@ -647,7 +647,9 @@ export class Map extends React.Component {
       this.map.renderSync();
     }
 
-    if (nextProps.mapinfo && this.props.mapinfo.size !== null && (nextProps.mapinfo.size[0] !== this.props.mapinfo.size[0] || nextProps.mapinfo.size[1] !== this.props.mapinfo.size[1])) {
+    const size = this.props.mapinfo !== undefined ? this.props.mapinfo.size : null;
+    const next_size = nextProps.mapinfo !== undefined ? nextProps.mapinfo.size : null;
+    if (size && next_size && (size[0] !== next_size[0] || size[1] !== next_size[1])) {
       this.map.updateSize();
     }
 
