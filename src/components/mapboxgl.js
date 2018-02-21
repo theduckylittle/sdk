@@ -19,6 +19,7 @@ import {connect} from 'react-redux';
 import {setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
 import {getResolutionForZoom, getKey} from '../util';
+import {MapPropTypes, MapDefaultProps, MapRender} from './map-common';
 
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import {dataVersionKey} from '../reducers/map';
@@ -85,6 +86,8 @@ export class MapboxGL extends React.Component {
     // interactions are how the user can manipulate the map,
     //  this tracks any active interaction.
     this.activeInteractions = null;
+
+    this.render = MapRender.bind(this);
   }
 
   componentDidMount() {
@@ -192,7 +195,7 @@ export class MapboxGL extends React.Component {
   }
 
   onMapMoveEnd() {
-    this.props.setView(this.map);
+    this.props.setView(this.map, this.props.projection);
   }
 
   onMouseMove(e) {
@@ -242,7 +245,7 @@ export class MapboxGL extends React.Component {
     if (this.map) {
       this.props.setSize([this.mapdiv.offsetWidth, this.mapdiv.offsetHeight], this.map);
 
-      this.props.setProjection('EPSG:3857');
+      this.props.setProjection(this.props.projection);
 
       this.map.on('resize', () => {
         this.props.setSize([this.mapdiv.offsetWidth, this.mapdiv.offsetHeight], this.map);
@@ -449,134 +452,14 @@ export class MapboxGL extends React.Component {
       overlays_to_remove[i].remove();
     }
   }
-
-  render() {
-    let className = 'sdk-map';
-    if (this.props.className) {
-      className = `${className} ${this.props.className}`;
-    }
-    return (
-      <div style={this.props.style} ref={(c) => {
-        this.mapdiv = c;
-      }} className={className}>
-        <div className="controls">
-          {this.props.children}
-        </div>
-      </div>
-    );
-  }
 }
 
-MapboxGL.propTypes = {
-  /** Should we wrap the world? If yes, data will be repeated in all worlds. */
-  wrapX: PropTypes.bool,
-  /** Should we handle map hover to show mouseposition? */
-  hover: PropTypes.bool,
-  /** Map configuration, modelled after the Mapbox Style specification. */
-  map: PropTypes.shape({
-    /** Center of the map. */
-    center: PropTypes.array,
-    /** Zoom level of the map. */
-    zoom: PropTypes.number,
-    /** Rotation of the map in degrees. */
-    bearing: PropTypes.number,
-    /** Extra information about the map. */
-    metadata: PropTypes.object,
-    /** List of map layers. */
-    layers: PropTypes.array,
-    /** List of layer sources. */
-    sources: PropTypes.object,
-    /** Sprite sheet to use. */
-    sprite: PropTypes.string,
-  }),
-  /** Child components. */
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ]),
-  /** Mapbox specific configuration. */
-  mapbox: PropTypes.shape({
-    /** Base url to use for mapbox:// substitutions. */
-    baseUrl: PropTypes.string,
-    /** Access token for the Mapbox account to use. */
-    accessToken: PropTypes.string,
-  }),
-  /** Style configuration object. */
-  style: PropTypes.object,
-  /** Css className. */
-  className: PropTypes.string,
-  /** Drawing specific configuration. */
-  drawing: PropTypes.shape({
-    /** Current interaction to use for drawing. */
-    interaction: PropTypes.string,
-    /** Current source name to use for drawing. */
-    sourceName: PropTypes.string,
-  }),
-  /** Initial popups to display in the map. */
-  initialPopups: PropTypes.arrayOf(PropTypes.object),
+MapboxGL.propTypes = Object.assign({}, {
   /** Initial drawing modes that are available for drawing */
   drawingModes: PropTypes.arrayOf(PropTypes.object),
-  /** setView callback function, triggered on moveend. */
-  setView: PropTypes.func,
-  /** setMousePosition callback function, triggered on mousemove. */
-  setMousePosition: PropTypes.func,
-  /** setProjection callback function. */
-  setProjection: PropTypes.func,
-  /** Should we include features when the map is clicked? */
-  includeFeaturesOnClick: PropTypes.bool,
-  /** onClick callback function, triggered on singleclick. */
-  onClick: PropTypes.func,
-  /** onFeatureDrawn callback, triggered on drawend of the draw interaction. */
-  onFeatureDrawn: PropTypes.func,
-  /** onFeatureModified callback, triggered on modifyend of the modify interaction. */
-  onFeatureModified: PropTypes.func,
-  /** setMeasureGeometry callback, called when the measure geometry changes. */
-  setMeasureGeometry: PropTypes.func,
-  /** clearMeasureFeature callback, called when the measure feature is cleared. */
-  clearMeasureFeature: PropTypes.func,
-};
+}, MapPropTypes);
 
-MapboxGL.defaultProps = {
-  wrapX: true,
-  hover: true,
-  map: {
-    center: [0, 0],
-    zoom: 2,
-    bearing: 0,
-    metadata: {},
-    layers: [],
-    sources: {},
-    sprite: undefined,
-  },
-  drawing: {
-    interaction: null,
-    source: null,
-  },
-  mapbox: {
-    baseUrl: '',
-    accessToken: '',
-  },
-  initialPopups: [],
-  setView: () => {
-    // swallow event.
-  },
-  setSize: () => {},
-  setMousePosition: () => {
-    // swallow event.
-  },
-  setProjection: () => {},
-  includeFeaturesOnClick: false,
-  onClick: () => {
-  },
-  onFeatureDrawn: () => {
-  },
-  onFeatureModified: () => {
-  },
-  setMeasureGeometry: () => {
-  },
-  clearMeasureFeature: () => {
-  },
-};
+MapboxGL.defaultProps = Object.assign({}, MapDefaultProps);
 
 function mapStateToProps(state) {
   return {
@@ -598,14 +481,14 @@ function mapDispatchToProps(dispatch) {
   return {
     updateLayer: (layerId, layerConfig) => {
     },
-    setView: (map) => {
+    setView: (map, projection) => {
       const center = map.getCenter().toArray();
       const bearing = map.getBearing();
       const zoom = map.getZoom();
       dispatch(setView(center, zoom));
       dispatch(setBearing(bearing));
       dispatch(setMapExtent(getMapExtent(map)));
-      dispatch(setResolution(getResolutionForZoom(zoom, 'EPSG:3857')));
+      dispatch(setResolution(getResolutionForZoom(zoom, projection)));
     },
     setSize: (size, map) => {
       dispatch(setMapSize(size));
