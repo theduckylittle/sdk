@@ -77,6 +77,7 @@ import {updateLayer, setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
 import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
+import MapCommon, {MapRender} from './map-common';
 
 import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '../actions/drawing';
 
@@ -532,6 +533,8 @@ export class Map extends React.Component {
     // interactions are how the user can manipulate the map,
     //  this tracks any active interaction.
     this.activeInteractions = null;
+
+    this.render = MapRender.bind(this);
   }
 
   componentDidMount() {
@@ -1556,103 +1559,20 @@ export class Map extends React.Component {
     return styleObj;
 
   }
-
-  render() {
-    let className = 'sdk-map';
-    if (this.props.className) {
-      className = `${className} ${this.props.className}`;
-    }
-    return (
-      <div style={this.props.style} ref={(c) => {
-        this.mapdiv = c;
-      }} className={className}>
-        <div className="controls">
-          {this.props.children}
-        </div>
-      </div>
-    );
-  }
 }
 
 Map.propTypes = {
+  ...MapCommon.propTypes,
   /** Should we declutter labels and symbols? */
   declutter: PropTypes.bool,
-  /** Should we wrap the world? If yes, data will be repeated in all worlds. */
-  wrapX: PropTypes.bool,
-  /** Should we handle map hover to show mouseposition? */
-  hover: PropTypes.bool,
-  /** Projection of the map, normally an EPSG code. */
-  projection: PropTypes.string,
   /** Tolerance in pixels for WFS DWITHIN type queries */
   tolerance: PropTypes.number,
-  /** Map configuration, modelled after the Mapbox Style specification. */
-  map: PropTypes.shape({
-    /** Center of the map. */
-    center: PropTypes.array,
-    /** Zoom level of the map. */
-    zoom: PropTypes.number,
-    /** Rotation of the map in degrees. */
-    bearing: PropTypes.number,
-    /** Extra information about the map. */
-    metadata: PropTypes.object,
-    /** List of map layers. */
-    layers: PropTypes.array,
-    /** List of layer sources. */
-    sources: PropTypes.object,
-    /** Sprite sheet to use. */
-    sprite: PropTypes.string,
-  }),
-  /** Child components. */
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ]),
-  /** Mapbox specific configuration. */
-  mapbox: PropTypes.shape({
-    /** Base url to use for mapbox:// substitutions. */
-    baseUrl: PropTypes.string,
-    /** Access token for the Mapbox account to use. */
-    accessToken: PropTypes.string,
-  }),
-  /** Style configuration object. */
-  style: PropTypes.object,
-  /** Css className. */
-  className: PropTypes.string,
-  /** Drawing specific configuration. */
-  drawing: PropTypes.shape({
-    /** Current interaction to use for drawing. */
-    interaction: PropTypes.string,
-    /** Current source name to use for drawing. */
-    sourceName: PropTypes.string,
-  }),
-  /** Initial popups to display in the map. */
-  initialPopups: PropTypes.arrayOf(PropTypes.object),
-  /** setView callback function, triggered on moveend. */
-  setView: PropTypes.func,
-  /** setSize callback function, triggered on change size. */
-  setSize: PropTypes.func,
-  /** setMousePosition callback function, triggered on pointermove. */
-  setMousePosition: PropTypes.func,
-  /** setProjection callback function. */
-  setProjection: PropTypes.func,
-  /** Should we include features when the map is clicked? */
-  includeFeaturesOnClick: PropTypes.bool,
-  /** onClick callback function, triggered on singleclick. */
-  onClick: PropTypes.func,
-  /** onFeatureDrawn callback, triggered on drawend of the draw interaction. */
-  onFeatureDrawn: PropTypes.func,
-  /** onFeatureModified callback, triggered on modifyend of the modify interaction. */
-  onFeatureModified: PropTypes.func,
   /** onFeatureSelected callback, triggered on select event of the select interaction. */
   onFeatureSelected: PropTypes.func,
   /** onFeatureDeselected callback, triggered when a feature gets deselected. */
   onFeatureDeselected: PropTypes.func,
   /** onExportImage callback, done on postcompose. */
   onExportImage: PropTypes.func,
-  /** setMeasureGeometry callback, called when the measure geometry changes. */
-  setMeasureGeometry: PropTypes.func,
-  /** clearMeasureFeature callback, called when the measure feature is cleared. */
-  clearMeasureFeature: PropTypes.func,
   /** finalizeMeasureFeature callback, called when the measure feature is done. */
   finalizeMeasureFeature: PropTypes.func,
   /** Callback function that should generate a TIME based filter. */
@@ -1660,58 +1580,19 @@ Map.propTypes = {
 };
 
 Map.defaultProps = {
+  ...MapCommon.defaultProps,
   tolerance: 5,
   declutter: false,
-  wrapX: true,
-  hover: true,
-  projection: 'EPSG:3857',
-  map: {
-    center: [0, 0],
-    zoom: 2,
-    bearing: 0,
-    metadata: {},
-    layers: [],
-    sources: {},
-    sprite: undefined,
-  },
-  drawing: {
-    interaction: null,
-    source: null,
-  },
-  mapbox: {
-    baseUrl: '',
-    accessToken: '',
-  },
-  initialPopups: [],
-  setView: () => {
-    // swallow event.
-  },
-  setSize: () => {},
-  setMousePosition: () => {
-    // swallow event.
-  },
-  setProjection: () => {},
-  includeFeaturesOnClick: false,
-  onClick: () => {
-  },
-  onFeatureDrawn: () => {
-  },
-  onFeatureModified: () => {
-  },
   onFeatureSelected: () => {
   },
   onFeatureDeselected: () => {
   },
   onExportImage: () => {
   },
-  setMeasureGeometry: () => {
-  },
-  clearMeasureFeature: () => {
-  },
   finalizeMeasureFeature: () => {
   },
   createLayerFilter: () => {
-  },
+  }
 };
 
 function mapStateToProps(state) {

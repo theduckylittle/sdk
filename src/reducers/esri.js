@@ -19,38 +19,11 @@
  */
 
 import {ESRI} from '../action-types';
+import {addSource, removeSource} from './source';
 
 const defaultState = {
   sources: {},
 };
-
-/** Add a source to the state.
- * @param {Object} state Current state.
- * @param {Object} action Action to handle.
- *
- * @returns {Object} The new state.
- */
-function addSource(state, action) {
-  const new_source = {};
-  new_source[action.sourceName] = action.sourceDef;
-
-  const new_sources = Object.assign({}, state.sources, new_source);
-  return Object.assign({}, state, {
-    sources: new_sources
-  });
-}
-
-/** Remove a source from the state.
- * @param {Object} state Current state.
- * @param {Object} action Action to handle.
- *
- * @returns {Object} The new state.
- */
-function removeSource(state, action) {
-  const new_sources = Object.assign({}, state.sources);
-  delete new_sources[action.sourceName];
-  return Object.assign({}, state, {sources: new_sources});
-}
 
 /** Esri reducer.
  *  @param {Object} state The redux state.
