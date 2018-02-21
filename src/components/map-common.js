@@ -32,6 +32,7 @@ export function MapRender() {
 
 /**
  * @module components/map-common
+ * @ignore
  */
 export default class MapCommon extends React.Component {
 }
