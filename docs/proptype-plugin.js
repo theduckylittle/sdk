@@ -70,14 +70,16 @@ exports.handlers = {
                     defaultValue = defaultValue.substring(defaultValue.indexOf('class ') + 6, defaultValue.indexOf('extends'));
                   }
                 }
-                doclet.properties.push({
-                  name: key,
-                  optional: !prop.required,
-                  description: prop.description,
-                  defaultvalue: defaultValue,
-                  type: {names: prop.type ? generateType(prop.type) : undefined},
-                  subprops: getSubprops(prop),
-                });
+                if (prop.description.indexOf('@ignore') === -1) {
+                  doclet.properties.push({
+                    name: key,
+                    optional: !prop.required,
+                    description: prop.description,
+                    defaultvalue: defaultValue,
+                    type: {names: prop.type ? generateType(prop.type) : undefined},
+                    subprops: getSubprops(prop),
+                  });
+                }
               }
             }
           }

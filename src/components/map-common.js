@@ -86,13 +86,21 @@ MapCommon.propTypes = {
   }),
   /** Initial popups to display in the map. */
   initialPopups: PropTypes.arrayOf(PropTypes.object),
-  /** setView callback function, triggered on moveend. */
+  /** setView callback function, triggered on moveend.
+   * @ignore
+   */
   setView: PropTypes.func,
-  /** setSize callback function, triggered on change size. */
+  /** setSize callback function, triggered on change size.
+   * @ignore
+   */
   setSize: PropTypes.func,
-  /** setMousePosition callback function, triggered on pointermove. */
+  /** setMousePosition callback function, triggered on pointermove.
+   * @ignore
+   */
   setMousePosition: PropTypes.func,
-  /** setProjection callback function. */
+  /** setProjection callback function.
+   * @ignore
+   */
   setProjection: PropTypes.func,
   /** Should we include features when the map is clicked? */
   includeFeaturesOnClick: PropTypes.bool,
@@ -102,9 +110,13 @@ MapCommon.propTypes = {
   onFeatureDrawn: PropTypes.func,
   /** onFeatureModified callback, triggered on modifyend of the modify interaction. */
   onFeatureModified: PropTypes.func,
-  /** setMeasureGeometry callback, called when the measure geometry changes. */
+  /** setMeasureGeometry callback, called when the measure geometry changes.
+   * @ignore
+   */
   setMeasureGeometry: PropTypes.func,
-  /** clearMeasureFeature callback, called when the measure feature is cleared. */
+  /** clearMeasureFeature callback, called when the measure feature is cleared.
+   * @ignore
+   */
   clearMeasureFeature: PropTypes.func,
 };
 

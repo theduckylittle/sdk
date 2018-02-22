@@ -1585,7 +1585,9 @@ Map.propTypes = {
   onFeatureDeselected: PropTypes.func,
   /** onExportImage callback, done on postcompose. */
   onExportImage: PropTypes.func,
-  /** finalizeMeasureFeature callback, called when the measure feature is done. */
+  /** finalizeMeasureFeature callback, called when the measure feature is done.
+   * @ignore
+   */
   finalizeMeasureFeature: PropTypes.func,
   /** Callback function that should generate a TIME based filter. */
   createLayerFilter: PropTypes.func,

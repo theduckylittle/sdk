@@ -153,7 +153,9 @@ HashHistory.propTypes = {
     /** Rotation of the map in degrees. */
     rotation: PropTypes.number,
   }),
-  /** setView callback function, called when the view needs to change. */
+  /** setView callback function, called when the view needs to change.
+   * @ignore
+   */
   setView: PropTypes.func,
 };
 
