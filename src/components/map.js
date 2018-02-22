@@ -33,6 +33,9 @@ import plugins from 'ol/plugins';
 import PluginType from 'ol/plugintype';
 import TileLayerRenderer from 'ol/renderer/canvas/tilelayer';
 
+import PolygonGeom from 'ol/geom/polygon';
+import MultiPolygonGeom from 'ol/geom/multipolygon';
+
 import Observable from 'ol/observable';
 
 import Proj from 'ol/proj';
@@ -1183,21 +1186,17 @@ export class Map extends React.Component {
         const map_extent = view.calculateExtent(map_size);
         if (layer.metadata[QUERY_TYPE_KEY] === QUERY_TYPE_WFS) {
           const geomName = layer.metadata[GEOMETRY_NAME_KEY];
-          const projUnits = Proj.get(this.props.projection).getUnits();
-          let units;
-          if (projUnits === 'm') {
-            units = 'meters';
-          } // TODO handle other units when needed
           promises.push(new Promise((resolve) => {
             const tolerance = ((map_extent[3] - map_extent[1]) / map_size[1]) * this.props.tolerance;
-            const lngLat = Proj.toLonLat(evt.coordinate);
+            const coord = evt.coordinate;
+            const bbox = [coord[0] - tolerance, coord[1] - tolerance, coord[0] + tolerance, coord[1] + tolerance];
             const params = Object.assign({}, {
               request: 'GetFeature',
               version: '1.0.0',
               typename: layer.source,
               outputformat: 'JSON',
-              srs: 'EPSG:4326',
-              'cql_filter': `DWITHIN(${geomName},Point(${lngLat[0]} ${lngLat[1]}),${tolerance},${units})`,
+              srsName: 'EPSG:4326',
+              'cql_filter': `BBOX(${geomName},${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]},'${this.props.projection}')`,
             }, layer.metadata[QUERY_PARAMS_KEY]);
             const url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
             fetch(url).then(
@@ -1205,8 +1204,21 @@ export class Map extends React.Component {
               error => console.error('An error occured.', error),
             )
               .then((json) => {
+                const features = GEOJSON_FORMAT.readFeatures(json);
+                const intersection = [];
+                for (let i = 0, ii = features.length; i < ii; ++i) {
+                  const feature = features[i];
+                  const geom = feature.getGeometry();
+                  if (geom instanceof PolygonGeom || geom instanceof MultiPolygonGeom) {
+                    if (geom.intersectsCoordinate(Proj.toLonLat(coord))) {
+                      intersection.push(feature);
+                    }
+                  } else {
+                    intersection.push(feature);
+                  }
+                }
                 features_by_layer[layer.source] = GEOJSON_FORMAT.writeFeaturesObject(
-                  GEOJSON_FORMAT.readFeatures(json), {
+                  intersection, {
                     featureProjection: GEOJSON_FORMAT.readProjection(json),
                     dataProjection: 'EPSG:4326',
                   },
@@ -1565,7 +1577,7 @@ Map.propTypes = {
   ...MapCommon.propTypes,
   /** Should we declutter labels and symbols? */
   declutter: PropTypes.bool,
-  /** Tolerance in pixels for WFS DWITHIN type queries */
+  /** Tolerance in pixels for WFS BBOX type queries */
   tolerance: PropTypes.number,
   /** onFeatureSelected callback, triggered on select event of the select interaction. */
   onFeatureSelected: PropTypes.func,
@@ -1581,7 +1593,7 @@ Map.propTypes = {
 
 Map.defaultProps = {
   ...MapCommon.defaultProps,
-  tolerance: 5,
+  tolerance: 4,
   declutter: false,
   onFeatureSelected: () => {
   },
