@@ -157,7 +157,9 @@ export class MapboxGL extends React.Component {
             if (this.draw) {
               if (nextProps.map.sources[src_name].type === 'geojson') {
                 this.props.map.sources[src_name].data.features.forEach((feature) => {
-                  this.draw.delete(feature.properties.id);
+                  if (feature.id) {
+                    this.draw.delete(feature.id);
+                  }
                 });
                 nextProps.map.sources[src_name].data.features.forEach((feature) => {
                   this.draw.add(feature);
