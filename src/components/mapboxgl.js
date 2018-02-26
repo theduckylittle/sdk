@@ -379,7 +379,7 @@ export class MapboxGL extends React.Component {
         this.addedMeasurementListener = true;
       }
     } else {
-      if(this.draw) {
+      if (this.draw) {
         this.draw.changeMode(STATIC_MODE);
       }
     }
