@@ -156,6 +156,9 @@ export class MapboxGL extends React.Component {
             source.setData(nextProps.map.sources[src_name].data);
             if (this.draw) {
               if (nextProps.map.sources[src_name].type === 'geojson') {
+                this.props.map.sources[src_name].data.features.forEach((feature) => {
+                  this.draw.delete(feature.properties.id);
+                });
                 nextProps.map.sources[src_name].data.features.forEach((feature) => {
                   this.draw.add(feature);
                 });
@@ -376,7 +379,9 @@ export class MapboxGL extends React.Component {
         this.addedMeasurementListener = true;
       }
     } else {
-      this.draw.changeMode(STATIC_MODE);
+      if(this.draw) {
+        this.draw.changeMode(STATIC_MODE);
+      }
     }
     if (drawingProps.sourceName) {
       const drawCreate = (evt) => {
