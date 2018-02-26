@@ -338,11 +338,13 @@ export class MapboxGL extends React.Component {
   }
 
   addFeaturesToDrawForSource(sourceName) {
-    if(this.draw) {
+    if (this.draw) {
       this.draw.deleteAll();
-      this.props.map.sources[sourceName].data.features.forEach((feature) => {
-        this.draw.add(feature);
-      });
+      if (this.props.map.sources[sourceName] && this.props.map.sources[sourceName].data && this.props.map.sources[sourceName].data.features) {
+        this.props.map.sources[sourceName].data.features.forEach((feature) => {
+          this.draw.add(feature);
+        });
+      }
     }
   }
 
