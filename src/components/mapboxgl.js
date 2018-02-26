@@ -154,13 +154,6 @@ export class MapboxGL extends React.Component {
           const source = this.map.getSource(src_name);
           if (source && typeof source !== 'undefined') {
             source.setData(nextProps.map.sources[src_name].data);
-            if (this.draw) {
-              if (nextProps.map.sources[src_name].type === 'geojson') {
-                nextProps.map.sources[src_name].data.features.forEach((feature) => {
-                  this.draw.add(feature);
-                });
-              }
-            }
           }
         }
       }
@@ -344,6 +337,17 @@ export class MapboxGL extends React.Component {
     return modeOptions ? modeOptions : {};
   }
 
+  addFeaturesToDrawForSource(sourceName) {
+    if (this.draw) {
+      this.draw.deleteAll();
+      if (this.props.map.sources[sourceName] && this.props.map.sources[sourceName].data && this.props.map.sources[sourceName].data.features) {
+        this.props.map.sources[sourceName].data.features.forEach((feature) => {
+          this.draw.add(feature);
+        });
+      }
+    }
+  }
+
   updateInteraction(drawingProps) {
     // this assumes the interaction is different,
     //  so the first thing to do is clear out the old interaction
@@ -354,14 +358,17 @@ export class MapboxGL extends React.Component {
       this.activeInteractions = null;
     }
     if (INTERACTIONS.drawing.includes(drawingProps.interaction)) {
+      this.addFeaturesToDrawForSource(drawingProps.sourceName);
       this.currentMode = this.setMode(this.getMode(drawingProps.interaction), drawingProps.currentMode);
       this.afterMode = this.setMode(this.currentMode, drawingProps.afterMode);
       this.draw.changeMode(this.currentMode, this.modeOptions(drawingProps.currentModeOptions));
     } else if (INTERACTIONS.modify === drawingProps.interaction || INTERACTIONS.select === drawingProps.interaction) {
+      this.addFeaturesToDrawForSource(drawingProps.sourceName);
       this.currentMode = this.setMode(SIMPLE_SELECT_MODE, drawingProps.currentMode);
       this.draw.changeMode(this.currentMode, this.modeOptions(drawingProps.currentModeOptions));
       this.afterMode = this.setMode(DIRECT_SELECT_MODE, drawingProps.afterMode);
     } else if (INTERACTIONS.measuring.includes(drawingProps.interaction)) {
+      this.addFeaturesToDrawForSource(drawingProps.sourceName);
       // clear the previous measure feature.
       this.props.clearMeasureFeature();
       // The measure interactions are the same as the drawing interactions
@@ -376,7 +383,9 @@ export class MapboxGL extends React.Component {
         this.addedMeasurementListener = true;
       }
     } else {
-      this.draw.changeMode(STATIC_MODE);
+      if (this.draw) {
+        this.draw.changeMode(STATIC_MODE);
+      }
     }
     if (drawingProps.sourceName) {
       const drawCreate = (evt) => {

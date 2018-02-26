@@ -17,6 +17,8 @@ const createMapDrawMock = () => {
   return {
     changeMode: () => {},
     getAll: () => {},
+    add: () => {},
+    deleteAll: () => {}
   };
 };
 const createMapMock = () => {
@@ -32,6 +34,8 @@ const createMapMock = () => {
     setBearing: () => {},
     setZoom: () => {},
     addControl: () => {},
+    on: () => {},
+    off: () => {},
     queryRenderedFeatures: () => {
       return [{
         layer: {
@@ -476,6 +480,48 @@ describe('MapboxGL component', () => {
     spyOn(map.draw, 'changeMode');
     map.updateInteraction({interaction: 'Polygon'});
     expect(map.draw.changeMode).toHaveBeenCalled();
+  });
+
+  it('updateInteraction adds the features to draw', () => {
+    const sources = {
+      geojson: {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [{id: '1'}]
+        }
+      },
+    };
+    const layers = [];
+    const metadata = {
+      'bnd:source-version': 0,
+      'bnd:layer-version': 0,
+      'bnd:data-version:geojson': 0,
+    };
+
+    const center = [0, 0];
+    const zoom = 2;
+    const apiKey = 'foo';
+    const drawing = {
+      interaction: 'Point'
+    };
+    const props = {
+      drawing,
+      mapbox: {accessToken: apiKey},
+      map: {center, zoom, sources, layers, metadata}
+    };
+    const wrapper = mount(<MapboxGL {...props} />);
+    const map = wrapper.instance();
+    // mock up our GL map
+    map.map = createMapMock();
+    map.draw = createMapDrawMock();
+    const on = () => {};
+    map.map.on = on;
+    spyOn(map.draw, 'deleteAll');
+    spyOn(map.draw, 'add');
+    map.updateInteraction({interaction: 'Polygon', sourceName: 'geojson'});
+    expect(map.draw.deleteAll).toHaveBeenCalled();
+    expect(map.draw.add).toHaveBeenCalled();
   });
 
   it('changes the mode with options', () => {
