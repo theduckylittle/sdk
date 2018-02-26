@@ -1,19 +1,20 @@
 node {
-  withCredentials([string(credentialsId: 'boundlessgeoadmin-token', variable: 'GITHUB_TOKEN'), string(credentialsId: 'sonar-jenkins-pipeline-token', variable: 'SONAR_TOKEN')]) {
-
+  withCredentials([
+    string(credentialsId: 'boundlessgeoadmin-token', variable: 'GITHUB_TOKEN'),
+    string(credentialsId: 'sonar-jenkins-pipeline-token', variable: 'SONAR_TOKEN'),
+  ]) {
     try {
       stage('Checkout'){
         checkout scm
           echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
       }
 
-
       stage('Test'){
         // make build
         sh """
           docker run -v \$(pwd -P):/web \
                      -w /web quay.io/boundlessgeo/node-yarn-sonar bash \
-                     -c 'yarn install && yarn test'
+                     -c 'npm install && npm run test'
           """
       }
 
@@ -22,21 +23,23 @@ node {
         sh """
           docker run -v \$(pwd -P):/web \
                      -w /web quay.io/boundlessgeo/node-yarn-sonar bash \
-                     -c 'yarn cover'
+                     -c 'npm run cover'
           """
       }
 
-      stage('SonarQube Analysis') {
-          sh """
-            docker run -v \$(pwd -P):/web \
-                       -w /web quay.io/boundlessgeo/node-yarn-sonar \
-                       bash -c 'sonar-scanner \
-                                         -Dsonar.host.url=https://sonar-ciapi.boundlessgeo.io \
-                                         -Dsonar.login=$SONAR_TOKEN \
-                                         -Dsonar.projectKey=web-sdk \
-                                         -Dsonar.sources=src \
-                                         -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info'
-            """
+      if (env.BRANCH_NAME == 'master') {
+        stage('SonarQube Analysis') {
+            sh """
+              docker run -v \$(pwd -P):/web \
+                         -w /web quay.io/boundlessgeo/node-yarn-sonar \
+                         bash -c 'sonar-scanner \
+                                           -Dsonar.host.url=https://sonar-ciapi.boundlessgeo.io \
+                                           -Dsonar.login=$SONAR_TOKEN \
+                                           -Dsonar.projectKey=web-sdk \
+                                           -Dsonar.sources=src \
+                                           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info'
+              """
+        }
       }
       currentBuild.result = "SUCCESS"
     }
