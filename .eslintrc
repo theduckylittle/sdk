@@ -1,5 +1,8 @@
 {
     "parser": "babel-eslint",
+    "plugins": [
+        "promise"
+    ],
     "env": {
         "browser": true,
         "node": true
@@ -14,7 +17,8 @@
         "no-plusplus" : ["error", {
             "allowForLoopAfterthoughts": true,
         }],
-        "camelcase": 0
+        "camelcase": 0,
+        "promise/catch-or-return": "warn",
     },
     "settings" : {
         "import/resolver": {
