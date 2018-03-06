@@ -64,6 +64,8 @@ function getRemoteLegend(href) {
       if (ref !== null) {
         ref.innerHTML = html;
       }
+    }).catch((error) => {
+      console.error('An error occured.', error);
     });
 
   return div;
@@ -308,6 +310,8 @@ export class Legend extends React.Component {
                 onApplyStyle();
               });
             }
+          }).catch((error) => {
+            console.error('An error occurred.', error);
           });
         }
       }} />);

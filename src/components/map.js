@@ -611,6 +611,8 @@ export class Map extends React.Component {
       this.configureSources(nextProps.map.sources, next_sources_version)
         .then(() => {
           this.configureLayers(nextProps.map.sources, nextProps.map.layers, next_layer_version, nextProps.map.sprite, this.props.declutter);
+        }).catch((error) => {
+          console.error('An error occured.', error);
         });
     } else if (this.layersVersion !== next_layer_version) {
       this.configureLayers(nextProps.map.sources, nextProps.map.layers, next_layer_version, nextProps.map.sprite, this.props.declutter);
@@ -1178,6 +1180,8 @@ export class Map extends React.Component {
                 },
               ).features;
               resolve(features_by_layer);
+            }).catch((error) => {
+              console.error('An error occured.', error);
             });
         }));
       } else if (layer.metadata[QUERY_ENDPOINT_KEY]) {
@@ -1224,6 +1228,8 @@ export class Map extends React.Component {
                   },
                 ).features;
                 resolve(features_by_layer);
+              }).catch((error) => {
+                console.error('An error occured.', error);
               });
           }));
         } else {
@@ -1433,6 +1439,8 @@ export class Map extends React.Component {
         .then(() => {
           this.configureLayers(this.props.map.sources, this.props.map.layers,
             this.props.map.metadata[LAYER_VERSION_KEY], this.props.map.sprite, this.props.declutter);
+        }).catch((error) => {
+          console.error('An error occured.', error);
         });
     }
 

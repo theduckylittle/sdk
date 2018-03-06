@@ -1261,6 +1261,8 @@ describe('Map component', () => {
     promises[0].then(function(features) {
       expect(features[layer.id][0].id).toBe('bugsites.1');
       done();
+    }).catch((error) => {
+      console.error('An error occured.', error);
     });
   });
 
@@ -1304,6 +1306,8 @@ describe('Map component', () => {
     promises[0].then(function(features) {
       expect(features[layer.id][0].properties.OBJECTID).toBe('281');
       done();
+    }).catch((error) => {
+      console.error('An error occured.', error);
     });
   });
 
@@ -1349,6 +1353,8 @@ describe('Map component', () => {
     promises[0].then(function(features) {
       expect(features[layer.source][0].properties['samp_pop']).toBe(468178);
       done();
+    }).catch((error) => {
+      console.error('An error occured.', error);
     });
   });
 
