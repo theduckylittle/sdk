@@ -2,6 +2,7 @@ node {
   withCredentials([
     string(credentialsId: 'boundlessgeoadmin-token', variable: 'GITHUB_TOKEN'),
     string(credentialsId: 'sonar-jenkins-pipeline-token', variable: 'SONAR_TOKEN'),
+    string(credentialsId: 'NPM_TOKEN', variable: 'NPM_TOKEN'),
   ]) {
     try {
       stage('Checkout'){
@@ -41,6 +42,17 @@ node {
               """
         }
       }
+
+      if (gitTagCheck()) {
+        stage('Create release') {
+            sh """
+              docker run -v \$(pwd -P):/web \
+                         -w /web quay.io/boundlessgeo/node-yarn-sonar bash \
+                         -c 'echo "//registry.npmjs.org/:_authToken=${env.NPM_TOKEN}" > ~/.npmrc && npm install && npm run dist && cd dist && npm publish'
+              """
+        }
+      }
+
       currentBuild.result = "SUCCESS"
     }
     catch (err) {
