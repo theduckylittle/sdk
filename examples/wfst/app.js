@@ -90,7 +90,11 @@ function main() {
 
   let edit_panel = null;
 
-  const selectFeature = (map, coordinate, feature) => {
+  const selectFeature = (map, coordinate, collection) => {
+    let feature;
+    if (collection && collection.features && collection.features.length > 0) {
+      feature = collection.features[0];
+    }
     edit_panel.setState({feature});
   };
 
