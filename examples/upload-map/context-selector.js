@@ -65,24 +65,23 @@ class ContextSelector extends React.PureComponent {
 
   handleSubmit(event) {
     this.clearError();
-    try {
-      fetch (this.state.value)
-        .then(
-          response => {
-            if (response.status >= 400) {
-              this.setState({badurl: response.url});
-              const msg = `${response.status} (${response.statusText})`;
-              this.setError(msg);
-            } else {
-              response.json().then(json => {
-                this.addMap({json});
-              });
-            }
+    fetch (this.state.value)
+      .then(
+        response => {
+          if (response.status >= 400) {
+            this.setState({badurl: response.url});
+            const msg = `${response.status} (${response.statusText})`;
+            this.setError(msg);
+          } else {
+            response.json().then(json => {
+              this.addMap({json});
+            }).catch((e) => {
+              this.setError(e);
+            });
           }
-        );
-    } catch (e) {
-      this.setError(e);
-    }
+        }).catch((e) => {
+        this.setError(e);
+      });
     event.preventDefault();
   }
 

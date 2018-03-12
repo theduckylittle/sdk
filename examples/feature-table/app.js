@@ -80,7 +80,10 @@ function main() {
         error => console.error('An error occured.', error),
       )
       // addFeatures with the features, source name
-      .then(json => store.dispatch(mapActions.addFeatures(sourceName, json)));
+      .then(json => store.dispatch(mapActions.addFeatures(sourceName, json)))
+      .catch((exception) => {
+        console.error('An error occurred.', exception);
+      });
   };
 
   // This is called by the onClick, keeping the onClick HTML clean

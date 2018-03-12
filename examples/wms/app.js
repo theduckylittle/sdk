@@ -74,6 +74,8 @@ function main() {
           }
           layers={root.Layer}
         />, document.getElementById('add-wms'));
+      }).catch((exception) => {
+        console.error('An error occurred.', exception);
       });
   };
 
@@ -105,6 +107,8 @@ function main() {
               features={features}
             />);
           }
+        }).catch((exception) => {
+          console.error('An error occurred.', exception);
         });
       }}>
       <SdkZoomControl style={{position: 'absolute', top: 20, left: 20}} />

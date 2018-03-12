@@ -110,6 +110,8 @@ function main() {
           if (features.length !== 0) {
             map.addPopup(<Popup coordinate={xy} features={features} closeable />);
           }
+        }).catch((exception) => {
+          console.error('An error occurred.', exception);
         });
       }}
     >
