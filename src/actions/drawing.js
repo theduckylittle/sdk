@@ -126,6 +126,12 @@ export function finalizeMeasureFeature() {
   };
 }
 
+/** Finish the measure geometry.
+ *
+ *  Turn the sketch feature into a permanent feature.
+ *
+ *  @returns {Object} A measurement action.
+ */
 export function finishMeasureGeometry() {
   return {
     type: DRAWING.FINISH_MEASURE_GEOMETRY,
