@@ -83,6 +83,10 @@ describe('drawing actions', () => {
     expect(actions.finalizeMeasureFeature()).toEqual({type: DRAWING.FINALIZE_MEASURE_FEATURE});
   });
 
+  it('should create an action to finish the measure geometry', () => {
+    expect(actions.finishMeasureGeometry()).toEqual({type: DRAWING.FINISH_MEASURE_GEOMETRY});
+  });
+
   it('should start a measuring tool', () => {
     expect(actions.startMeasure(INTERACTIONS.measure_point)).toEqual({
       type: DRAWING.START,
@@ -90,6 +94,7 @@ describe('drawing actions', () => {
       sourceName: null,
     });
   });
+
   it('should change the edit style', () => {
     const style = {
       id: 'style1',

@@ -211,6 +211,8 @@ function main() {
               // Show the super advanced fun popup!
               map.addPopup(<MarkFeaturesPopup coordinate={xy} features={features} closeable />);
             }
+          }).catch((exception) => {
+            console.error('An error occurred.', exception);
           });
         }}
       >

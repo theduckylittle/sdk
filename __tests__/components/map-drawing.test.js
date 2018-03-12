@@ -411,6 +411,45 @@ describe('Map component with drawing', () => {
 
   });
 
+  it('measures a polygon, and finishes the geometry', () => {
+    const sdk_map = wrapper.instance().getWrappedInstance();
+    const ol_map = sdk_map.map;
+
+    // set the polygon measure
+    store.dispatch(DrawingActions.startMeasure(INTERACTIONS.measure_polygon));
+    // get the measure interaction
+    const interactions = ol_map.getInteractions();
+    const measure = interactions.item(interactions.getLength() - 1);
+
+    // create a dummy OL feature with a Polygon for measuring.
+    const sketch_geometry = new Polygon([]);
+    const sketch_feature = new Feature(sketch_geometry);
+
+    measure.dispatchEvent({
+      type: 'drawstart',
+      feature: sketch_feature,
+    });
+
+    const coords = [[[0, 0], [20, 20], [0, 40], [0, 0]]];
+    // create a new polygon in map coordinates
+    const tmp_polygon = (new Polygon(coords.slice()));
+    tmp_polygon.transform('EPSG:4326', 'EPSG:3857');
+    sketch_geometry.setCoordinates(tmp_polygon.getCoordinates());
+
+    let state = store.getState().drawing;
+    expect(state.measureFeature).toEqual({
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: coords,
+      },
+    });
+    spyOn(measure, 'finishDrawing');
+    store.dispatch(DrawingActions.finishMeasureGeometry());
+    expect(measure.finishDrawing).toHaveBeenCalled();
+  });
+
   it('returns ol style func', () => {
 
     const mbStyle = [{
