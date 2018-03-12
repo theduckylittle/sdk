@@ -126,6 +126,12 @@ export function finalizeMeasureFeature() {
   };
 }
 
+export function finishMeasureGeometry() {
+  return {
+    type: DRAWING.FINISH_MEASURE_GEOMETRY,
+  };
+}
+
 /** Clear the measurement feature.
  *  @returns {Object} An action object to pass to the reducer.
  */

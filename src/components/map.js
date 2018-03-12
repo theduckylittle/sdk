@@ -691,9 +691,13 @@ export class Map extends React.Component {
     this.updatePopups();
 
     // change the current interaction as needed
-    if (nextProps.drawing && (nextProps.drawing.interaction !== this.props.drawing.interaction
-        || nextProps.drawing.sourceName !== this.props.drawing.sourceName)) {
-      this.updateInteraction(nextProps.drawing);
+    if (nextProps.drawing) {
+      if (nextProps.drawing.interaction !== this.props.drawing.interaction || nextProps.drawing.sourceName !== this.props.drawing.sourceName) {
+        this.updateInteraction(nextProps.drawing);
+      }
+      if (nextProps.drawing.measureFinishGeometry) {
+        this.finishMeasureGeometry();
+      }
     }
 
     if (nextProps.print && nextProps.print.exportImage) {
@@ -1627,6 +1631,11 @@ export class Map extends React.Component {
       for (let i = 0, ii = this.activeInteractions.length; i < ii; i++) {
         this.map.addInteraction(this.activeInteractions[i]);
       }
+    }
+  }
+  finishMeasureGeometry() {
+    if (this.activeInteractions && this.activeInteractions.length === 1) {
+      this.activeInteractions[0].finishDrawing();
     }
   }
   setStyleFunc(styleObj, style) {

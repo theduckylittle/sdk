@@ -150,6 +150,43 @@ describe('drawing reducer', () => {
       measureFeature: line,
       measureSegments: segs,
       measureDone: true,
+      measureFinishGeometry: false,
+      editStyle: null,
+      modifyStyle: null,
+      selectStyle: null
+    });
+  });
+
+  it('should finish the measure geometry', () => {
+    const line = {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Line',
+        coordinates: [
+          [0, 0], [1, 1], [2, 2],
+        ],
+      },
+    };
+    const segs = [1, 1];
+
+    deepFreeze(line);
+    deepFreeze(segs);
+
+    let state = reducer(undefined, actions.setMeasureFeature(line, segs));
+    state = reducer(state, actions.finishMeasureGeometry());
+    deepFreeze(state);
+
+    expect(state).toEqual({
+      interaction: null,
+      sourceName: null,
+      currentMode: null,
+      afterMode: null,
+      currentModeOptions: null,
+      measureFeature: line,
+      measureSegments: segs,
+      measureDone: false,
+      measureFinishGeometry: true,
       editStyle: null,
       modifyStyle: null,
       selectStyle: null

@@ -87,6 +87,11 @@ export default function drawingReducer(state = defaultState, action) {
     case DRAWING.FINALIZE_MEASURE_FEATURE:
       return Object.assign({}, state, {
         measureDone: true,
+        measureFinishGeometry: false,
+      });
+    case DRAWING.FINISH_MEASURE_GEOMETRY:
+      return Object.assign({}, state, {
+        measureFinishGeometry: true,
       });
     case DRAWING.CLEAR_MEASURE_FEATURE:
       return Object.assign({}, state, {
