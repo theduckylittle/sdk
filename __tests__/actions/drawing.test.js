@@ -105,6 +105,7 @@ describe('drawing actions', () => {
       editStyle: style
     });
   });
+
   it('should change the select style function', () => {
     const style = {
       id: 'style1',
@@ -115,6 +116,7 @@ describe('drawing actions', () => {
       selectStyle: style
     });
   });
+
   it('should change the modify style function', () => {
     const style = {
       id: 'style1',
@@ -125,4 +127,16 @@ describe('drawing actions', () => {
       modifyStyle: style
     });
   });
+
+  it('should change the measure style function', () => {
+    const style = {
+      id: 'style1',
+      type: 'fill'
+    };
+    expect(actions.setMeasureStyle(style)).toEqual({
+      type: DRAWING.SET_MEASURE_STYLE,
+      measureStyle: style
+    });
+  });
+
 });

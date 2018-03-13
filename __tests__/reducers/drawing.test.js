@@ -19,6 +19,7 @@ describe('drawing reducer', () => {
       measureDone: false,
       editStyle: null,
       modifyStyle: null,
+      measureStyle: null,
       selectStyle: null
     });
   });
@@ -45,6 +46,7 @@ describe('drawing reducer', () => {
       measureDone: false,
       editStyle: null,
       modifyStyle: null,
+      measureStyle: null,
       selectStyle: null
     };
 
@@ -102,6 +104,7 @@ describe('drawing reducer', () => {
       measureDone: false,
       editStyle: null,
       modifyStyle: null,
+      measureStyle: null,
       selectStyle: null
     });
 
@@ -117,6 +120,7 @@ describe('drawing reducer', () => {
       measureDone: false,
       editStyle: null,
       modifyStyle: null,
+      measureStyle: null,
       selectStyle: null
     });
   });
@@ -153,6 +157,7 @@ describe('drawing reducer', () => {
       measureFinishGeometry: false,
       editStyle: null,
       modifyStyle: null,
+      measureStyle: null,
       selectStyle: null
     });
   });
@@ -189,6 +194,7 @@ describe('drawing reducer', () => {
       measureFinishGeometry: true,
       editStyle: null,
       modifyStyle: null,
+      measureStyle: null,
       selectStyle: null
     });
   });
@@ -213,11 +219,13 @@ describe('drawing reducer', () => {
       measureDone: false,
       editStyle: null,
       modifyStyle: null,
+      measureStyle: null,
       selectStyle: selectStyle
     };
 
     expect(reducer(undefined, test_action)).toEqual(expected_state);
   });
+
   it('should change the modify style', () => {
     const modifyStyle = 'Point';
 
@@ -237,12 +245,14 @@ describe('drawing reducer', () => {
       measureSegments: null,
       measureDone: false,
       editStyle: null,
+      measureStyle: null,
       modifyStyle: modifyStyle,
       selectStyle: null
     };
 
     expect(reducer(undefined, test_action)).toEqual(expected_state);
   });
+
   it('should change the edit style', () => {
     const editStyle = 'Point';
 
@@ -262,12 +272,42 @@ describe('drawing reducer', () => {
       measureSegments: null,
       measureDone: false,
       editStyle: editStyle,
+      measureStyle: null,
       modifyStyle: null,
       selectStyle: null
     };
 
     expect(reducer(undefined, test_action)).toEqual(expected_state);
   });
+
+  it('should change the measure style', () => {
+    const measureStyle = 'MEASURE';
+
+    const test_action = {
+      type: DRAWING.SET_MEASURE_STYLE,
+      measureStyle,
+    };
+    deepFreeze(test_action);
+
+    const expected_state = {
+      interaction: null,
+      sourceName: null,
+      currentMode: null,
+      afterMode: null,
+      currentModeOptions: null,
+      measureFeature: null,
+      measureSegments: null,
+      measureDone: false,
+      editStyle: null,
+      measureStyle: 'MEASURE',
+      modifyStyle: null,
+      selectStyle: null
+    };
+
+    expect(reducer(undefined, test_action)).toEqual(expected_state);
+  });
+
+
   it('should keep the style even if drawing end', () => {
     const editStyle = 'Point';
 
@@ -287,6 +327,7 @@ describe('drawing reducer', () => {
       measureSegments: null,
       measureDone: false,
       editStyle: editStyle,
+      measureStyle: null,
       modifyStyle: null,
       selectStyle: null
     };
@@ -310,6 +351,7 @@ describe('drawing reducer', () => {
       measureSegments: null,
       measureDone: false,
       editStyle: editStyle,
+      measureStyle: null,
       modifyStyle: null,
       selectStyle: null
     };
@@ -324,6 +366,7 @@ describe('drawing reducer', () => {
       measureSegments: null,
       measureDone: false,
       editStyle: editStyle,
+      measureStyle: null,
       modifyStyle: null,
       selectStyle: null
     };
@@ -332,4 +375,5 @@ describe('drawing reducer', () => {
     expect(reducer(expected_state, test_action_start)).toEqual(expected_state_in_between);
     expect(reducer(expected_state_in_between, {type: DRAWING.END})).toEqual(expected_end_state);
   });
+
 });
