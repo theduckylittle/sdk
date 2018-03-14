@@ -32,7 +32,8 @@ const defaultState = {
   measureDone: false,
   editStyle: null,
   modifyStyle: null,
-  selectStyle: null
+  selectStyle: null,
+  measureStyle: null,
 };
 
 /** Drawing reducer.
@@ -77,6 +78,10 @@ export default function drawingReducer(state = defaultState, action) {
     case DRAWING.SET_MODIFY_STYLE:
       return Object.assign({}, state, {
         modifyStyle: action.modifyStyle
+      });
+    case DRAWING.SET_MEASURE_STYLE:
+      return Object.assign({}, state, {
+        measureStyle: action.measureStyle
       });
     case DRAWING.SET_MEASURE_FEATURE:
       return Object.assign({}, state, {

@@ -1600,11 +1600,14 @@ export class Map extends React.Component {
       // clear the previous measure feature.
       this.props.clearMeasureFeature();
 
-      const measure = new DrawInteraction({
+      const measureObj = {
         // The measure interactions are the same as the drawing interactions
         // but are prefixed with "measure:"
         type: drawingProps.interaction.split(':')[1],
-      });
+      };
+      const styleMeasureObj = this.setStyleFunc(measureObj, drawingProps.measureStyle);
+
+      const measure = new DrawInteraction(styleMeasureObj);
 
       let measure_listener = null;
       measure.on('drawstart', (evt) => {
