@@ -102,7 +102,7 @@ describe('mapinfo reducer', () => {
     });
   });
 
-  it('should errored sources', () => {
+  it('should clear errored sources', () => {
     let state = {
       sourceErrors: {
         test: true,
