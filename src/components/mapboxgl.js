@@ -152,7 +152,7 @@ export class MapboxGL extends React.Component {
         if (this.props.map.metadata !== undefined &&
             this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key] && this.map) {
           const source = this.map.getSource(src_name);
-          if (source && typeof source !== 'undefined') {
+          if (source !== undefined) {
             source.setData(nextProps.map.sources[src_name].data);
           }
         }

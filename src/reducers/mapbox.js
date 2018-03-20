@@ -32,10 +32,9 @@ const defaultState = {
  *  @returns {Object} The new state object.
  */
 export default function MapboxReducer(state = defaultState, action) {
-  switch (action.type) {
-    case MAPBOX.CONFIGURE:
-      return Object.assign({}, state, {baseUrl: action.baseUrl, accessToken: action.accessToken});
-    default:
-      return state;
+  if (action.type === MAPBOX.CONFIGURE) {
+    return Object.assign({}, state, {baseUrl: action.baseUrl, accessToken: action.accessToken});
+  } else {
+    return state;
   }
 }
