@@ -247,7 +247,8 @@ export function addFeatures(sourceName, features, position = -1) {
   };
 }
 
-/** Remove features from a source on the map.
+/** Remove features from a source on the map. If no filter is provided, all features
+ *  will get removed from the source.
  *
  *  @param {Object} sourceName Name of the source on which the features will be removed.
  *  @param {string[]} filter Rule determining which features will be removed.
