@@ -18,6 +18,7 @@ describe('mapinfo reducer', () => {
       extent: null,
       projection: 'EPSG:3857',
       resolution: null,
+      sourceErrors: {},
     });
   });
 
@@ -80,6 +81,41 @@ describe('mapinfo reducer', () => {
 
     expect(reducer(state, action)).toEqual({
       requestedRedraws: 1,
+    });
+  });
+
+  it('should set an errored source', () => {
+    let state = {
+      sourceErrors: {},
+    };
+    deepFreeze(state);
+
+    const action = {
+      type: MAPINFO.SET_SOURCE_ERROR,
+      srcName: 'test',
+    };
+
+    expect(reducer(state, action)).toEqual({
+      sourceErrors: {
+        test: true,
+      },
+    });
+  });
+
+  it('should errored sources', () => {
+    let state = {
+      sourceErrors: {
+        test: true,
+      },
+    };
+    deepFreeze(state);
+
+    const action = {
+      type: MAPINFO.CLEAR_SOURCE_ERRORS,
+    };
+
+    expect(reducer(state, action)).toEqual({
+      sourceErrors: {},
     });
   });
 });
