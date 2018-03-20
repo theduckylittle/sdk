@@ -584,13 +584,16 @@ export class Map extends React.Component {
     }
   }
 
-  /** This will check nextProps and nextState to see
-   *  what needs to be updated on the map.
+  shouldComponentUpdate() {
+    // This should always return false to keep
+    // render() from being called.
+    return false;
+  }
+
+  /** This will check nextProps to see what needs to be updated on the map.
    * @param {Object} nextProps The next properties of this component.
-   *
-   * @returns {boolean} should the component re-render?
    */
-  shouldComponentUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const old_time = getKey(this.props.map.metadata, TIME_KEY);
 
     const new_time = getKey(nextProps.map.metadata, TIME_KEY);
@@ -725,10 +728,6 @@ export class Map extends React.Component {
     if (force_redraw || !optionalEquals(this.props, nextProps, 'mapinfo', 'size')) {
       this.map.updateSize();
     }
-
-    // This should always return false to keep
-    // render() from being called.
-    return false;
   }
 
   /** Callback for finished drawings, converts the event's feature

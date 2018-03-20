@@ -444,7 +444,7 @@ describe('Map component', () => {
           }],
         },
       };
-      instance.shouldComponentUpdate.call(instance, nextProps);
+      wrapper.setProps(nextProps);
       window.setTimeout(() => {
         expect(layer.getVisible()).toBe(false);
         done();
@@ -479,7 +479,7 @@ describe('Map component', () => {
     expect(view.getZoom()).toBe(undefined);
   });
 
-  it('should handle undefined center, zoom, bearing in shouldComponentUpdate', () => {
+  it('should handle undefined center, zoom, bearing in componentWillReceiveProps', () => {
     const sources = {
       tilejson: {
         type: 'raster',
@@ -519,7 +519,7 @@ describe('Map component', () => {
         layers,
       },
     };
-    instance.shouldComponentUpdate.call(instance, nextProps);
+    wrapper.setProps(nextProps);
     // previous values should still be valid
     expect(radiansToDegrees(view.getRotation())).toBe(-45);
     expect(view.getZoom()).toBe(2 + 1);
@@ -590,8 +590,6 @@ describe('Map component', () => {
     const zoom = 2;
     const wrapper = mount(<Map map={{center, zoom, sources, layers, metadata}} />);
 
-    const instance = wrapper.instance();
-
     let nextProps = {
       map: {
         center,
@@ -616,7 +614,7 @@ describe('Map component', () => {
     let error = false;
     window.setTimeout(() => {
       try {
-        instance.shouldComponentUpdate.call(instance, nextProps);
+        wrapper.setProps(nextProps);
       } catch (e) {
         error = true;
       }
@@ -675,7 +673,7 @@ describe('Map component', () => {
           }],
         },
       };
-      instance.shouldComponentUpdate.call(instance, nextProps);
+      wrapper.setProps(nextProps);
       window.setTimeout(() => {
         let max_rez = view.constrainResolution(
           view.getMaxResolution(), nextProps.map.sources.tilejson.maxzoom - view.getMinZoom());
@@ -709,7 +707,7 @@ describe('Map component', () => {
             }],
           },
         };
-        instance.shouldComponentUpdate.call(instance, nextProps);
+        wrapper.setProps(nextProps);
         window.setTimeout(() => {
           // the layer minzoom will be handled in the style and *not* on the layer itself.
           max_rez = view.constrainResolution(
@@ -758,7 +756,7 @@ describe('Map component', () => {
           layers: [],
         },
       };
-      instance.shouldComponentUpdate.call(instance, nextProps);
+      wrapper.setProps(nextProps);
       window.setTimeout(() => {
         expect(map.getLayers().getLength()).toBe(0);
         nextProps = {
@@ -773,7 +771,7 @@ describe('Map component', () => {
             layers,
           },
         };
-        instance.shouldComponentUpdate.call(instance, nextProps);
+        wrapper.setProps(nextProps);
         window.setTimeout(() => {
           expect(map.getLayers().getLength()).toBe(1);
           done();
@@ -811,7 +809,7 @@ describe('Map component', () => {
           layers: [],
         },
       };
-      instance.shouldComponentUpdate.call(instance, nextProps);
+      wrapper.setProps(nextProps);
       window.setTimeout(() => {
         expect(instance.sourcesVersion).toEqual(undefined);
         done();
