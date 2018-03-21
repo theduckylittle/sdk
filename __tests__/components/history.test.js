@@ -5,10 +5,10 @@ import {shallow, mount, configure} from 'enzyme';
 import  Adapter from 'enzyme-adapter-react-16';
 
 import {createStore, combineReducers} from 'redux';
-import MapReducer from '../../src/reducers/map';
-import {setView} from '../../src/actions/map';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import {setView} from '@boundlessgeo/sdk/actions/map';
 
-import SdkHashHistory, {HashHistory} from '../../src/components/history';
+import SdkHashHistory, {HashHistory} from '@boundlessgeo/sdk/components/history';
 
 configure({adapter: new Adapter()});
 

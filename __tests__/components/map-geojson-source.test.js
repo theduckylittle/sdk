@@ -10,12 +10,12 @@ import {mount, configure} from 'enzyme';
 import nock from 'nock';
 import  Adapter from 'enzyme-adapter-react-16';
 
-import SdkMap from '../../src/components/map';
-import MapReducer from '../../src/reducers/map';
-import MapboxReducer from '../../src/reducers/mapbox';
-import MapInfoReducer from '../../src/reducers/mapinfo';
-import * as MapActions from '../../src/actions/map';
-import * as MapboxActions from '../../src/actions/mapbox';
+import SdkMap from '@boundlessgeo/sdk/components/map';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import MapboxReducer from '@boundlessgeo/sdk/reducers/mapbox';
+import MapInfoReducer from '@boundlessgeo/sdk/reducers/mapinfo';
+import * as MapActions from '@boundlessgeo/sdk/actions/map';
+import * as MapboxActions from '@boundlessgeo/sdk/actions/mapbox';
 
 configure({adapter: new Adapter()});
 

@@ -11,9 +11,9 @@ import XYZSource from 'ol/source/xyz';
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 
-import ConnectedMap from '../../src/components/map';
-import MapReducer from '../../src/reducers/map';
-import * as MapActions from '../../src/actions/map';
+import ConnectedMap from '@boundlessgeo/sdk/components/map';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import * as MapActions from '@boundlessgeo/sdk/actions/map';
 
 configure({adapter: new Adapter()});
 

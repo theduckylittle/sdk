@@ -4,9 +4,9 @@ import configureMockStore from 'redux-mock-store';
 import nock from 'nock';
 import thunk from 'redux-thunk';
 
-import * as actions from '../../src/actions/map';
-import {MAP} from '../../src/action-types';
-import {TITLE_KEY, TIME_KEY} from '../../src/constants';
+import * as actions from '@boundlessgeo/sdk/actions/map';
+import {MAP} from '@boundlessgeo/sdk/action-types';
+import {TITLE_KEY, TIME_KEY} from '@boundlessgeo/sdk/constants';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);

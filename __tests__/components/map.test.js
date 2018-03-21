@@ -20,17 +20,17 @@ import ImageTile from 'ol/imagetile';
 import TileState from 'ol/tilestate';
 
 import {createStore, combineReducers} from 'redux';
-import {radiansToDegrees} from '../../src/util';
+import {radiansToDegrees} from '@boundlessgeo/sdk/util';
 
-import ConnectedMap, {Map} from '../../src/components/map';
-import {hydrateLayer, getFakeStyle, getMapExtent, getTileJSONUrl} from '../../src/components/map';
-import SdkPopup from '../../src/components/map/popup';
-import MapReducer from '../../src/reducers/map';
-import MapInfoReducer from '../../src/reducers/mapinfo';
-import PrintReducer from '../../src/reducers/print';
-import * as MapActions from '../../src/actions/map';
-import * as MapInfoActions from '../../src/actions/mapinfo';
-import * as PrintActions from '../../src/actions/print';
+import ConnectedMap, {Map} from '@boundlessgeo/sdk/components/map';
+import {hydrateLayer, getFakeStyle, getMapExtent, getTileJSONUrl} from '@boundlessgeo/sdk/components/map';
+import SdkPopup from '@boundlessgeo/sdk/components/map/popup';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import MapInfoReducer from '@boundlessgeo/sdk/reducers/mapinfo';
+import PrintReducer from '@boundlessgeo/sdk/reducers/print';
+import * as MapActions from '@boundlessgeo/sdk/actions/map';
+import * as MapInfoActions from '@boundlessgeo/sdk/actions/mapinfo';
+import * as PrintActions from '@boundlessgeo/sdk/actions/print';
 
 configure({adapter: new Adapter()});
 

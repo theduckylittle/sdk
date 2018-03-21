@@ -1,7 +1,7 @@
 /* global describe, it, expect */
 
-import * as actions from '../../src/actions/wfs';
-import {WFS} from '../../src/action-types';
+import * as actions from '@boundlessgeo/sdk/actions/wfs';
+import {WFS} from '@boundlessgeo/sdk/action-types';
 
 describe('test that wfs actions are properly created', () => {
   const DUMMY_FEATURE = {

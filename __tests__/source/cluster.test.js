@@ -4,7 +4,7 @@ import VectorSource from 'ol/source/vector';
 import Feature from 'ol/feature';
 import PointGeom from 'ol/geom/point';
 
-import SdkClusterSource from '../../src/source/cluster';
+import SdkClusterSource from '@boundlessgeo/sdk/source/cluster';
 
 describe('Cluster source', () => {
   it('should set cluster count', () => {

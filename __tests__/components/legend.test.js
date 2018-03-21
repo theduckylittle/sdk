@@ -6,10 +6,10 @@ import nock from 'nock';
 import  Adapter from 'enzyme-adapter-react-16';
 
 import {createStore, combineReducers} from 'redux';
-import MapReducer from '../../src/reducers/map';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
 
-import SdkLegend, {Legend} from '../../src/components/legend';
-import {getLegend, getPointGeometry, getLineGeometry, getPolygonGeometry} from '../../src/components/legend';
+import SdkLegend, {Legend} from '@boundlessgeo/sdk/components/legend';
+import {getLegend, getPointGeometry, getLineGeometry, getPolygonGeometry} from '@boundlessgeo/sdk/components/legend';
 
 configure({adapter: new Adapter()});
 
