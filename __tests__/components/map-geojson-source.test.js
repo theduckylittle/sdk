@@ -13,6 +13,7 @@ import  Adapter from 'enzyme-adapter-react-16';
 import SdkMap from '../../src/components/map';
 import MapReducer from '../../src/reducers/map';
 import MapboxReducer from '../../src/reducers/mapbox';
+import MapInfoReducer from '../../src/reducers/mapinfo';
 import * as MapActions from '../../src/actions/map';
 import * as MapboxActions from '../../src/actions/mapbox';
 
@@ -27,6 +28,7 @@ describe('tests for the geojson-type map sources', () => {
     store = createStore(combineReducers({
       map: MapReducer,
       mapbox: MapboxReducer,
+      mapinfo: MapInfoReducer,
     }));
 
     baseUrl = 'http://example.com/base';
@@ -173,5 +175,19 @@ describe('tests for the geojson-type map sources', () => {
       .reply(200, JSON.stringify(feature_collection));
 
     testGeojsonData(done, 'https://foo.com/my.geojson', 2);
+  });
+
+  it('dispatches an error', (done) => {
+    nock('http://dummy')
+      .get('/missing.geojson')
+      .reply(404, '');
+
+    const follow_up = () => {
+      const errors = store.getState().mapinfo.sourceErrors;
+      expect(errors['test-source']).toBe(true);
+      done();
+    };
+
+    testGeojsonData(follow_up, 'http://dummy/missing.geojson', 0);
   });
 });

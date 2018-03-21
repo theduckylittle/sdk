@@ -77,7 +77,7 @@ import AttributionControl from 'ol/control/attribution';
 import LoadingStrategy from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
-import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection} from '../actions/mapinfo';
+import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection, setSourceError, clearSourceErrors} from '../actions/mapinfo';
 import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
 import MapCommon, {MapRender} from './map-common';
@@ -370,6 +370,8 @@ function getLoaderFunction(glSource, mapProjection, baseUrl) {
           this.addFeatures(GEOJSON_FORMAT.readFeatures(features, readFeatureOpt));
         }
       }).catch((error) => {
+        // use the event name tileloaderror for consistency.
+        this.dispatchEvent('tileloaderror');
         console.error(error);
       });
     }
@@ -773,17 +775,28 @@ export class Map extends React.Component {
     //       additions and removals.
     let src_names = Object.keys(sourcesDef);
     const map_view = this.map.getView();
+
+    const listenForError = (src_name, source) => {
+      source.on('tileloaderror', () => {
+        this.props.setSourceError(src_name);
+      });
+    };
+
     const addSource = function(src_name, source) {
       if (source) {
         this.sources[src_name] = source;
+        listenForError(src_name, source);
       }
     };
     const addAndUpdateSource = function(src_name, source) {
       if (source) {
         this.sources[src_name] = source;
         this.updateLayerSource(src_name);
+        listenForError(src_name, source);
       }
     };
+
+
     for (let i = 0, ii = src_names.length; i < ii; i++) {
       const src_name = src_names[i];
       // Add the source because it's not in the current
@@ -1456,6 +1469,11 @@ export class Map extends React.Component {
       });
     }
 
+    // when the map starts, reset all the errors.
+    this.map.on('movestart', () => {
+      this.props.clearSourceErrors();
+    });
+
     // when the map moves update the location in the state
     this.map.on('moveend', () => {
       this.props.setView(this.map);
@@ -1774,6 +1792,12 @@ function mapDispatchToProps(dispatch) {
     },
     setMousePosition(lngLat, coordinate) {
       dispatch(setMousePosition(lngLat, coordinate));
+    },
+    setSourceError(srcName) {
+      dispatch(setSourceError(srcName));
+    },
+    clearSourceErrors() {
+      dispatch(clearSourceErrors());
     },
   };
 }

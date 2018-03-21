@@ -88,3 +88,26 @@ export function requestRedraw() {
     type: MAPINFO.REQUEST_REDRAW,
   };
 }
+
+/** Set an error for a source.
+ *
+ *  @param {String} srcName - The name of the source with the error
+ *
+ *  @returns {Object} Action object to set a source error.
+ */
+export function setSourceError(srcName) {
+  return {
+    type: MAPINFO.SET_SOURCE_ERROR,
+    srcName,
+  };
+}
+
+/** Clear the source errors
+ *
+ *  @returns {Object} Action object to clear all the source errors
+ */
+export function clearSourceErrors() {
+  return {
+    type: MAPINFO.CLEAR_SOURCE_ERRORS,
+  };
+}

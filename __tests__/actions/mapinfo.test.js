@@ -37,5 +37,18 @@ describe('test that mapinfo actions are properly created', () => {
     });
   });
 
+  it('should issue an action to set a source error', () => {
+    expect(actions.setSourceError('test')).toEqual({
+      type: MAPINFO.SET_SOURCE_ERROR,
+      srcName: 'test'
+    });
+  });
+
+  it('should clear the source errors', () => {
+    expect(actions.clearSourceErrors()).toEqual({
+      type: MAPINFO.CLEAR_SOURCE_ERRORS,
+    });
+  });
+
 });
 
