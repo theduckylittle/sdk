@@ -12,7 +12,7 @@
  */
 
 // inspired by: https://github.com/Viglino/ol3-games/blob/master/style/ol.style.sprite.js
-import IconStyle from 'ol/style/icon';
+import IconStyle from 'ol/style/Icon';
 
 class SdkSpriteStyle extends IconStyle {
   constructor(options) {

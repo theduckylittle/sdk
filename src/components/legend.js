@@ -15,12 +15,12 @@ import fetch from 'isomorphic-fetch';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import OlRender from 'ol/render';
-import LineString from 'ol/geom/linestring';
-import Polygon from 'ol/geom/polygon';
-import Point from 'ol/geom/point';
-import Feature from 'ol/feature';
-import VectorLayer from 'ol/layer/vector';
+import {toContext} from 'ol/render';
+import LineString from 'ol/geom/LineString';
+import Polygon from 'ol/geom/Polygon';
+import Point from 'ol/geom/Point';
+import Feature from 'ol/Feature';
+import VectorLayer from 'ol/layer/Vector';
 import {applyStyle} from 'ol-mapbox-style';
 import {jsonEquals, jsonClone, getLayerById, parseQueryString, encodeQueryObject} from '../util';
 import {getFakeStyle, hydrateLayer} from './map';
@@ -263,7 +263,7 @@ export class Legend extends React.Component {
       const size = props.size;
       return (<canvas ref={(c) => {
         if (c !== null) {
-          let vectorContext = OlRender.toContext(c.getContext('2d'), {size: size});
+          let vectorContext = toContext(c.getContext('2d'), {size: size});
           const fake_style = getFakeStyle(
             props.sprite,
             layers,

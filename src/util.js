@@ -12,9 +12,9 @@
  */
 
 import {GROUP_KEY, TITLE_KEY} from './constants';
-import GeoJsonFormat from 'ol/format/geojson';
-import Proj from 'ol/proj';
-import View from 'ol/view';
+import GeoJsonFormat from 'ol/format/GeoJSON';
+import {transformExtent} from 'ol/proj';
+import View from 'ol/View';
 
 /** @module util
  * @desc functions for Boundless SDK.
@@ -68,7 +68,7 @@ export function getZoomForResolution(resolution, projection) {
  * @returns {number} The resolution to use when zooming to the extent.
  */
 export function getResolutionForExtent(extent, size, projection) {
-  const bbox = Proj.transformExtent(extent, 'EPSG:4326', projection);
+  const bbox = transformExtent(extent, 'EPSG:4326', projection);
   const xResolution = (bbox[2] - bbox[0]) / size[0];
   const yResolution = (bbox[3] - bbox[1]) / size[1];
   return Math.max(xResolution, yResolution);

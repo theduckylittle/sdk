@@ -5,19 +5,19 @@ import {shallow, mount, configure} from 'enzyme';
 import nock from 'nock';
 import Adapter from 'enzyme-adapter-react-16';
 
-import olMap from 'ol/pluggablemap';
-import olView from 'ol/view';
-import TileLayer from 'ol/layer/tile';
-import VectorLayer from 'ol/layer/vector';
-import ImageLayer from 'ol/layer/image';
-import VectorTileLayer from 'ol/layer/vectortile';
-import VectorTileSource from 'ol/source/vectortile';
-import ImageStaticSource from 'ol/source/imagestatic';
-import TileJSONSource from 'ol/source/tilejson';
-import TileWMSSource from 'ol/source/tilewms';
-import XYZSource from 'ol/source/xyz';
-import ImageTile from 'ol/imagetile';
-import TileState from 'ol/tilestate';
+import CanvasMap from 'ol/CanvasMap';
+import olView from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
+import ImageLayer from 'ol/layer/Image';
+import VectorTileLayer from 'ol/layer/VectorTile';
+import VectorTileSource from 'ol/source/VectorTile';
+import ImageStaticSource from 'ol/source/ImageStatic';
+import TileJSONSource from 'ol/source/TileJSON';
+import TileWMSSource from 'ol/source/TileWMS';
+import XYZSource from 'ol/source/XYZ';
+import ImageTile from 'ol/ImageTile';
+import TileState from 'ol/TileState';
 
 import {createStore, combineReducers} from 'redux';
 import {radiansToDegrees} from '@boundlessgeo/sdk/util';
@@ -174,7 +174,7 @@ describe('Map component', () => {
     />);
     const map = wrapper.instance().map;
     expect(map).toBeDefined();
-    expect(map).toBeInstanceOf(olMap);
+    expect(map).toBeInstanceOf(CanvasMap);
     window.setTimeout(() => {
       expect(map.getLayers().item(0)).toBeInstanceOf(TileLayer);
       expect(map.getLayers().item(1)).toBeInstanceOf(TileLayer);

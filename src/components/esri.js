@@ -17,10 +17,10 @@ import PropTypes from 'prop-types';
 import {Component} from 'react';
 import {connect} from 'react-redux';
 
-import View from 'ol/view';
-import EsriJsonFormat from 'ol/format/esrijson';
-import GeoJsonFormat from 'ol/format/geojson';
-import Proj from 'ol/proj';
+import View from 'ol/View';
+import EsriJsonFormat from 'ol/format/EsriJSON';
+import GeoJsonFormat from 'ol/format/GeoJSON';
+import {fromLonLat} from 'ol/proj';
 
 import {encodeQueryObject} from '../util';
 import {updateSource} from '../actions/map';
@@ -50,7 +50,7 @@ class EsriController extends Component {
   }
 
   fetchData() {
-    this.view.setCenter(Proj.fromLonLat(this.props.map.center));
+    this.view.setCenter(fromLonLat(this.props.map.center));
     this.view.setZoom(this.props.map.zoom + 1);
     const extent = this.view.calculateExtent(this.props.mapinfo.size);
     for (let key in this.props.sources) {

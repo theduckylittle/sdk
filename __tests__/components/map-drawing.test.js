@@ -14,10 +14,10 @@ import  Adapter from 'enzyme-adapter-react-16';
 
 import {createStore, combineReducers} from 'redux';
 
-import Feature from 'ol/feature';
-import Point from 'ol/geom/point';
-import LineString from 'ol/geom/linestring';
-import Polygon from 'ol/geom/polygon';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import LineString from 'ol/geom/LineString';
+import Polygon from 'ol/geom/Polygon';
 
 import SdkMap, {getOLStyleFunctionFromMapboxStyle} from '@boundlessgeo/sdk/components/map';
 import MapReducer from '@boundlessgeo/sdk/reducers/map';
