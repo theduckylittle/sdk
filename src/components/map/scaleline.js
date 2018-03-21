@@ -14,7 +14,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import Proj from 'ol/proj';
+import {METERS_PER_UNIT} from 'ol/proj/Units';
+import {fromLonLat, get, getPointResolution} from 'ol/proj';
 
 const DEGREES = 'degrees';
 const IMPERIAL = 'imperial';
@@ -45,19 +46,19 @@ export class ScaleLine extends React.Component {
     return false;
   }
   calculateProperties() {
-    const center = Proj.fromLonLat(this.props.map.center);
+    const center = fromLonLat(this.props.map.center);
     const units = this.props.units;
     const pointResolutionUnits = units === DEGREES ? DEGREES : 'm';
-    const projection = Proj.get(this.props.mapinfo.projection);
+    const projection = get(this.props.mapinfo.projection);
     const resolution = this.props.mapinfo.resolution;
-    let pointResolution = Proj.getPointResolution(projection, resolution, center, pointResolutionUnits);
+    let pointResolution = getPointResolution(projection, resolution, center, pointResolutionUnits);
     if (units !== DEGREES) {
       pointResolution *= projection.getMetersPerUnit();
     }
     let nominalCount = this.props.minWidth * pointResolution;
     let suffix = '';
     if (units === DEGREES) {
-      const metersPerDegree = Proj.METERS_PER_UNIT[DEGREES];
+      const metersPerDegree = METERS_PER_UNIT[DEGREES];
       if (projection.getUnits() === DEGREES) {
         nominalCount *= metersPerDegree;
       } else {

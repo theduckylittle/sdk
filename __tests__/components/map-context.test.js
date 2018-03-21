@@ -4,9 +4,9 @@ import React from 'react';
 import {mount, configure} from 'enzyme';
 import  Adapter from 'enzyme-adapter-react-16';
 
-import TileLayer from 'ol/layer/tile';
-import TileWMSSource from 'ol/source/tilewms';
-import XYZSource from 'ol/source/xyz';
+import TileLayer from 'ol/layer/Tile';
+import TileWMSSource from 'ol/source/TileWMS';
+import XYZSource from 'ol/source/XYZ';
 
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';

@@ -5,7 +5,7 @@
 /* global it, describe, expect, beforeEach */
 
 import React from 'react';
-import VectorSource from 'ol/source/vector';
+import VectorSource from 'ol/source/Vector';
 import {createStore, combineReducers} from 'redux';
 import {mount, configure} from 'enzyme';
 import  Adapter from 'enzyme-adapter-react-16';

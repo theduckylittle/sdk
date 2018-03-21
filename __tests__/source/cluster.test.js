@@ -1,8 +1,8 @@
 /* global it, describe, expect */
 
-import VectorSource from 'ol/source/vector';
-import Feature from 'ol/feature';
-import PointGeom from 'ol/geom/point';
+import VectorSource from 'ol/source/Vector';
+import Feature from 'ol/Feature';
+import PointGeom from 'ol/geom/Point';
 
 import SdkClusterSource from '@boundlessgeo/sdk/source/cluster';
 

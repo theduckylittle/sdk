@@ -221,6 +221,7 @@ export class MapboxGL extends React.Component {
     if (mapboxgl) {
       mapboxgl.accessToken = this.props.mapbox.accessToken;
       this.map = new mapboxgl.Map({
+        interactive: this.props.interactive,
         minZoom: getKey(this.props.map.metadata, MIN_ZOOM_KEY),
         maxZoom: getKey(this.props.map.metadata, MAX_ZOOM_KEY),
         renderWorldCopies: this.props.wrapX,
