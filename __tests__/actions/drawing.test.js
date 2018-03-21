@@ -1,8 +1,8 @@
 /* global describe, it, expect */
 
-import * as actions from '../../src/actions/drawing';
-import {DRAWING} from '../../src/action-types';
-import {INTERACTIONS} from '../../src/constants';
+import * as actions from '@boundlessgeo/sdk/actions/drawing';
+import {DRAWING} from '@boundlessgeo/sdk/action-types';
+import {INTERACTIONS} from '@boundlessgeo/sdk/constants';
 
 describe('drawing actions', () => {
   it('should create an action to start drawing', () => {

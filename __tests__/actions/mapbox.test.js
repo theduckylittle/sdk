@@ -1,7 +1,7 @@
 /* global describe, it, expect */
 
-import * as actions from '../../src/actions/mapbox';
-import {MAPBOX} from '../../src/action-types';
+import * as actions from '@boundlessgeo/sdk/actions/mapbox';
+import {MAPBOX} from '@boundlessgeo/sdk/action-types';
 
 describe('Mapbox actions', () => {
   it('should create an action to set configure', () => {

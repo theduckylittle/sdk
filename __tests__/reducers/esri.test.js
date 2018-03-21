@@ -1,7 +1,7 @@
 /* global it, beforeEach, describe, expect */
 
-import * as actions from '../../src/actions/esri';
-import reducer from '../../src/reducers/esri';
+import * as actions from '@boundlessgeo/sdk/actions/esri';
+import reducer from '@boundlessgeo/sdk/reducers/esri';
 
 describe('Esri reducer', () => {
 

@@ -2,8 +2,8 @@
 
 import deepFreeze from 'deep-freeze';
 
-import reducer from '../../src/reducers/print';
-import {PRINT} from '../../src/action-types';
+import reducer from '@boundlessgeo/sdk/reducers/print';
+import {PRINT} from '@boundlessgeo/sdk/action-types';
 
 describe('print reducer', () => {
   it('should return default state', () => {

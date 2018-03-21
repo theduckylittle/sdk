@@ -7,13 +7,13 @@ import  Adapter from 'enzyme-adapter-react-16';
 import {createStore, combineReducers} from 'redux';
 import {Provider} from 'react-redux';
 
-import MapReducer from '../../src/reducers/map';
-import * as MapActions from '../../src/actions/map';
-import {isLayerVisible} from '../../src/util';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import * as MapActions from '@boundlessgeo/sdk/actions/map';
+import {isLayerVisible} from '@boundlessgeo/sdk/util';
 
-import SdkLayerList from '../../src/components/layer-list';
-import SdkLayerListItem from  '../../src/components/layer-list-item';
-import {layerListItemTarget} from '../../src/components/layer-list-item';
+import SdkLayerList from '@boundlessgeo/sdk/components/layer-list';
+import SdkLayerListItem from  '@boundlessgeo/sdk/components/layer-list-item';
+import {layerListItemTarget} from '@boundlessgeo/sdk/components/layer-list-item';
 
 configure({adapter: new Adapter()});
 

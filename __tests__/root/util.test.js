@@ -1,7 +1,7 @@
 /* global it, describe, expect */
 
-import * as util from '../../src/util';
-import {GROUP_KEY, TITLE_KEY} from '../../src/constants';
+import * as util from '@boundlessgeo/sdk/util';
+import {GROUP_KEY, TITLE_KEY} from '@boundlessgeo/sdk/constants';
 
 describe('util', () => {
   it('calculates the resolution for zoom', () => {

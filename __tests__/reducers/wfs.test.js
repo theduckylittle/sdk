@@ -2,9 +2,9 @@
 
 import deepFreeze from 'deep-freeze';
 
-import * as actions from '../../src/actions/wfs';
-import reducer from '../../src/reducers/wfs';
-import  {WFS} from '../../src/action-types';
+import * as actions from '@boundlessgeo/sdk/actions/wfs';
+import reducer from '@boundlessgeo/sdk/reducers/wfs';
+import  {WFS} from '@boundlessgeo/sdk/action-types';
 
 describe('wfs reducer', () => {
 

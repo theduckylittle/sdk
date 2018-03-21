@@ -1,7 +1,7 @@
 /* global describe, it, expect */
 
-import * as actions from '../../src/actions/mapinfo';
-import {MAPINFO} from '../../src/action-types';
+import * as actions from '@boundlessgeo/sdk/actions/mapinfo';
+import {MAPINFO} from '@boundlessgeo/sdk/action-types';
 
 describe('test that mapinfo actions are properly created', () => {
 

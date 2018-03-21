@@ -6,9 +6,9 @@ import  Adapter from 'enzyme-adapter-react-16';
 
 import {createStore, combineReducers} from 'redux';
 
-import ConnectedMap from '../../src/components/map';
-import MapReducer from '../../src/reducers/map';
-import * as MapActions from '../../src/actions/map';
+import ConnectedMap from '@boundlessgeo/sdk/components/map';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import * as MapActions from '@boundlessgeo/sdk/actions/map';
 
 configure({adapter: new Adapter()});
 

@@ -2,9 +2,9 @@
 
 import {createStore, combineReducers} from 'redux';
 
-import reducer from '../../src/reducers/map';
-import * as MapActions from '../../src/actions/map';
-import {addLayer, addSource} from '../../src/actions/map';
+import reducer from '@boundlessgeo/sdk/reducers/map';
+import * as MapActions from '@boundlessgeo/sdk/actions/map';
+import {addLayer, addSource} from '@boundlessgeo/sdk/actions/map';
 
 describe('test reordering groups in the map', () => {
 

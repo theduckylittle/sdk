@@ -2,8 +2,8 @@
 
 import deepFreeze from 'deep-freeze';
 
-import {MAPINFO} from '../../src/action-types';
-import reducer from '../../src/reducers/mapinfo';
+import {MAPINFO} from '@boundlessgeo/sdk/action-types';
+import reducer from '@boundlessgeo/sdk/reducers/mapinfo';
 
 describe('mapinfo reducer', () => {
 

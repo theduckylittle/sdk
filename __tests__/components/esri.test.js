@@ -8,12 +8,12 @@ import  Adapter from 'enzyme-adapter-react-16';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 
-import EsriReducer from '../../src/reducers/esri';
-import MapReducer from '../../src/reducers/map';
-import MapInfoReducer from '../../src/reducers/mapinfo';
-import EsriController from '../../src/components/esri';
-import * as mapActions from '../../src/actions/map';
-import {addSource} from '../../src/actions/esri';
+import EsriReducer from '@boundlessgeo/sdk/reducers/esri';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import MapInfoReducer from '@boundlessgeo/sdk/reducers/mapinfo';
+import EsriController from '@boundlessgeo/sdk/components/esri';
+import * as mapActions from '@boundlessgeo/sdk/actions/map';
+import {addSource} from '@boundlessgeo/sdk/actions/esri';
 
 configure({adapter: new Adapter()});
 

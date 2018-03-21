@@ -3,8 +3,8 @@
 import deepFreeze from 'deep-freeze';
 
 import proj from 'ol/proj';
-import reducer from '../../src/reducers/map';
-import {MAP} from '../../src/action-types';
+import reducer from '@boundlessgeo/sdk/reducers/map';
+import {MAP} from '@boundlessgeo/sdk/action-types';
 
 describe('map reducer add features', () => {
 

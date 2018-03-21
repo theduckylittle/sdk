@@ -9,10 +9,10 @@ import {createStore, combineReducers} from 'redux';
 import {mount, configure} from 'enzyme';
 import  Adapter from 'enzyme-adapter-react-16';
 
-import SdkMap from '../../src/components/map';
-import MapReducer from '../../src/reducers/map';
-import * as MapActions from '../../src/actions/map';
-import SdkSpriteStyle from '../../src/style/sprite';
+import SdkMap from '@boundlessgeo/sdk/components/map';
+import MapReducer from '@boundlessgeo/sdk/reducers/map';
+import * as MapActions from '@boundlessgeo/sdk/actions/map';
+import SdkSpriteStyle from '@boundlessgeo/sdk/style/sprite';
 import Feature from 'ol/feature';
 
 import canvas from 'canvas';
