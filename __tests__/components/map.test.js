@@ -143,7 +143,7 @@ describe('Map component', () => {
         source: 'mapbox',
       }, {
         id: 'purple-points',
-        ref: 'sample-points',
+        source: 'points',
         paint: {
           'circle-radius': 5,
           'circle-color': '#cc00cc',
