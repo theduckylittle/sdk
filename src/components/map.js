@@ -29,8 +29,8 @@ import View from 'ol/View';
 import Overlay from 'ol/Overlay';
 import {defaults as interactionDefaults} from 'ol/interaction';
 
-import PolygonGeom from 'ol/geom/polygon';
-import MultiPolygonGeom from 'ol/geom/multipolygon';
+import PolygonGeom from 'ol/geom/Polygon';
+import MultiPolygonGeom from 'ol/geom/MultiPolygon';
 
 import {unByKey} from 'ol/Observable';
 
@@ -59,7 +59,7 @@ import VectorSource from 'ol/source/Vector';
 import GeoJsonFormat from 'ol/format/GeoJSON';
 import EsriJsonFormat from 'ol/format/EsriJSON';
 
-import DrawInteraction from 'ol/interaction/Draw';
+import DrawInteraction, {createBox} from 'ol/interaction/Draw';
 import ModifyInteraction from 'ol/interaction/Modify';
 import SelectInteraction from 'ol/interaction/Select';
 
@@ -862,9 +862,6 @@ export class Map extends React.Component {
         layer.filter = createFilter(layer.filter);
       }
     }
-    const onPostCompose = function(e) {
-      this.update(e);
-    };
     olLayer.setStyle((feature, resolution) => {
       // loop over the layers to see which one matches
       for (let l = 0, ll = layers.length; l < ll; ++l) {
@@ -874,7 +871,9 @@ export class Map extends React.Component {
             if (!styleCache[layer.id]) {
               const sprite = new SpriteStyle(spriteOptions[layer.id]);
               styleCache[layer.id] = new Style({image: sprite});
-              this.map.on('postcompose', onPostCompose, sprite);
+              this.map.on('postcompose', (e) => {
+                sprite.update(e);
+              });
             }
             return styleCache[layer.id];
           } else {
@@ -888,7 +887,9 @@ export class Map extends React.Component {
               options.rotation = rotation;
               const sprite = new SpriteStyle(options);
               const style = new Style({image: sprite});
-              this.map.on('postcompose', onPostCompose, sprite);
+              this.map.on('postcompose', (e) => {
+                sprite.update(e);
+              });
               styleCache[layer.id][rotation] = style;
             }
             return styleCache[layer.id][rotation];
@@ -1603,7 +1604,7 @@ export class Map extends React.Component {
     } else if (INTERACTIONS.drawing.includes(drawingProps.interaction)) {
       let drawObj = {};
       if (drawingProps.interaction === INTERACTIONS.box) {
-        const geometryFunction = DrawInteraction.createBox();
+        const geometryFunction = createBox();
         drawObj = {
           type: 'Circle',
           geometryFunction
@@ -1766,7 +1767,9 @@ function mapDispatchToProps(dispatch) {
           segments.push(getDistance(a, b));
         }
       } else if (geom.type === 'Polygon' && geom.coordinates.length > 0) {
-        segments.push(Math.abs(getArea(geom.coordinates[0])));
+        const clone = geometry.clone();
+        clone.transform(projection, 'EPSG:4326');
+        segments.push(getArea(clone));
       }
 
 
