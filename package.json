@@ -62,7 +62,6 @@
     "jest-css-modules": "^1.1.0",
     "jsdoc": "^3.5.4",
     "mapbox-gl": "^0.44.0",
-    "mapbox-to-ol-style": "^3.3.0",
     "marked": "^0.3.6",
     "metalsmith": "^2.3.0",
     "metalsmith-layouts": "^1.8.1",
@@ -71,7 +70,7 @@
     "nock": "^9.0.13",
     "node-sass": "^4.5.3",
     "ol": "^5.0.0-beta.9",
-    "ol-mapbox-style": "^2.8.4",
+    "ol-mapbox-style": "^3.0.0-beta.1",
     "react": "^16.0.0",
     "react-dnd": "^2.5.4",
     "react-dnd-html5-backend": "^2.5.4",
@@ -102,9 +101,8 @@
     "@turf/area": "^5.0.4",
     "@turf/distance": "^5.0.4",
     "mapbox-gl": "^0.42.0",
-    "mapbox-to-ol-style": "^3.3.0",
-    "ol": "^4.5.0",
-    "ol-mapbox-style": "^2.8.4",
+    "ol": "^5.0.0-beta.9",
+    "ol-mapbox-style": "^3.0.0-beta.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-dnd": "^2.5.4",
@@ -129,7 +127,7 @@
       "<rootDir>/env-setup.js"
     ],
     "transformIgnorePatterns": [
-      "/node_modules/(?!(ol|mapbox-to-ol-style|ol-mapbox-style)/).*/"
+      "/node_modules/(?!(ol|ol-mapbox-style)/).*/"
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
