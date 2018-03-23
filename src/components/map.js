@@ -695,7 +695,6 @@ export class Map extends React.Component {
 
             if (force_redraw || (this.props.map.metadata !== undefined &&
                 this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key])) {
-              const src = this.props.map.sources[src_name];
               updateGeojsonSource(this.sources[src_name], src, map_view, this.props.mapbox.baseUrl);
             }
           }
