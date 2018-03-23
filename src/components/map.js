@@ -86,7 +86,7 @@ import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '..
 
 import ClusterSource from '../source/cluster';
 
-import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject, isLayerVisible, optionalEquals} from '../util';
+import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject, isLayerVisible} from '../util';
 
 import fetchJsonp from 'fetch-jsonp';
 
@@ -600,7 +600,7 @@ export class Map extends React.Component {
 
     const new_time = getKey(nextProps.map.metadata, TIME_KEY);
 
-    const force_redraw = !optionalEquals(this.props, nextProps, 'mapinfo', 'requestedRedraws');
+    const force_redraw = this.props.requestedRedraws !== nextProps.requestedRedraws;
 
     if (old_time !== new_time) {
       // find time dependent layers
@@ -726,7 +726,7 @@ export class Map extends React.Component {
       this.map.renderSync();
     }
 
-    if (force_redraw || !optionalEquals(this.props, nextProps, 'mapinfo', 'size')) {
+    if (force_redraw || !jsonEquals(this.props.size, nextProps.size)) {
       this.map.updateSize();
     }
   }
@@ -1722,7 +1722,8 @@ function mapStateToProps(state) {
     drawing: state.drawing,
     print: state.print,
     mapbox: state.mapbox,
-    mapinfo: state.mapinfo,
+    size: state.mapinfo ? state.mapinfo.size : null,
+    requestedRedraws: state.mapinfo ? state.mapinfo.requestedRedraws : 0,
   };
 }
 
