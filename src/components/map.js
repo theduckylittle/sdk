@@ -682,20 +682,22 @@ export class Map extends React.Component {
     }
 
     // wait for the sources to be ready.
+    const props = this.props;
     sources_promise
       .then(() => {
         // check the vector sources for data changes
         const src_names = Object.keys(nextProps.map.sources);
         for (let i = 0, ii = src_names.length; i < ii; i++) {
           const src_name = src_names[i];
-          const src = this.props.map.sources[src_name];
+          const src = props.map.sources[src_name];
           if (src && src.type === 'geojson') {
             const version_key = dataVersionKey(src_name);
 
 
-            if (force_redraw || (this.props.map.metadata !== undefined &&
-                this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key])) {
-              updateGeojsonSource(this.sources[src_name], src, map_view, this.props.mapbox.baseUrl);
+            if (force_redraw || (props.map.metadata !== undefined &&
+                props.map.metadata[version_key] !== nextProps.map.metadata[version_key])) {
+              const next_src = nextProps.map.sources[src_name];
+              updateGeojsonSource(this.sources[src_name], next_src, map_view, props.mapbox.baseUrl);
             }
           }
         }
