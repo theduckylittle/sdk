@@ -242,4 +242,34 @@ describe('tests for the geojson-type map sources', () => {
     }, 200);
   });
 
+  it('updates correctly when empty from the start', (done) => {
+    const src_name = 'test-source';
+    const empty = {
+      type: 'FeatureCollection',
+      features: [],
+    };
+    const feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0],
+      },
+      properties: {
+        sample: 'value',
+      },
+    };
+    store.dispatch(MapActions.addSource(src_name, {
+      type: 'geojson',
+      data: empty
+    }));
+    window.setTimeout(() => {
+      expect(map.sources[src_name].getFeatures()).toHaveLength(0);
+      store.dispatch(MapActions.addFeatures(src_name, [feature]));
+      window.setTimeout(() => {
+        expect(map.sources[src_name].getFeatures()[0].get('sample')).toBe('value');
+        done();
+      }, 200);
+    }, 200);
+  });
+
 });
