@@ -89,6 +89,19 @@ export function requestRedraw() {
   };
 }
 
+/** Request that a source redraws.
+ *
+ *  @param {String} srcName - The name of the source to redraw.
+ *
+ *  @returns {Object} Action object to request a source redraw.
+ */
+export function requestSourceRedraw(srcName) {
+  return {
+    type: MAPINFO.REQUEST_SOURCE_REDRAW,
+    srcName,
+  };
+}
+
 /** Set an error for a source.
  *
  *  @param {String} srcName - The name of the source with the error

@@ -181,7 +181,7 @@ function main() {
     validateFeature(sourceName, proposedFeature)
       .then((feature) => {
         // if the feature passes the validation, then add it to the source.
-        store.dispatch(mapActions.addFeatures(sourceName, feature));
+        store.dispatch(mapActions.addFeatures(sourceName, [feature]));
         // and let the user know
         error_div.innerHTML = `Feature ${feature.properties.id} added.`;
       })

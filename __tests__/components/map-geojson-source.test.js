@@ -204,4 +204,72 @@ describe('tests for the geojson-type map sources', () => {
 
     testGeojsonData(follow_up, 'http://dummy/missing.geojson', 0, true);
   });
+
+  it('updates correctly', (done) => {
+    const src_name = 'test-source';
+    const data1 = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0],
+      },
+      properties: {
+        sample: 'value',
+      },
+    };
+    const data2 = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0],
+      },
+      properties: {
+        sample: 'value2',
+      },
+    };
+    store.dispatch(MapActions.addSource(src_name, {
+      type: 'geojson',
+      data: data1,
+    }));
+    window.setTimeout(() => {
+      expect(map.sources[src_name].getFeatures()[0].get('sample')).toBe('value');
+      store.dispatch(MapActions.removeFeatures(src_name));
+      store.dispatch(MapActions.addFeatures(src_name, [data2]));
+      window.setTimeout(() => {
+        expect(map.sources[src_name].getFeatures()[0].get('sample')).toBe('value2');
+        done();
+      }, 200);
+    }, 200);
+  });
+
+  it('updates correctly when empty from the start', (done) => {
+    const src_name = 'test-source';
+    const empty = {
+      type: 'FeatureCollection',
+      features: [],
+    };
+    const feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0],
+      },
+      properties: {
+        sample: 'value',
+      },
+    };
+    store.dispatch(MapActions.addSource(src_name, {
+      type: 'geojson',
+      data: empty
+    }));
+    window.setTimeout(() => {
+      expect(map.sources[src_name].getFeatures()).toHaveLength(0);
+      store.dispatch(MapActions.addFeatures(src_name, [feature]));
+      window.setTimeout(() => {
+        expect(map.sources[src_name].getFeatures()[0].get('sample')).toBe('value');
+        done();
+      }, 200);
+    }, 200);
+  });
+
 });

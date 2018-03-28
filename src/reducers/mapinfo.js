@@ -28,12 +28,21 @@ const defaultState = {
   resolution: null,
   projection: 'EPSG:3857',
   sourceErrors: {},
+  sourceRedraws: {},
 };
 
 function requestRedraw(state) {
   const next_redraw = state.requestedRedraws + 1;
   return Object.assign({}, state, {
     requestedRedraws: next_redraw,
+  });
+}
+
+function requestSourceRedraw(state, action) {
+  const mixin = {};
+  mixin[action.srcName] = (new Date()).getTime();
+  return Object.assign({}, state, {
+    sourceRedraws: Object.assign({}, state.sourceRedraws, mixin),
   });
 }
 
@@ -65,6 +74,8 @@ export default function mapInfoReducer(state = defaultState, action) {
       return Object.assign({}, state, {projection: action.projection});
     case MAPINFO.REQUEST_REDRAW:
       return requestRedraw(state);
+    case MAPINFO.REQUEST_SOURCE_REDRAW:
+      return requestSourceRedraw(state, action);
     case MAPINFO.SET_SOURCE_ERROR:
       return setSourceError(state, action);
     case MAPINFO.CLEAR_SOURCE_ERRORS:

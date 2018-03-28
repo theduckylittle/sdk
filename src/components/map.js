@@ -86,7 +86,7 @@ import {finalizeMeasureFeature, setMeasureFeature, clearMeasureFeature} from '..
 
 import ClusterSource from '../source/cluster';
 
-import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject, isLayerVisible, optionalEquals} from '../util';
+import {parseQueryString, jsonClone, jsonEquals, getLayerById, degreesToRadians, radiansToDegrees, getKey, encodeQueryObject, isLayerVisible} from '../util';
 
 import fetchJsonp from 'fetch-jsonp';
 
@@ -264,8 +264,15 @@ function configureMvtSource(glSource, accessToken) {
       // check the first tile to see if we need to do BBOX subsitution
       if (glSource.tiles[0].indexOf(BBOX_STRING) !== -1) {
         tile_url_fn = function(urlTileCoord, pixelRatio, projection) {
+          // copy the src string.
+          let img_src = glSource.tiles[0].slice();
+          // check to see if a cache invalidation has been requested.
+          const ck = source.get('_ck');
+          if (ck !== undefined) {
+            img_src = addParam(img_src, '_ck', ck);
+          }
           const bbox = source.getTileGrid().getTileCoordExtent(urlTileCoord);
-          return glSource.tiles[0].replace(BBOX_STRING, bbox.toString());
+          return img_src.replace(BBOX_STRING, bbox.toString());
         };
       }
       source = new VectorTileSource({
@@ -600,8 +607,8 @@ export class Map extends React.Component {
 
     const new_time = getKey(nextProps.map.metadata, TIME_KEY);
 
-    const force_redraw = !optionalEquals(this.props, nextProps, 'mapinfo', 'requestedRedraws');
-
+    const force_redraw = this.props.requestedRedraws !== nextProps.requestedRedraws;
+    const force_source_redraw = !jsonEquals(this.props.sourceRedraws, nextProps.sourceRedraws);
     if (old_time !== new_time) {
       // find time dependent layers
       for (let i = 0, ii = nextProps.map.layers.length; i < ii; ++i) {
@@ -622,17 +629,28 @@ export class Map extends React.Component {
     }
 
     // Force WMS-type layers to refresh.
-    if (force_redraw) {
-      const timestamp = (new Date()).getTime();
+    if (force_redraw || force_source_redraw) {
+      let timestamp;
+      if (force_redraw) {
+        timestamp = (new Date()).getTime();
+      }
       for (const key in this.sources) {
         const src = this.sources[key];
-        if (typeof src.updateParams === 'function') {
-          src.updateParams({'_CK': timestamp});
-        } else {
-          // set the time stamp for other loaders which
-          //  check for the _ck attribute.
-          src.set('_ck', timestamp);
-          src.refresh();
+        if (force_source_redraw) {
+          timestamp = nextProps.sourceRedraws[key];
+        }
+        if (timestamp) {
+          if (typeof src.updateParams === 'function') {
+            src.updateParams({'_CK': timestamp});
+          } else {
+            // set the time stamp for other loaders which
+            //  check for the _ck attribute.
+            src.set('_ck', timestamp);
+            if (typeof src.clear === 'function') {
+              src.clear();
+            }
+            src.refresh();
+          }
         }
       }
     }
@@ -682,21 +700,22 @@ export class Map extends React.Component {
     }
 
     // wait for the sources to be ready.
+    const props = this.props;
     sources_promise
       .then(() => {
         // check the vector sources for data changes
         const src_names = Object.keys(nextProps.map.sources);
         for (let i = 0, ii = src_names.length; i < ii; i++) {
           const src_name = src_names[i];
-          const src = this.props.map.sources[src_name];
+          const src = props.map.sources[src_name];
           if (src && src.type === 'geojson') {
             const version_key = dataVersionKey(src_name);
 
 
-            if (force_redraw || (this.props.map.metadata !== undefined &&
-                this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key])) {
+            if (force_redraw || (props.map.metadata !== undefined &&
+                props.map.metadata[version_key] !== nextProps.map.metadata[version_key])) {
               const next_src = nextProps.map.sources[src_name];
-              updateGeojsonSource(this.sources[src_name], next_src, map_view, this.props.mapbox.baseUrl);
+              updateGeojsonSource(this.sources[src_name], next_src, map_view, props.mapbox.baseUrl);
             }
           }
         }
@@ -727,7 +746,7 @@ export class Map extends React.Component {
       this.map.renderSync();
     }
 
-    if (force_redraw || !optionalEquals(this.props, nextProps, 'mapinfo', 'size')) {
+    if (force_redraw || !jsonEquals(this.props.size, nextProps.size)) {
       this.map.updateSize();
     }
   }
@@ -1723,7 +1742,9 @@ function mapStateToProps(state) {
     drawing: state.drawing,
     print: state.print,
     mapbox: state.mapbox,
-    mapinfo: state.mapinfo,
+    size: state.mapinfo ? state.mapinfo.size : null,
+    requestedRedraws: state.mapinfo ? state.mapinfo.requestedRedraws : 0,
+    sourceRedraws: state.mapinfo ? state.mapinfo.sourceRedraws : {},
   };
 }
 

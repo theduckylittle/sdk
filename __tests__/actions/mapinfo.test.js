@@ -44,6 +44,13 @@ describe('test that mapinfo actions are properly created', () => {
     });
   });
 
+  it('should issue an action to request a source redraw', () => {
+    expect(actions.requestSourceRedraw('test')).toEqual({
+      type: MAPINFO.REQUEST_SOURCE_REDRAW,
+      srcName: 'test'
+    });
+  });
+
   it('should clear the source errors', () => {
     expect(actions.clearSourceErrors()).toEqual({
       type: MAPINFO.CLEAR_SOURCE_ERRORS,

@@ -19,6 +19,7 @@ describe('mapinfo reducer', () => {
       projection: 'EPSG:3857',
       resolution: null,
       sourceErrors: {},
+      sourceRedraws: {},
     });
   });
 
@@ -82,6 +83,21 @@ describe('mapinfo reducer', () => {
     expect(reducer(state, action)).toEqual({
       requestedRedraws: 1,
     });
+  });
+
+  it('should set a timestamp for source redraw', () => {
+    let state = {
+      sourceRedraws: {},
+    };
+    deepFreeze(state);
+
+    const action = {
+      type: MAPINFO.REQUEST_SOURCE_REDRAW,
+      srcName: 'test',
+    };
+
+    const result = reducer(state, action);
+    expect(result.sourceRedraws.test).toBeTruthy();
   });
 
   it('should set an errored source', () => {
