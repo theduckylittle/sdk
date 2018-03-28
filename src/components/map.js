@@ -264,8 +264,15 @@ function configureMvtSource(glSource, accessToken) {
       // check the first tile to see if we need to do BBOX subsitution
       if (glSource.tiles[0].indexOf(BBOX_STRING) !== -1) {
         tile_url_fn = function(urlTileCoord, pixelRatio, projection) {
+          // copy the src string.
+          let img_src = glSource.tiles[0].slice();
+          // check to see if a cache invalidation has been requested.
+          const ck = source.get('_ck');
+          if (ck !== undefined) {
+            img_src = addParam(img_src, '_ck', ck);
+          }
           const bbox = source.getTileGrid().getTileCoordExtent(urlTileCoord);
-          return glSource.tiles[0].replace(BBOX_STRING, bbox.toString());
+          return img_src.replace(BBOX_STRING, bbox.toString());
         };
       }
       source = new VectorTileSource({
@@ -601,7 +608,7 @@ export class Map extends React.Component {
     const new_time = getKey(nextProps.map.metadata, TIME_KEY);
 
     const force_redraw = this.props.requestedRedraws !== nextProps.requestedRedraws;
-
+    const force_source_redraw = !jsonEquals(this.props.sourceRedraws, nextProps.sourceRedraws);
     if (old_time !== new_time) {
       // find time dependent layers
       for (let i = 0, ii = nextProps.map.layers.length; i < ii; ++i) {
@@ -622,17 +629,28 @@ export class Map extends React.Component {
     }
 
     // Force WMS-type layers to refresh.
-    if (force_redraw) {
-      const timestamp = (new Date()).getTime();
+    if (force_redraw || force_source_redraw) {
+      let timestamp;
+      if (force_redraw) {
+        timestamp = (new Date()).getTime();
+      }
       for (const key in this.sources) {
         const src = this.sources[key];
-        if (typeof src.updateParams === 'function') {
-          src.updateParams({'_CK': timestamp});
-        } else {
-          // set the time stamp for other loaders which
-          //  check for the _ck attribute.
-          src.set('_ck', timestamp);
-          src.refresh();
+        if (force_source_redraw) {
+          timestamp = nextProps.sourceRedraws[key];
+        }
+        if (timestamp) {
+          if (typeof src.updateParams === 'function') {
+            src.updateParams({'_CK': timestamp});
+          } else {
+            // set the time stamp for other loaders which
+            //  check for the _ck attribute.
+            src.set('_ck', timestamp);
+            if (typeof src.clear === 'function') {
+              src.clear();
+            }
+            src.refresh();
+          }
         }
       }
     }
@@ -1726,6 +1744,7 @@ function mapStateToProps(state) {
     mapbox: state.mapbox,
     size: state.mapinfo ? state.mapinfo.size : null,
     requestedRedraws: state.mapinfo ? state.mapinfo.requestedRedraws : 0,
+    sourceRedraws: state.mapinfo ? state.mapinfo.sourceRedraws : {},
   };
 }
 

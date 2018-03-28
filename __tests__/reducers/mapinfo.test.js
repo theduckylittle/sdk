@@ -19,6 +19,7 @@ describe('mapinfo reducer', () => {
       projection: 'EPSG:3857',
       resolution: null,
       sourceErrors: {},
+      sourceRedraws: {},
     });
   });
 
