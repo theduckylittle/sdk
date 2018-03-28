@@ -85,6 +85,21 @@ describe('mapinfo reducer', () => {
     });
   });
 
+  it('should set a timestamp for source redraw', () => {
+    let state = {
+      sourceRedraws: {},
+    };
+    deepFreeze(state);
+
+    const action = {
+      type: MAPINFO.REQUEST_SOURCE_REDRAW,
+      srcName: 'test',
+    };
+
+    const result = reducer(state, action);
+    expect(result.sourceRedraws.test).toBeTruthy();
+  });
+
   it('should set an errored source', () => {
     let state = {
       sourceErrors: {},
