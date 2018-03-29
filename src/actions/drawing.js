@@ -23,11 +23,12 @@ import {INTERACTIONS} from '../constants';
  *  @param {string} drawingType The type of drawing interaction.
  *  @param {string} afterMode The mode to be used after the drawing interaction finishes.
  *  @param {string} currentMode The mode to be used for drawing interaction.
- *  @param {Object} currentModeOptions The mode options for the currentMode
+ *  @param {Object} currentModeOptions The mode options for the currentMode.
+ *  @param {Object} feature The feature that should get modified.
  *
  *  @returns {Object} An action object to pass to the reducer.
  */
-export function startDrawing(sourceName, drawingType, afterMode, currentMode, currentModeOptions) {
+export function startDrawing(sourceName, drawingType, afterMode, currentMode, currentModeOptions, feature) {
   return {
     type: DRAWING.START,
     interaction: drawingType,
@@ -35,6 +36,7 @@ export function startDrawing(sourceName, drawingType, afterMode, currentMode, cu
     currentMode,
     afterMode,
     currentModeOptions,
+    feature,
   };
 }
 
@@ -42,11 +44,12 @@ export function startDrawing(sourceName, drawingType, afterMode, currentMode, cu
  *  @param {string} sourceName The name of the source to modify.
  *  @param {string} afterMode The mode to be used after the drawing interaction finishes.
  *  @param {string} currentMode The mode to be used for drawing interaction.
+ *  @param {Object} feature The feature that should get modified.
  *
  *  @returns {Object} Call to startDrawing()
  */
-export function startModify(sourceName, afterMode, currentMode) {
-  return startDrawing(sourceName, INTERACTIONS.modify, afterMode, currentMode);
+export function startModify(sourceName, afterMode, currentMode, feature) {
+  return startDrawing(sourceName, INTERACTIONS.modify, afterMode, currentMode, undefined, feature);
 }
 
 /** Short-hand action to start select-feature
