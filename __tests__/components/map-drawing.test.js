@@ -228,6 +228,34 @@ describe('Map component with drawing', () => {
     expect(sdk_map.onFeatureEvent).toHaveBeenCalled();
   });
 
+  it('turns on feature modification for a given feature', () => {
+    const sdk_map = wrapper.instance().getWrappedInstance();
+    const ol_map = sdk_map.map;
+
+    const interactions = ol_map.getInteractions();
+
+    store.dispatch({
+      type: DRAWING.START,
+      interaction: INTERACTIONS.modify,
+      sourceName: 'test',
+      feature: {
+        type: 'Feature',
+        properties: {
+          foo: 'bar'
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: [125.6, 10.1]
+        },
+      },
+    });
+
+    const select = interactions.item(interactions.getLength() - 2);
+    // feature added to select interaction
+    expect(select.getFeatures().getArray()).toHaveLength(1);
+    expect(select.getFeatures().item(0).get('foo')).toBe('bar');
+  });
+
   it('turns on select', () => {
     const sdk_map = wrapper.instance().getWrappedInstance();
     const ol_map = sdk_map.map;

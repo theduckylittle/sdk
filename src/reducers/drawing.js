@@ -24,6 +24,7 @@ import {DRAWING} from '../action-types';
 const defaultState = {
   interaction: null,
   sourceName: null,
+  feature: null,
   measureFeature: null,
   measureSegments: null,
   currentMode: null,
@@ -66,6 +67,7 @@ export default function drawingReducer(state = defaultState, action) {
         measureDone: false,
         measureFeature: null,
         measureSegments: null,
+        feature: action.feature,
       });
     case DRAWING.SET_EDIT_STYLE:
       return Object.assign({}, state, {

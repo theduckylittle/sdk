@@ -11,6 +11,7 @@ describe('drawing reducer', () => {
     expect(reducer(undefined, {})).toEqual({
       interaction: null,
       sourceName: null,
+      feature: null,
       measureFeature: null,
       measureSegments: null,
       currentMode: null,
@@ -38,6 +39,45 @@ describe('drawing reducer', () => {
     const expected_state = {
       interaction: geo_type,
       sourceName: source_name,
+      measureFeature: null,
+      measureSegments: null,
+      currentMode: undefined,
+      afterMode: undefined,
+      currentModeOptions: undefined,
+      measureDone: false,
+      editStyle: null,
+      modifyStyle: null,
+      measureStyle: null,
+      selectStyle: null
+    };
+
+    expect(reducer(undefined, test_action)).toEqual(expected_state);
+  });
+
+  it('should set the feature for modification', () => {
+    const source_name = 'points-test';
+
+    const test_action = {
+      type: DRAWING.START,
+      interaction: 'Modify',
+      sourceName: source_name,
+      feature: {
+        type: 'Feature',
+        properties: {
+          foo: 'bar'
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: [125.6, 10.1]
+        }
+      },
+    };
+    deepFreeze(test_action);
+
+    const expected_state = {
+      interaction: 'Modify',
+      sourceName: source_name,
+      feature: test_action.feature,
       measureFeature: null,
       measureSegments: null,
       currentMode: undefined,
@@ -99,6 +139,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: line,
       measureSegments: segs,
       measureDone: false,
@@ -115,6 +156,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: null,
       measureSegments: null,
       measureDone: false,
@@ -151,6 +193,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: line,
       measureSegments: segs,
       measureDone: true,
@@ -188,6 +231,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: line,
       measureSegments: segs,
       measureDone: false,
@@ -214,6 +258,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: null,
       measureSegments: null,
       measureDone: false,
@@ -241,6 +286,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: null,
       measureSegments: null,
       measureDone: false,
@@ -268,6 +314,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: null,
       measureSegments: null,
       measureDone: false,
@@ -295,6 +342,7 @@ describe('drawing reducer', () => {
       currentMode: null,
       afterMode: null,
       currentModeOptions: null,
+      feature: null,
       measureFeature: null,
       measureSegments: null,
       measureDone: false,
@@ -326,6 +374,7 @@ describe('drawing reducer', () => {
       measureFeature: null,
       measureSegments: null,
       measureDone: false,
+      feature: null,
       editStyle: editStyle,
       measureStyle: null,
       modifyStyle: null,
