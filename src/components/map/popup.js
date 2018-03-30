@@ -18,7 +18,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class Popup extends React.PureComponent {
+/** Popup Component.
+ */
+export default class Popup extends React.PureComponent {
   constructor(props) {
     super(props);
     this.close = this.close.bind(this);
@@ -112,5 +114,3 @@ Popup.defaultProps = {
     // do nothing
   },
 };
-
-export default Popup;

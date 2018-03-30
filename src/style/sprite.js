@@ -14,7 +14,9 @@
 // inspired by: https://github.com/Viglino/ol3-games/blob/master/style/ol.style.sprite.js
 import IconStyle from 'ol/style/icon';
 
-class SdkSpriteStyle extends IconStyle {
+/** Sprite style generator.
+ */
+export default class SdkSpriteStyle extends IconStyle {
   constructor(options) {
     const canvas = document.createElement('canvas');
     const width = canvas.width = options.width;
@@ -76,5 +78,3 @@ class SdkSpriteStyle extends IconStyle {
     }
   }
 }
-
-export default SdkSpriteStyle;

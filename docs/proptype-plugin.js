@@ -41,7 +41,7 @@ exports.handlers = {
         const start = filename.indexOf('src/') + 4;
         const end = filename.indexOf('.js') - start;
         const module = `module:${e.filename.substr(start, end)}`;
-        componentInfo[module] = reactDocs.parse(fs.readFileSync(e.filename), reactDocs.resolver.findAllComponentDefinitions);  
+        componentInfo[module] = reactDocs.parse(fs.readFileSync(e.filename), reactDocs.resolver.findAllComponentDefinitions);
       }
     },
     newDoclet: function(e) {
@@ -70,7 +70,7 @@ exports.handlers = {
                     defaultValue = defaultValue.substring(defaultValue.indexOf('class ') + 6, defaultValue.indexOf('extends'));
                   }
                 }
-                if (prop.description.indexOf('@ignore') === -1) {
+                if (prop.description && prop.description.indexOf('@ignore') === -1) {
                   doclet.properties.push({
                     name: key,
                     optional: !prop.required,

@@ -65,6 +65,8 @@ function getVersion(obj, key) {
   return obj.metadata[key];
 }
 
+/** MapboxGL based renderer class.
+ */
 export class MapboxGL extends React.Component {
 
   constructor(props) {
@@ -488,6 +490,12 @@ function mapStateToProps(state) {
   };
 }
 
+/** Get the extent for the map.
+ *
+ *  @param {MapboxGLMap} map - The MapboxGL Map instance.
+ *
+ *  @return {Array} of minx, miny, maxx, maxy
+ */
 export function getMapExtent(map) {
   const bounds = map.getBounds();
   const sw = bounds.getSouthWest();
@@ -541,5 +549,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-// Ensure that withRef is set to true so getWrappedInstance will return the Map.
+/** Export the connected class by default.
+ *  Ensure that withRef is set to true so getWrappedInstance will return the Map.
+ */
 export default connect(mapStateToProps, mapDispatchToProps, undefined, {withRef: true})(MapboxGL);

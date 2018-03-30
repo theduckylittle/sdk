@@ -5,7 +5,7 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack-dev-server.config.js --open --open-page 'build/examples'",
     "serve": "webpack-dev-server --config webpack-dev-server.config.js",
-    "pretest": "npm run lint",
+    "pretest": "npm run check-docs ; npm run lint",
     "test": "jest",
     "test:watch": "npm test -- --watch",
     "lint": "eslint __tests__ src examples tasks",
@@ -22,7 +22,8 @@
     "dist": "npm run build:js && npm run dist:copy && npm run sass -- -o ./dist",
     "build:doc-css": "npm run sass -- -o ./docs",
     "build:jsdoc": "jsdoc -r ./src -R docs/getting-started.md -d docs/out -c docs/conf.json",
-    "jsdoc": "npm run build:doc-css && npm run build:jsdoc"
+    "jsdoc": "npm run build:doc-css && npm run build:jsdoc",
+    "check-docs": "cd docs && ./doc_checker.sh"
   },
   "devDependencies": {
     "@mapbox/mapbox-gl-draw": "^1.0.4",

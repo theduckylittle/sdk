@@ -1738,7 +1738,9 @@ Map.defaultProps = {
   finalizeMeasureFeature: () => {
   },
   createLayerFilter: () => {
-  }
+  },
+  clearSourceErrors: () => {
+  },
 };
 
 function mapStateToProps(state) {

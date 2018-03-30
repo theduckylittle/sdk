@@ -91,6 +91,8 @@ export const MAPINFO = {
   CLEAR_SOURCE_ERRORS: 'MAPINFO.CLEAR_SOURCE_ERRORS',
 };
 
+/** Export all the action-types into a single "index" of action types.
+ */
 export default {
   MAP,
   DRAWING,
