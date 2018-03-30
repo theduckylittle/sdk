@@ -18,7 +18,9 @@ import ClusterSource from 'ol/source/cluster';
  *  {@link http://openlayers.org/en/latest/apidoc/ol.source.Cluster.html}
  */
 
-class SdkClusterSource extends ClusterSource {
+/** Custom cluster source class.
+ */
+export default class SdkClusterSource extends ClusterSource {
 
   /** Creates the cluster.
    *
@@ -36,5 +38,3 @@ class SdkClusterSource extends ClusterSource {
     return cluster;
   }
 }
-
-export default SdkClusterSource;

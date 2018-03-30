@@ -68,6 +68,8 @@ INTERACTIONS.measuring = [
   INTERACTIONS.measure_polygon,
 ];
 
+/** Export all the const's in a convenient Object.
+ */
 export default {
   LAYER_VERSION_KEY,
   SOURCE_VERSION_KEY,
