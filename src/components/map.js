@@ -67,7 +67,7 @@ import DrawInteraction from 'ol/interaction/draw';
 import ModifyInteraction from 'ol/interaction/modify';
 import SelectInteraction from 'ol/interaction/select';
 
-import mb2olstyle from 'mapbox-to-ol-style';
+import mb2olstyle from 'ol-mapbox-style/stylefunction';
 
 import Style from 'ol/style/style';
 import SpriteStyle from '../style/sprite';
