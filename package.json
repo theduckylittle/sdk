@@ -103,9 +103,8 @@
     "@turf/area": "^5.0.4",
     "@turf/distance": "^5.0.4",
     "mapbox-gl": "^0.42.0",
-    "mapbox-to-ol-style": "^3.3.0",
     "ol": "^4.5.0",
-    "ol-mapbox-style": "^2.8.4",
+    "ol-mapbox-style": "^2.11.2",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-dnd": "^2.5.4",
@@ -133,7 +132,7 @@
       "<rootDir>/config/polyfills.js"
     ],
     "transformIgnorePatterns": [
-      "/node_modules/(?!(ol|mapbox-to-ol-style|ol-mapbox-style)/).*/"
+      "/node_modules/(?!(ol|ol-mapbox-style)/).*/"
     ],
     "moduleNameMapper": {
       "\\.(css)$": "<rootDir>/node_modules/jest-css-modules"
