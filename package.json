@@ -72,6 +72,7 @@
     "node-sass": "^4.5.3",
     "ol": "^4.6.2",
     "ol-mapbox-style": "^2.11.2",
+    "raf": "^3.4.0",
     "react": "^16.0.0",
     "react-dnd": "^2.5.4",
     "react-dnd-html5-backend": "^2.5.4",
@@ -124,16 +125,15 @@
   },
   "homepage": "https://github.com/boundlessgeo/sdk#readme",
   "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,mjs}"
+    ],
     "testURL": "http://localhost",
     "setupFiles": [
-      "<rootDir>/env-setup.js"
+      "<rootDir>/config/polyfills.js"
     ],
     "transformIgnorePatterns": [
       "/node_modules/(?!(ol|mapbox-to-ol-style|ol-mapbox-style)/).*/"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "env-setup.js"
     ],
     "moduleNameMapper": {
       "\\.(css)$": "<rootDir>/node_modules/jest-css-modules"
