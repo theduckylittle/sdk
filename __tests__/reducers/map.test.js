@@ -113,6 +113,132 @@ describe('map reducer', () => {
     });
   });
 
+  it('should handle ADD_LAYER with unknown positionId', () => {
+    const title = 'Background';
+    const layer = {
+      id: 'background',
+      type: 'background',
+      paint: {
+        'background-color': 'rgba(0,0,0,0)',
+      },
+    };
+    deepFreeze(layer);
+    const action = {
+      type: MAP.ADD_LAYER,
+      layerDef: layer,
+      layerTitle: title,
+      positionId: 'foo',
+    };
+    deepFreeze(action);
+    const initialState = {
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      bearing: 0,
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
+      },
+      sources: {},
+      layers: [
+        {
+          id: 'osm',
+        },
+      ],
+    };
+    deepFreeze(initialState);
+    expect(reducer(initialState, action)).toEqual({
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      bearing: 0,
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 1,
+      },
+      sources: {},
+      layers: [
+        {
+          id: 'osm',
+        }, {
+          id: 'background',
+          type: 'background',
+          paint: {
+            'background-color': 'rgba(0,0,0,0)',
+          },
+          metadata: {
+            'bnd:title': title,
+          },
+        },
+      ],
+    });
+  });
+
+  it('should handle ADD_LAYER with known positionId', () => {
+    const title = 'Background';
+    const layer = {
+      id: 'background',
+      type: 'background',
+      paint: {
+        'background-color': 'rgba(0,0,0,0)',
+      },
+    };
+    deepFreeze(layer);
+    const action = {
+      type: MAP.ADD_LAYER,
+      layerDef: layer,
+      layerTitle: title,
+      positionId: 'osm',
+    };
+    deepFreeze(action);
+    const initialState = {
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      bearing: 0,
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 0,
+      },
+      sources: {},
+      layers: [
+        {
+          id: 'osm',
+        },
+      ],
+    };
+    deepFreeze(initialState);
+    expect(reducer(initialState, action)).toEqual({
+      version: 8,
+      name: 'default',
+      center: [0, 0],
+      zoom: 3,
+      bearing: 0,
+      metadata: {
+        'bnd:source-version': 0,
+        'bnd:layer-version': 1,
+      },
+      sources: {},
+      layers: [
+        {
+          id: 'background',
+          type: 'background',
+          paint: {
+            'background-color': 'rgba(0,0,0,0)',
+          },
+          metadata: {
+            'bnd:title': title,
+          },
+        }, {
+          id: 'osm',
+        },
+      ],
+    });
+  });
+
   it('should handle SET_NAME', () => {
     const state = {
       version: 8,
