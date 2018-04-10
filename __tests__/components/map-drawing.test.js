@@ -254,6 +254,7 @@ describe('Map component with drawing', () => {
     // feature added to select interaction
     expect(select.getFeatures().getArray()).toHaveLength(1);
     expect(select.getFeatures().item(0).get('foo')).toBe('bar');
+    expect(select.getActive()).toBe(false);
   });
 
   it('turns on select', () => {

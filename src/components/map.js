@@ -1597,6 +1597,7 @@ export class Map extends React.Component {
         const readFeatureOpt = {featureProjection: this.map.getView().getProjection()};
         const feature = GEOJSON_FORMAT.readFeature(drawingProps.feature, readFeatureOpt);
         select.getFeatures().push(feature);
+        select.setActive(false);
       }
       let modifyObj = {
         features: select.getFeatures(),
