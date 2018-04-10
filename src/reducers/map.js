@@ -95,7 +95,7 @@ function placeLayer(state, layer, targetId) {
   if (idx1 !== -1) {
     new_layers.splice(idx1, 1);
   }
-  const newIndex = targetId ? idx2 : new_layers.length;
+  const newIndex = (targetId && idx2 !== -1) ? idx2 : new_layers.length;
   new_layers.splice(newIndex, 0, layer);
   return Object.assign({}, state, {
     layers: new_layers,
