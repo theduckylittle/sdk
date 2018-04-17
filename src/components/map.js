@@ -252,10 +252,11 @@ function configureImageSource(glSource) {
  * Mapbox GL style object.
  * @param {Object} glSource The Mapbox GL map source of type 'vector'.
  * @param {string} accessToken The user's Mapbox tiles access token .
+ * @param {Object} fetchOptions Options to use for fetch calls.
  *
  * @returns {Object} Configured OpenLayers VectorTileSource.
  */
-function configureMvtSource(glSource, accessToken) {
+function configureMvtSource(glSource, accessToken, fetchOptions) {
   if (glSource.tiles) {
     return new Promise((resolve, reject) => {
       // predefine the source in-case since it's needed for the tile_url_fn
@@ -291,7 +292,7 @@ function configureMvtSource(glSource, accessToken) {
     });
   } else {
     let url = getTileJSONUrl(glSource, accessToken);
-    return fetch(url).then((response) => {
+    return fetch(url, fetchOptions).then((response) => {
       if (response.ok) {
         return response.json();
       }
@@ -324,7 +325,7 @@ function addParam(url, paramName, paramValue) {
   return new_url;
 }
 
-function getLoaderFunction(glSource, mapProjection, baseUrl) {
+function getLoaderFunction(glSource, mapProjection, baseUrl, fetchOptions) {
   return function(bbox, resolution, projection) {
     // setup a feature promise to handle async loading
     // of features.
@@ -353,7 +354,7 @@ function getLoaderFunction(glSource, mapProjection, baseUrl) {
       if (ck !== undefined) {
         url = addParam(url, '_ck', ck);
       }
-      features_promise = fetch(url).then(response => response.json());
+      features_promise = fetch(url, fetchOptions).then(response => response.json());
     } else if (typeof glSource.data === 'object'
       && (glSource.data.type === 'Feature' || glSource.data.type === 'FeatureCollection')) {
       features_promise = new Promise((resolve) => {
@@ -385,14 +386,14 @@ function getLoaderFunction(glSource, mapProjection, baseUrl) {
   };
 }
 
-function updateGeojsonSource(olSource, glSource, mapView, baseUrl) {
+function updateGeojsonSource(olSource, glSource, mapView, baseUrl, fetchOptions) {
   let src = olSource;
   if (glSource.cluster) {
     src = olSource.getSource();
   }
 
   // update the loader function based on the glSource definition
-  src.loader_ = getLoaderFunction(glSource, mapView.getProjection(), baseUrl);
+  src.loader_ = getLoaderFunction(glSource, mapView.getProjection(), baseUrl, fetchOptions);
 
   // clear the layer WITHOUT dispatching remove events.
   src.clear(true);
@@ -409,14 +410,15 @@ function updateGeojsonSource(olSource, glSource, mapView, baseUrl) {
  *  @param {Object} mapView The OpenLayers map view.
  *  @param {string} baseUrl The mapbox base url.
  *  @param {boolean} wrapX Should we wrap the world?
+ *  @param {Object} fetchOptions Options to use for fetch calls.
  *
  *  @returns {Object} ol.source.vector instance.
  */
-function configureGeojsonSource(glSource, mapView, baseUrl, wrapX) {
+function configureGeojsonSource(glSource, mapView, baseUrl, wrapX, fetchOptions) {
   const use_bbox = (typeof glSource.data === 'string' && glSource.data.indexOf(BBOX_STRING) >= 0);
   const vector_src = new VectorSource({
     strategy: use_bbox ? LoadingStrategy.bbox : LoadingStrategy.all,
-    loader: getLoaderFunction(glSource, mapView.getProjection(), baseUrl),
+    loader: getLoaderFunction(glSource, mapView.getProjection(), baseUrl, fetchOptions),
     useSpatialIndex: true,
     wrapX: wrapX,
   });
@@ -436,7 +438,7 @@ function configureGeojsonSource(glSource, mapView, baseUrl, wrapX) {
 
   // seed the vector source with the first update
   //  before returning it.
-  updateGeojsonSource(new_src, glSource, mapView, baseUrl);
+  updateGeojsonSource(new_src, glSource, mapView, baseUrl, fetchOptions);
   return new_src;
 }
 
@@ -448,10 +450,11 @@ function configureGeojsonSource(glSource, mapView, baseUrl, wrapX) {
  * @param {string} baseUrl A baseUrl provided by this.props.mapbox.baseUrl.
  * @param {string} time The current time if time-enabled.
  * @param {boolean} wrapX Should we wrap the world?
+ * @param {Object} fetchOptions Options to use for fetch calls.
  *
  * @returns {(Object|null)} Callback to the applicable configure source method.
  */
-function configureSource(glSource, mapView, accessToken, baseUrl, time, wrapX) {
+function configureSource(glSource, mapView, accessToken, baseUrl, time, wrapX, fetchOptions) {
   let src;
   // tiled raster layer.
   if (glSource.type === 'raster') {
@@ -461,11 +464,11 @@ function configureSource(glSource, mapView, accessToken, baseUrl, time, wrapX) {
       src = configureTileJSONSource(glSource, accessToken);
     }
   } else if (glSource.type === 'geojson') {
-    src = configureGeojsonSource(glSource, mapView, baseUrl, wrapX);
+    src = configureGeojsonSource(glSource, mapView, baseUrl, wrapX, fetchOptions);
   } else if (glSource.type === 'image') {
     src = configureImageSource(glSource);
   } else if (glSource.type === 'vector') {
-    return configureMvtSource(glSource, accessToken);
+    return configureMvtSource(glSource, accessToken, fetchOptions);
   }
   return new Promise((resolve, reject) => {
     resolve(src);
@@ -715,7 +718,7 @@ export class Map extends React.Component {
             if (force_redraw || (props.map.metadata !== undefined &&
                 props.map.metadata[version_key] !== nextProps.map.metadata[version_key])) {
               const next_src = nextProps.map.sources[src_name];
-              updateGeojsonSource(this.sources[src_name], next_src, map_view, props.mapbox.baseUrl);
+              updateGeojsonSource(this.sources[src_name], next_src, map_view, props.mapbox.baseUrl, props.fetchOptions);
             }
           }
         }
@@ -823,7 +826,7 @@ export class Map extends React.Component {
       if (!(src_name in this.sources)) {
         const time = getKey(this.props.map.metadata, TIME_KEY);
         promises.push(configureSource(sourcesDef[src_name], map_view,
-          this.props.mapbox.accessToken, this.props.mapbox.baseUrl, time, this.props.wrapX)
+          this.props.mapbox.accessToken, this.props.mapbox.baseUrl, time, this.props.wrapX, this.props.fetchOptions)
           .then(addSource.bind(this, src_name)));
       }
       const src = this.props.map.sources[src_name];
@@ -835,7 +838,8 @@ export class Map extends React.Component {
           this.props.mapbox.accessToken,
           this.props.mapbox.baseUrl,
           undefined,
-          this.props.wrapX
+          this.props.wrapX,
+          this.props.fetchOptions,
         )
           .then(addAndUpdateSource.bind(this, src_name)));
       }
@@ -853,7 +857,8 @@ export class Map extends React.Component {
           this.props.mapbox.accessToken,
           this.props.mapbox.baseUrl,
           undefined,
-          this.props.wrapX
+          this.props.wrapX,
+          this.props.fetchOptions,
         ).then(addAndUpdateSource.bind(this, src_name)));
       }
     }
@@ -1255,9 +1260,10 @@ export class Map extends React.Component {
    *  @param {Object} layer Mapbox GL layer object.
    *  @param {Promise[]} promises Features promies.
    *  @param {Object} evt Map event whose coordinates drive the feature request.
+   *  @param {Object} fetchOptions Options to use for fetch calls.
    *
    */
-  handleAsyncGetFeatureInfo(layer, promises, evt) {
+  handleAsyncGetFeatureInfo(layer, promises, evt, fetchOptions) {
     const map = this.map;
     const view = map.getView();
     const map_prj = view.getProjection();
@@ -1274,7 +1280,7 @@ export class Map extends React.Component {
               INFO_FORMAT: 'application/json',
             },
           );
-          fetch(url).then(
+          fetch(url, fetchOptions).then(
             response => response.json(),
             error => console.error('An error occured.', error),
           )
@@ -1309,7 +1315,7 @@ export class Map extends React.Component {
               'cql_filter': `BBOX(${geomName},${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]},'${this.props.projection}')`,
             }, layer.metadata[QUERY_PARAMS_KEY]);
             const url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
-            fetch(url).then(
+            fetch(url, fetchOptions).then(
               response => response.json(),
               error => console.error('An error occured.', error),
             )
@@ -1441,7 +1447,7 @@ export class Map extends React.Component {
     // add other async queries here.
     for (let i = 0, ii = this.props.map.layers.length; i < ii; ++i) {
       const layer = this.props.map.layers[i];
-      this.handleAsyncGetFeatureInfo(layer, promises, evt);
+      this.handleAsyncGetFeatureInfo(layer, promises, evt, this.props.fetchOptions);
     }
 
     return Promise.all(promises);
@@ -1708,6 +1714,8 @@ export class Map extends React.Component {
 
 Map.propTypes = {
   ...MapCommon.propTypes,
+  /** Options to use for fetch calls */
+  fetchOptions: PropTypes.object,
   /** Should we declutter labels and symbols? */
   declutter: PropTypes.bool,
   /** Tolerance in pixels for WFS BBOX type queries */
@@ -1728,6 +1736,9 @@ Map.propTypes = {
 
 Map.defaultProps = {
   ...MapCommon.defaultProps,
+  fetchOptions: {
+    credentials: 'same-origin',
+  },
   tolerance: 4,
   declutter: false,
   onFeatureSelected: () => {
