@@ -1198,10 +1198,11 @@ export class Map extends React.Component {
   /** Add a Popup to the map.
    *
    *  @param {SdkPopup} popup Instance of SdkPopop or a subclass.
-   *  @param {boolean} [silent] When true, do not call updatePopups() after adding.
+   *  @param {boolean} silent When true, do not call updatePopups() after adding.
+   *  @param {boolean} stopEvent Should the created overlay stop events.
    *
    */
-  addPopup(popup, silent = false) {
+  addPopup(popup, silent = false, stopEvent = false) {
     // each popup uses a unique id to relate what is
     //  in openlayers vs what we have in the react world.
     const id = uuid.v4();
@@ -1211,9 +1212,9 @@ export class Map extends React.Component {
     const overlay = new Overlay({
       // create an empty div element for the Popup
       element: elem,
-      // allow events to pass through, using the default stopevent
+      // if false, allow events to pass through, using the default stopevent
       // container does not allow react to check for events.
-      stopEvent: false,
+      stopEvent: stopEvent,
       // put the popup into view
       autoPan: true,
       autoPanAnimation: {
@@ -1568,7 +1569,7 @@ export class Map extends React.Component {
       // add the initial popups from the user.
       for (let i = 0, ii = this.props.initialPopups.length; i < ii; i++) {
         // set silent to true since updatePopups is called after the loop
-        this.addPopup(this.props.initialPopups[i], true);
+        this.addPopup(this.props.initialPopups[i], true, this.props.stopEvent);
       }
 
       this.updatePopups();
@@ -1733,10 +1734,15 @@ Map.propTypes = {
   finalizeMeasureFeature: PropTypes.func,
   /** Callback function that should generate a TIME based filter. */
   createLayerFilter: PropTypes.func,
+  /**
+   * Should we stop events in the popup overlay?
+   */
+  stopEvent: PropTypes.bool,
 };
 
 Map.defaultProps = {
   ...MapCommon.defaultProps,
+  stopEvent: false,
   fetchOptions: {
     credentials: 'same-origin',
   },
