@@ -1476,7 +1476,7 @@ export class Map extends React.Component {
     const minZoom = getKey(this.props.map.metadata, MIN_ZOOM_KEY);
     const maxZoom = getKey(this.props.map.metadata, MAX_ZOOM_KEY);
     this.map = new OlMap({
-      interactions: interaction.defaults(),
+      interactions: this.props.interactive ? interaction.defaults() : [],
       controls: [new AttributionControl()],
       target: this.mapdiv,
       logo: false,
@@ -1738,10 +1738,15 @@ Map.propTypes = {
    * Should we stop events in the popup overlay?
    */
   stopEvent: PropTypes.bool,
+  /**
+   * Should we be interactive? I.e. respond to mouse and keyboard events?
+   */
+  interactive: PropTypes.bool,
 };
 
 Map.defaultProps = {
   ...MapCommon.defaultProps,
+  interactive: true,
   stopEvent: false,
   fetchOptions: {
     credentials: 'same-origin',
