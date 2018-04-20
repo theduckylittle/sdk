@@ -50,6 +50,11 @@ describe('Map component', () => {
     expect(wrapper.find('.foo').length).toBe(1);
   });
 
+  it('should render a non interactive map', () => {
+    const wrapper = mount(<Map interactive={false} />);
+    expect(wrapper.instance().map.getInteractions().getLength()).toBe(0);
+  });
+
   it('should create a map', (done) => {
 
     // eslint-disable-next-line
