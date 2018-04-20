@@ -104,6 +104,8 @@ const WGS84_SPHERE = new Sphere(6378137);
 const MAPBOX_PROTOCOL = 'mapbox://';
 const MAPBOX_HOST = 'api.mapbox.com/v4';
 const BBOX_STRING = '{bbox-epsg-3857}';
+const START = 'start';
+const END = 'end';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
@@ -564,6 +566,8 @@ export class Map extends React.Component {
   constructor(props) {
     super(props);
 
+    this.loadCounter = 0;
+
     this.sourcesVersion = null;
     this.layersVersion = null;
 
@@ -782,6 +786,24 @@ export class Map extends React.Component {
     }
   }
 
+  onLoadEvents(eventType) {
+    if (eventType === START) {
+      this.loadCounter = this.loadCounter + 1;
+    } else if (eventType === END) {
+      this.loadCounter = this.loadCounter - 1;
+    }
+    if (this.loadCounter > 0 && !this._startTriggered) {
+      this.props.onLoadChanged(false);
+      this._startTriggered = true;
+      this._endTriggered = false;
+    }
+    if (this.loadCounter === 0 && !this._endTriggered) {
+      this.props.onLoadChanged(true);
+      this._endTriggered = true;
+      this._startTriggered = false;
+    }
+  }
+
 
   /** Convert the GL source definitions into internal
    *  OpenLayers source definitions.
@@ -805,10 +827,23 @@ export class Map extends React.Component {
       });
     };
 
+    const listenForLoad = (source) => {
+      source.on('tileloadstart', () => {
+        this.onLoadEvents(START);
+      });
+      source.on('tileloadend', () => {
+        this.onLoadEvents(END);
+      });
+      source.on('tileloaderror', () => {
+        this.onLoadEvents(END);
+      });
+    };
+
     const addSource = function(src_name, source) {
       if (source) {
         this.sources[src_name] = source;
         listenForError(src_name, source);
+        listenForLoad(source);
       }
     };
     const addAndUpdateSource = function(src_name, source) {
@@ -816,6 +851,7 @@ export class Map extends React.Component {
         this.sources[src_name] = source;
         this.updateLayerSource(src_name);
         listenForError(src_name, source);
+        listenForLoad(source);
       }
     };
 
@@ -1742,6 +1778,10 @@ Map.propTypes = {
    * Should we be interactive? I.e. respond to mouse and keyboard events?
    */
   interactive: PropTypes.bool,
+  /*
+   * Callback function for when we are loading data or are done loading data.
+   */
+  onLoadChanged: PropTypes.func,
 };
 
 Map.defaultProps = {
@@ -1753,6 +1793,8 @@ Map.defaultProps = {
   },
   tolerance: 4,
   declutter: false,
+  onLoadChanged: (done) => {
+  },
   onFeatureSelected: () => {
   },
   onFeatureDeselected: () => {

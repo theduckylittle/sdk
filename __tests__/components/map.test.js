@@ -216,6 +216,47 @@ describe('Map component', () => {
     }, 200);
   });
 
+  it('should handle load events', (done) => {
+    const onLoadChanged = (done) => {
+    };
+
+    const props = {
+      map: {
+        metadata: {},
+        sources: {
+          osm: {
+            type: 'raster',
+            attribution: '&copy; <a href=\'https://www.openstreetmap.org/copyright\'>OpenStreetMap</a> contributors.',
+            tileSize: 256,
+            tiles: [
+              'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            ],
+          },
+        },
+        layers: [{
+          id: 'osm',
+          source: 'osm',
+        }],
+      },
+      onLoadChanged,
+    };
+
+    spyOn(props, 'onLoadChanged').and.callThrough();
+
+    const wrapper = mount(<Map {...props} />);
+    const sdk_map = wrapper.instance();
+
+    window.setTimeout(() => {
+      sdk_map.sources.osm.dispatchEvent('tileloadstart');
+      expect(props.onLoadChanged).toHaveBeenCalledWith(false);
+      sdk_map.sources.osm.dispatchEvent('tileloadend');
+      expect(props.onLoadChanged).toHaveBeenCalledWith(true);
+      done();
+    }, 200);
+  });
+
   it('should ignore unknown types', () => {
     const sources = {
       overlay: {
