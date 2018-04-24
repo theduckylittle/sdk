@@ -216,6 +216,60 @@ describe('Map component', () => {
     }, 200);
   });
 
+  it('should handle load events', (done) => {
+    const setMapLoaded = () => {
+    };
+    const setMapLoading = () => {
+    };
+    const setSourceError = (src_name) => {
+    };
+
+    const props = {
+      map: {
+        metadata: {},
+        sources: {
+          osm: {
+            type: 'raster',
+            attribution: '&copy; <a href=\'https://www.openstreetmap.org/copyright\'>OpenStreetMap</a> contributors.',
+            tileSize: 256,
+            tiles: [
+              'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            ],
+          },
+        },
+        layers: [{
+          id: 'osm',
+          source: 'osm',
+        }],
+      },
+      setMapLoading,
+      setMapLoaded,
+      setSourceError,
+    };
+
+    spyOn(props, 'setMapLoaded');
+    spyOn(props, 'setMapLoading');
+    spyOn(props, 'setSourceError');
+
+    const wrapper = mount(<Map {...props} />);
+    const sdk_map = wrapper.instance();
+
+    window.setTimeout(() => {
+      sdk_map.sources.osm.dispatchEvent('tileloadstart');
+      expect(props.setMapLoading).toHaveBeenCalled();
+      sdk_map.sources.osm.dispatchEvent('tileloadend');
+      expect(props.setMapLoaded).toHaveBeenCalled();
+      sdk_map.sources.osm.dispatchEvent('tileloadstart');
+      expect(props.setMapLoading).toHaveBeenCalled();
+      sdk_map.sources.osm.dispatchEvent('tileloaderror');
+      expect(props.setMapLoaded).toHaveBeenCalled();
+      expect(props.setSourceError).toHaveBeenCalledWith('osm');
+      done();
+    }, 200);
+  });
+
   it('should ignore unknown types', () => {
     const sources = {
       overlay: {

@@ -29,6 +29,7 @@ const defaultState = {
   projection: 'EPSG:3857',
   sourceErrors: {},
   sourceRedraws: {},
+  loading: false,
 };
 
 function requestRedraw(state) {
@@ -80,6 +81,10 @@ export default function mapInfoReducer(state = defaultState, action) {
       return setSourceError(state, action);
     case MAPINFO.CLEAR_SOURCE_ERRORS:
       return Object.assign({}, state, {sourceErrors: {}});
+    case MAPINFO.SET_MAP_LOADING:
+      return Object.assign({}, state, {loading: true});
+    case MAPINFO.SET_MAP_LOADED:
+      return Object.assign({}, state, {loading: false});
     default:
       return state;
   }

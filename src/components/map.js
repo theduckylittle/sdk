@@ -77,7 +77,7 @@ import AttributionControl from 'ol/control/attribution';
 import LoadingStrategy from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
-import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection, setSourceError, clearSourceErrors} from '../actions/mapinfo';
+import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection, setSourceError, clearSourceErrors, setMapLoaded, setMapLoading} from '../actions/mapinfo';
 import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
 import MapCommon, {MapRender} from './map-common';
@@ -104,6 +104,8 @@ const WGS84_SPHERE = new Sphere(6378137);
 const MAPBOX_PROTOCOL = 'mapbox://';
 const MAPBOX_HOST = 'api.mapbox.com/v4';
 const BBOX_STRING = '{bbox-epsg-3857}';
+const START = 'start';
+const END = 'end';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
@@ -564,6 +566,8 @@ export class Map extends React.Component {
   constructor(props) {
     super(props);
 
+    this.loadCounter = 0;
+
     this.sourcesVersion = null;
     this.layersVersion = null;
 
@@ -782,6 +786,19 @@ export class Map extends React.Component {
     }
   }
 
+  onLoadEvents(eventType) {
+    if (eventType === START) {
+      this.loadCounter = this.loadCounter + 1;
+    } else if (eventType === END) {
+      this.loadCounter = this.loadCounter - 1;
+    }
+    if (this.loadCounter > 0 && this.props.loading !== true) {
+      this.props.setMapLoading();
+    }
+    if (this.loadCounter === 0 && this.props.loading !== false) {
+      this.props.setMapLoaded();
+    }
+  }
 
   /** Convert the GL source definitions into internal
    *  OpenLayers source definitions.
@@ -805,10 +822,23 @@ export class Map extends React.Component {
       });
     };
 
+    const listenForLoad = (source) => {
+      source.on('tileloadstart', () => {
+        this.onLoadEvents(START);
+      });
+      source.on('tileloadend', () => {
+        this.onLoadEvents(END);
+      });
+      source.on('tileloaderror', () => {
+        this.onLoadEvents(END);
+      });
+    };
+
     const addSource = function(src_name, source) {
       if (source) {
         this.sources[src_name] = source;
         listenForError(src_name, source);
+        listenForLoad(source);
       }
     };
     const addAndUpdateSource = function(src_name, source) {
@@ -816,6 +846,7 @@ export class Map extends React.Component {
         this.sources[src_name] = source;
         this.updateLayerSource(src_name);
         listenForError(src_name, source);
+        listenForLoad(source);
       }
     };
 
@@ -1774,6 +1805,7 @@ function mapStateToProps(state) {
     print: state.print,
     mapbox: state.mapbox,
     size: state.mapinfo ? state.mapinfo.size : null,
+    loading: state.mapinfo ? state.mapinfo.loading : false,
     requestedRedraws: state.mapinfo ? state.mapinfo.requestedRedraws : 0,
     sourceRedraws: state.mapinfo ? state.mapinfo.sourceRedraws : {},
   };
@@ -1850,6 +1882,12 @@ function mapDispatchToProps(dispatch) {
     },
     clearSourceErrors() {
       dispatch(clearSourceErrors());
+    },
+    setMapLoading() {
+      dispatch(setMapLoading());
+    },
+    setMapLoaded() {
+      dispatch(setMapLoaded());
     },
   };
 }

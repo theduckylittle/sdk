@@ -20,6 +20,7 @@ describe('mapinfo reducer', () => {
       resolution: null,
       sourceErrors: {},
       sourceRedraws: {},
+      loading: false,
     });
   });
 
@@ -134,4 +135,25 @@ describe('mapinfo reducer', () => {
       sourceErrors: {},
     });
   });
+
+  it('should handle setting the map to loading', () => {
+    const action = {
+      type: MAPINFO.SET_MAP_LOADING,
+    };
+
+    expect(reducer({}, action)).toEqual({
+      loading: true,
+    });
+  });
+
+  it('should handle setting the map to loaded', () => {
+    const action = {
+      type: MAPINFO.SET_MAP_LOADED,
+    };
+
+    expect(reducer({}, action)).toEqual({
+      loading: false,
+    });
+  });
+
 });
