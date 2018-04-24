@@ -88,13 +88,6 @@ function main() {
   // Updates minzoom level on Null Island layer to 2.
   const updateMinzoom = () => {
     store.dispatch(mapActions.updateLayer('null-island', {
-      source: 'points',
-      type: 'circle',
-      paint: {
-        'circle-radius': 3,
-        'circle-color': '#feb24c',
-        'circle-stroke-color': '#f03b20',
-      },
       minzoom: 5,
     }));
   };
