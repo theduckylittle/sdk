@@ -966,7 +966,7 @@ export class Map extends React.Component {
     }
 
     if (layers.length === 1 && layers[0].type === 'raster') {
-      if (layers[0].paint && layers[0].paint['raster-opacity']) {
+      if (layers[0].paint && layers[0].paint['raster-opacity'] !== undefined) {
         olLayer.setOpacity(layers[0].paint['raster-opacity']);
       }
     }

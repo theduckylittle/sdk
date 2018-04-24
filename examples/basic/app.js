@@ -20,7 +20,6 @@ import SdkScaleLine from '@boundlessgeo/sdk/components/map/scaleline';
 import SdkHashHistory from '@boundlessgeo/sdk/components/history';
 import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
 import SdkMapInfoReducer from '@boundlessgeo/sdk/reducers/mapinfo';
-import {getLayerById} from '@boundlessgeo/sdk/util';
 import * as mapActions from '@boundlessgeo/sdk/actions/map';
 
 import RendererSwitch from '../rendererswitch';
@@ -51,9 +50,6 @@ function main() {
     id: 'osm',
     source: 'osm',
     type: 'raster',
-    paint: {
-      'raster-opacity': .5,
-    },
   }));
 
   // 'geojson' sources allow rendering a vector layer
@@ -165,43 +161,6 @@ function main() {
     }
   }
 
-  class OpacityControl extends React.PureComponent {
-    render() {
-      const layers = store.getState().map.layers;
-      const layer = getLayerById(layers, 'osm');
-      const opacity = layer.paint['raster-opacity'] * 100;
-
-      return (
-        <div>
-          <input
-            min="0"
-            max="100"
-            type="number"
-            defaultValue={opacity}
-            ref={(me) => {
-              this.opacityInput = me;
-            }}
-          />
-
-          <button
-            className="sdk-btn"
-            onClick={() => {
-              const new_opacity = this.opacityInput.value / 100;
-
-              store.dispatch(mapActions.updateLayer('osm', {
-                paint: Object.assign({}, layer.paint, {
-                  'raster-opacity': new_opacity,
-                })
-              }));
-            }}
-          >
-            Change Basemap Opacity
-          </button>
-        </div>
-      );
-    }
-  }
-
   // place the map on the page.
   ReactDOM.render(<Provider store={store}>
     <RendererSwitch>
@@ -220,7 +179,6 @@ function main() {
       <button className="sdk-btn" onClick={addRandomPoints}>Add 10 random points</button>
       <button className="sdk-btn blue" onClick={removeRandomPoints}>Remove random points</button>
       <InputField />
-      <OpacityControl />
 
       {/*SdkHashHistory provides a log of coordinates in the url hash*/}
       <SdkHashHistory store={store} />
