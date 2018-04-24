@@ -56,7 +56,7 @@ export default class Popup extends React.PureComponent {
           c.addEventListener('click', this.close);
         }
       }
-      } className="sdk-popup-closer fa fa-times" />);
+      } className="sdk-popup-closer" />);
     }
     if (this.state.closed) {
       return false;
