@@ -124,3 +124,23 @@ export function clearSourceErrors() {
     type: MAPINFO.CLEAR_SOURCE_ERRORS,
   };
 }
+
+/** Sets the map state to loading.
+ *
+ *  @returns {Object} Action object to set the map state to loading.
+ */
+export function setMapLoading() {
+  return {
+    type: MAPINFO.SET_MAP_LOADING,
+  };
+}
+
+/** Sets the map state to loaded.
+ *
+ *  @returns {Object} Action object to set the map state to loaded.
+ */
+export function setMapLoaded() {
+  return {
+    type: MAPINFO.SET_MAP_LOADED,
+  };
+}

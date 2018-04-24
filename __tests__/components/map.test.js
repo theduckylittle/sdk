@@ -217,7 +217,9 @@ describe('Map component', () => {
   });
 
   it('should handle load events', (done) => {
-    const onLoadChanged = (done) => {
+    const setMapLoaded = () => {
+    };
+    const setMapLoading = () => {
     };
     const setSourceError = (src_name) => {
     };
@@ -242,11 +244,13 @@ describe('Map component', () => {
           source: 'osm',
         }],
       },
-      onLoadChanged,
+      setMapLoading,
+      setMapLoaded,
       setSourceError,
     };
 
-    spyOn(props, 'onLoadChanged');
+    spyOn(props, 'setMapLoaded');
+    spyOn(props, 'setMapLoading');
     spyOn(props, 'setSourceError');
 
     const wrapper = mount(<Map {...props} />);
@@ -254,13 +258,13 @@ describe('Map component', () => {
 
     window.setTimeout(() => {
       sdk_map.sources.osm.dispatchEvent('tileloadstart');
-      expect(props.onLoadChanged).toHaveBeenCalledWith(false);
+      expect(props.setMapLoading).toHaveBeenCalled();
       sdk_map.sources.osm.dispatchEvent('tileloadend');
-      expect(props.onLoadChanged).toHaveBeenCalledWith(true);
+      expect(props.setMapLoaded).toHaveBeenCalled();
       sdk_map.sources.osm.dispatchEvent('tileloadstart');
-      expect(props.onLoadChanged).toHaveBeenCalledWith(false);
+      expect(props.setMapLoading).toHaveBeenCalled();
       sdk_map.sources.osm.dispatchEvent('tileloaderror');
-      expect(props.onLoadChanged).toHaveBeenCalledWith(true);
+      expect(props.setMapLoaded).toHaveBeenCalled();
       expect(props.setSourceError).toHaveBeenCalledWith('osm');
       done();
     }, 200);

@@ -77,7 +77,7 @@ import AttributionControl from 'ol/control/attribution';
 import LoadingStrategy from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
-import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection, setSourceError, clearSourceErrors} from '../actions/mapinfo';
+import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection, setSourceError, clearSourceErrors, setMapLoaded, setMapLoading} from '../actions/mapinfo';
 import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
 import MapCommon, {MapRender} from './map-common';
@@ -792,18 +792,13 @@ export class Map extends React.Component {
     } else if (eventType === END) {
       this.loadCounter = this.loadCounter - 1;
     }
-    if (this.loadCounter > 0 && !this._startTriggered) {
-      this.props.onLoadChanged(false);
-      this._startTriggered = true;
-      this._endTriggered = false;
+    if (this.loadCounter > 0 && this.props.loading !== true) {
+      this.props.setMapLoading();
     }
-    if (this.loadCounter === 0 && !this._endTriggered) {
-      this.props.onLoadChanged(true);
-      this._endTriggered = true;
-      this._startTriggered = false;
+    if (this.loadCounter === 0 && this.props.loading !== false) {
+      this.props.setMapLoaded();
     }
   }
-
 
   /** Convert the GL source definitions into internal
    *  OpenLayers source definitions.
@@ -1778,10 +1773,6 @@ Map.propTypes = {
    * Should we be interactive? I.e. respond to mouse and keyboard events?
    */
   interactive: PropTypes.bool,
-  /*
-   * Callback function for when we are loading data or are done loading data.
-   */
-  onLoadChanged: PropTypes.func,
 };
 
 Map.defaultProps = {
@@ -1793,8 +1784,6 @@ Map.defaultProps = {
   },
   tolerance: 4,
   declutter: false,
-  onLoadChanged: (done) => {
-  },
   onFeatureSelected: () => {
   },
   onFeatureDeselected: () => {
@@ -1816,6 +1805,7 @@ function mapStateToProps(state) {
     print: state.print,
     mapbox: state.mapbox,
     size: state.mapinfo ? state.mapinfo.size : null,
+    loading: state.mapinfo ? state.mapinfo.loading : false,
     requestedRedraws: state.mapinfo ? state.mapinfo.requestedRedraws : 0,
     sourceRedraws: state.mapinfo ? state.mapinfo.sourceRedraws : {},
   };
@@ -1892,6 +1882,12 @@ function mapDispatchToProps(dispatch) {
     },
     clearSourceErrors() {
       dispatch(clearSourceErrors());
+    },
+    setMapLoading() {
+      dispatch(setMapLoading());
+    },
+    setMapLoaded() {
+      dispatch(setMapLoaded());
     },
   };
 }

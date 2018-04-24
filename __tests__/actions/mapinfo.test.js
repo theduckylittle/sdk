@@ -57,5 +57,17 @@ describe('test that mapinfo actions are properly created', () => {
     });
   });
 
+  it('should set the map to loading', () => {
+    expect(actions.setMapLoading()).toEqual({
+      type: MAPINFO.SET_MAP_LOADING,
+    });
+  });
+
+  it('should set the map to loaded', () => {
+    expect(actions.setMapLoaded()).toEqual({
+      type: MAPINFO.SET_MAP_LOADED,
+    });
+  });
+
 });
 
