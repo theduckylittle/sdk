@@ -14,9 +14,6 @@ import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 
 import SdkZoomControl from '@boundlessgeo/sdk/components/map/zoom-control';
-import SdkZoomSlider from '@boundlessgeo/sdk/components/map/zoom-slider';
-import SdkMousePosition from '@boundlessgeo/sdk/components/map/mouseposition';
-import SdkScaleLine from '@boundlessgeo/sdk/components/map/scaleline';
 import SdkHashHistory from '@boundlessgeo/sdk/components/history';
 import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
 import SdkMapInfoReducer from '@boundlessgeo/sdk/reducers/mapinfo';
@@ -129,10 +126,7 @@ function main() {
   // place the map on the page.
   ReactDOM.render(<Provider store={store}>
     <RendererSwitch>
-      <SdkScaleLine />
-      <SdkMousePosition style={{position: 'absolute', top: 20, right: 12, zIndex: 1, width: '5em'}} />
       <SdkZoomControl />
-      <SdkZoomSlider />
     </RendererSwitch>
   </Provider>, document.getElementById('map'));
 
