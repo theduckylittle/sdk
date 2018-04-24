@@ -147,15 +147,7 @@ After `class App extends Component {`, add the following lines:
 ```javascript
 componentDidMount() {
   // add the OSM source
-  store.dispatch(SdkMapActions.addSource('osm', {
-    type: 'raster',
-    tileSize: 256,
-    tiles: [
-      'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    ],
-  }));
+  store.dispatch(SdkMapActions.addOsmSource('osm'));
 
   // add an OSM layer
   store.dispatch(SdkMapActions.addLayer({
