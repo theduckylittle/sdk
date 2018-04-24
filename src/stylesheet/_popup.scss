@@ -75,9 +75,13 @@
   }
 }
 .sdk-popup-closer {
+  font-style: normal;
   text-decoration: none;
   position: absolute;
   top: 7px;
   right: 8px;
   cursor: pointer;
+}
+.sdk-popup-closer:after {
+  content: "✖";
 }
