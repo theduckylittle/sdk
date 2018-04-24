@@ -42,12 +42,6 @@ function main() {
   // Set the map name
   store.dispatch(mapActions.setMapName('Basic Map Example'));
 
-  // Restrict the zoom levels
-  store.dispatch(mapActions.updateMetadata({
-    'bnd:minzoom': 4,
-    'bnd:maxzoom': 20,
-  }));
-
   // add the OSM source
   store.dispatch(mapActions.addOsmSource('osm'));
 
@@ -208,20 +202,6 @@ function main() {
     }
   }
 
-  // Updates minzoom level on Null Island layer to 2.
-  const updateMinzoom = () => {
-    store.dispatch(mapActions.updateLayer('null-island', {
-      source: 'points',
-      type: 'circle',
-      paint: {
-        'circle-radius': 3,
-        'circle-color': '#feb24c',
-        'circle-stroke-color': '#f03b20',
-      },
-      minzoom: 5,
-    }));
-  };
-
   // place the map on the page.
   ReactDOM.render(<Provider store={store}>
     <RendererSwitch>
@@ -239,7 +219,6 @@ function main() {
       <button className="sdk-btn" onClick={zoomToNullIsland}>Zoom to Null Island</button>
       <button className="sdk-btn" onClick={addRandomPoints}>Add 10 random points</button>
       <button className="sdk-btn blue" onClick={removeRandomPoints}>Remove random points</button>
-      <button className="sdk-btn" onClick={updateMinzoom}>Change Minimum Zoom Level on Null Island to 5</button>
       <InputField />
       <OpacityControl />
 
