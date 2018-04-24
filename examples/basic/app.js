@@ -38,9 +38,6 @@ function main() {
   // Start with a reasonable global view of the map.
   store.dispatch(mapActions.setView([-93, 45], 2));
 
-  // Set the map name
-  store.dispatch(mapActions.setMapName('Basic Map Example'));
-
   // add the OSM source
   store.dispatch(mapActions.addOsmSource('osm'));
 
@@ -129,38 +126,6 @@ function main() {
     store.dispatch(mapActions.removeFeatures('points', ['==', 'isRandom', true]));
   };
 
-  // Component to update map name from user input.
-  class InputField extends React.PureComponent {
-    constructor(props) {
-      super(props);
-      this.state = {value: store.getState().map.name};
-      this.handleSubmit = this.handleSubmit.bind(this);
-      this.updateMapName = this.updateMapName.bind(this);
-    }
-    updateMapName(event) {
-      this.setState({value: event.target.value});
-    }
-    handleSubmit(event) {
-      event.preventDefault();
-      store.dispatch(mapActions.setMapName(this.state.value));
-      this.setState({value: ''});
-    }
-    render() {
-      return (
-        <div className="mapName">
-          <form onSubmit={this.handleSubmit}>
-            <div className="mapForm">
-              <label className="nameLabel" htmlFor="nameField">Change Map Name in Redux store:</label>
-              <input className="nameField" placeholder="Enter new map name here" type="text" id="nameField" value={this.state.value} onChange={this.updateMapName} />
-              <button className="sdk-btn" type="submit">Update Map Name</button>
-            </div>
-          </form>
-          <div className="newName">New Redux state.map.name Value: {store.getState().map.name}</div>
-        </div>
-      );
-    }
-  }
-
   // place the map on the page.
   ReactDOM.render(<Provider store={store}>
     <RendererSwitch>
@@ -178,7 +143,6 @@ function main() {
       <button className="sdk-btn" onClick={zoomToNullIsland}>Zoom to Null Island</button>
       <button className="sdk-btn" onClick={addRandomPoints}>Add 10 random points</button>
       <button className="sdk-btn blue" onClick={removeRandomPoints}>Remove random points</button>
-      <InputField />
 
       {/*SdkHashHistory provides a log of coordinates in the url hash*/}
       <SdkHashHistory store={store} />
