@@ -1023,6 +1023,7 @@ export class Map extends React.Component {
       case 'raster':
         layer = new TileLayer({
           source,
+          zIndex: idx,
           opacity: layers[0].paint ? layers[0].paint['raster-opacity'] : undefined,
         });
         this.applyStyle(layer, layers, sprite);
@@ -1030,6 +1031,7 @@ export class Map extends React.Component {
       case 'geojson':
         layer = new VectorLayer({
           declutter: declutter,
+          zIndex: idx,
           source,
         });
         this.applyStyle(layer, layers, sprite);
@@ -1051,6 +1053,7 @@ export class Map extends React.Component {
       case 'image':
         return new ImageLayer({
           source,
+          zIndex: idx,
           opacity: layers[0].paint ? layers[0].paint['raster-opacity'] : undefined,
         });
       default:

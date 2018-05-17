@@ -182,7 +182,9 @@ describe('Map component', () => {
     expect(map).toBeInstanceOf(olMap);
     window.setTimeout(() => {
       expect(map.getLayers().item(0)).toBeInstanceOf(TileLayer);
+      expect(map.getLayers().item(0).getZIndex()).toBe(0);
       expect(map.getLayers().item(1)).toBeInstanceOf(TileLayer);
+      expect(map.getLayers().item(1).getZIndex()).toBe(1);
       expect(map.getLayers().item(1).getSource()).toBeInstanceOf(TileWMSSource);
       const tileLoadFunction = map.getLayers().item(6).getSource().getTileLoadFunction();
       const tileCoord = [0, 0, 0];
