@@ -39,7 +39,7 @@ SDK-based apps do require additional dependencies. These include Redux for
 managing state and node-sass for preprocessing CSS.
 
 ```
-yarn add node-sass-chokidar redux react-redux ol ol-mapbox-style
+yarn add node-sass-chokidar redux react-redux ol ol-mapbox-style@^2.11.2
 ```
 
 ### Add sass-building scripts to package.json
@@ -75,7 +75,7 @@ and do not need the latest features from the master branch.
 It will install the dist-version of the library.
 
 ```bash
-yarn add @boundlessgeo/sdk
+yarn add @boundlessgeo/sdk@^2.0.0
 ```
 
 #### From GitHub
