@@ -993,7 +993,9 @@ export class Map extends React.Component {
       this.props.mapbox.accessToken,
     );
     if (olLayer.setStyle && spriteLayers.length === 0) {
-      applyStyle(olLayer, fake_style, layers[0].source);
+      applyStyle(olLayer, fake_style, layers[0].source).catch((error) => {
+        console.error('An error occured.', error);
+      });
     }
 
     if (layers.length === 1 && layers[0].type === 'raster') {
