@@ -221,12 +221,6 @@ export class Legend extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const nextLayer = getLayerById(nextProps.layers, this.props.layerId);
-    const layer = getLayerById(this.props.layers, this.props.layerId);
-    return (layer !== nextLayer);
-  }
-
   layersEqual(layer1, layer2) {
     let paintEqual = true;
     if (layer1 && layer1.paint && layer2 && layer2.paint) {
