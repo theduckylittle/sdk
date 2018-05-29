@@ -536,8 +536,8 @@ describe('Map component', () => {
     const view = map.getView();
     // default values should get set
     expect(view.getRotation()).toBe(0);
-    expect(view.getCenter()).toBe(null);
-    expect(view.getZoom()).toBe(undefined);
+    expect(view.getCenter()).toEqual([0, 0]);
+    expect(view.getZoom()).toBe(1);
   });
 
   it('should handle undefined center, zoom, bearing in componentWillReceiveProps', () => {

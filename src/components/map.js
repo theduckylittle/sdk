@@ -524,7 +524,7 @@ export function hydrateLayer(layersDef, glLayer) {
     // clone the gl layer
     layer_def = jsonClone(glLayer);
     // remove the reference
-    layer_def.ref = undefined;
+    delete layer_def.ref;
     // mixin the layer_def to the ref layer.
     layer_def = Object.assign({}, ref_layer, layer_def);
   }
@@ -1502,8 +1502,15 @@ export class Map extends React.Component {
     let center;
     if (this.props.map.center !== undefined) {
       center = Proj.transform(this.props.map.center, 'EPSG:4326', map_proj);
+    } else {
+      center = [0, 0];
     }
-
+    let zoom;
+    if (this.props.map.zoom !== undefined) {
+      zoom = this.props.map.zoom + 1;
+    } else {
+      zoom = 1;
+    }
     // initialize the map.
     const minZoom = getKey(this.props.map.metadata, MIN_ZOOM_KEY);
     const maxZoom = getKey(this.props.map.metadata, MAX_ZOOM_KEY);
@@ -1516,7 +1523,7 @@ export class Map extends React.Component {
         minZoom: minZoom ? minZoom + 1 : undefined,
         maxZoom: maxZoom ? maxZoom + 1 : undefined,
         center,
-        zoom: this.props.map.zoom >= 0 ? this.props.map.zoom + 1 : this.props.map.zoom,
+        zoom,
         rotation: rotation !== undefined ? -rotation : 0,
         projection: map_proj,
       }),
