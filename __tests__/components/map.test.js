@@ -509,8 +509,8 @@ describe('Map component', () => {
       window.setTimeout(() => {
         expect(layer.getVisible()).toBe(false);
         done();
-      }, 0);
-    }, 0);
+      }, 200);
+    }, 200);
   });
 
   it('should handle undefined center, zoom and bearing in constructor', () => {
