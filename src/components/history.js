@@ -38,9 +38,8 @@ function proposeFloat(value, defaultValue) {
 }
 
 export class HashHistory extends React.Component {
-  /** Ensure the hash is restored if already set
-   */
-  componentWillMount() {
+  constructor(props) {
+    super(props);
     // without this, render() will overwrite what is in the URL.
     this.onHashChange();
   }

@@ -103,73 +103,61 @@ export class MapboxGL extends React.Component {
     }
   }
 
-  /** This will check nextProps and nextState to see
-   *  what needs to be updated on the map.
-   * @param {Object} nextProps The next properties of this component.
-   *
-   * @returns {boolean} should the component re-render?
-   */
-  shouldComponentUpdate(nextProps) {
-    // This should always return false to keep
-    // render() from being called.
-    return false;
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.drawing && nextProps.drawing.interaction) {
+  componentDidUpdate(prevProps) {
+    if (this.props.drawing && this.props.drawing.interaction) {
       this.addDrawIfNeeded();
     }
     // check if the sources or layers diff
-    const next_sources_version = getVersion(nextProps.map, SOURCE_VERSION_KEY);
-    const next_layer_version = getVersion(nextProps.map, LAYER_VERSION_KEY);
+    const next_sources_version = getVersion(this.props.map, SOURCE_VERSION_KEY);
+    const next_layer_version = getVersion(this.props.map, LAYER_VERSION_KEY);
     if (this.sourcesVersion !== next_sources_version || this.layersVersion !== next_layer_version) {
       this.sourcesVersion = next_sources_version;
       this.layersVersion = next_layer_version;
-      this.map && this.map.setStyle(nextProps.map);
+      this.map && this.map.setStyle(this.props.map);
     }
     // compare the centers
-    if (nextProps.map.center !== undefined) {
+    if (this.props.map.center !== undefined) {
       // center has not been set yet or differs
-      if (this.props.map.center === undefined ||
-        (nextProps.map.center[0] !== this.props.map.center[0]
-        || nextProps.map.center[1] !== this.props.map.center[1])) {
-        this.map && this.map.setCenter(nextProps.map.center);
+      if (prevProps.map.center === undefined ||
+        (this.props.map.center[0] !== prevProps.map.center[0]
+        || this.props.map.center[1] !== prevProps.map.center[1])) {
+        this.map && this.map.setCenter(this.props.map.center);
       }
     }
     // compare the zoom
-    if (nextProps.map.zoom !== undefined && (nextProps.map.zoom !== this.props.map.zoom) && this.map) {
-      this.map.setZoom(nextProps.map.zoom);
+    if (this.props.map.zoom !== undefined && (this.props.map.zoom !== prevProps.map.zoom) && this.map) {
+      this.map.setZoom(this.props.map.zoom);
     }
     // compare the rotation
-    if (nextProps.map.bearing !== undefined && nextProps.map.bearing !== this.props.map.bearing && this.map) {
-      this.map.setBearing(nextProps.map.bearing);
+    if (this.props.map.bearing !== undefined && this.props.map.bearing !== prevProps.map.bearing && this.map) {
+      this.map.setBearing(this.props.map.bearing);
     }
     // check the vector sources for data changes
-    const src_names = Object.keys(nextProps.map.sources);
+    const src_names = Object.keys(this.props.map.sources);
     for (let i = 0, ii = src_names.length; i < ii; i++) {
       const src_name = src_names[i];
-      const src = this.props.map.sources[src_name];
+      const src = prevProps.map.sources[src_name];
       if (src && src.type === 'geojson') {
         const version_key = dataVersionKey(src_name);
-        if (this.props.map.metadata !== undefined &&
-            this.props.map.metadata[version_key] !== nextProps.map.metadata[version_key] && this.map) {
+        if (prevProps.map.metadata !== undefined &&
+            prevProps.map.metadata[version_key] !== this.props.map.metadata[version_key] && this.map) {
           const source = this.map.getSource(src_name);
           if (source !== undefined) {
-            source.setData(nextProps.map.sources[src_name].data);
+            source.setData(this.props.map.sources[src_name].data);
           }
         }
       }
     }
     // trigger a resize event when the size has changed or a redraw is requested.
-    if (!optionalEquals(this.props, nextProps, 'mapinfo', 'size')
-        || !optionalEquals(this.props, nextProps, 'mapinfo', 'requestedRedraws')) {
+    if (!optionalEquals(this.props, prevProps, 'mapinfo', 'size')
+        || !optionalEquals(this.props, prevProps, 'mapinfo', 'requestedRedraws')) {
       this.map.resize();
     }
 
     // change the current interaction as needed
-    if (nextProps.drawing && (nextProps.drawing.interaction !== this.props.drawing.interaction
-        || nextProps.drawing.sourceName !== this.props.drawing.sourceName)) {
-      this.updateInteraction(nextProps.drawing);
+    if (this.props.drawing && (this.props.drawing.interaction !== prevProps.drawing.interaction
+        || this.props.drawing.sourceName !== prevProps.drawing.sourceName)) {
+      this.updateInteraction(this.props.drawing);
     }
   }
 

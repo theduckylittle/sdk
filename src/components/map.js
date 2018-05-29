@@ -600,36 +600,30 @@ export class Map extends React.Component {
     }
   }
 
-  shouldComponentUpdate() {
-    // This should always return false to keep
-    // render() from being called.
-    return false;
-  }
-
-  /** This will check nextProps to see what needs to be updated on the map.
-   * @param {Object} nextProps The next properties of this component.
+  /** This will check prevProps versus this.props to see what needs to be updated on the map.
+   * @param {Object} prevProps The next properties of this component.
    */
-  componentWillReceiveProps(nextProps) {
-    const old_time = getKey(this.props.map.metadata, TIME_KEY);
+  componentDidUpdate(prevProps) {
+    const old_time = getKey(prevProps.map.metadata, TIME_KEY);
 
-    const new_time = getKey(nextProps.map.metadata, TIME_KEY);
+    const new_time = getKey(this.props.map.metadata, TIME_KEY);
 
-    const force_redraw = this.props.requestedRedraws !== nextProps.requestedRedraws;
-    const force_source_redraw = !jsonEquals(this.props.sourceRedraws, nextProps.sourceRedraws);
+    const force_redraw = this.props.requestedRedraws !== prevProps.requestedRedraws;
+    const force_source_redraw = !jsonEquals(this.props.sourceRedraws, prevProps.sourceRedraws);
     if (old_time !== new_time) {
       // find time dependent layers
-      for (let i = 0, ii = nextProps.map.layers.length; i < ii; ++i) {
-        const layer = nextProps.map.layers[i];
+      for (let i = 0, ii = this.props.map.layers.length; i < ii; ++i) {
+        const layer = this.props.map.layers[i];
         if (layer.metadata[TIME_START_KEY] !== undefined) {
           this.props.updateLayer(layer.id, {
-            filter: this.props.createLayerFilter(layer, nextProps.map.metadata[TIME_KEY])
+            filter: this.props.createLayerFilter(layer, this.props.map.metadata[TIME_KEY])
           });
         }
         if (layer.metadata[TIME_KEY] !== undefined) {
           const source = layer.source;
           const olSource = this.sources[source];
           if (olSource && olSource instanceof TileWMSSource) {
-            olSource.updateParams({TIME: nextProps.map.metadata[TIME_KEY]});
+            olSource.updateParams({TIME: this.props.map.metadata[TIME_KEY]});
           }
         }
       }
@@ -644,7 +638,7 @@ export class Map extends React.Component {
       for (const key in this.sources) {
         const src = this.sources[key];
         if (force_source_redraw) {
-          timestamp = nextProps.sourceRedraws[key];
+          timestamp = this.props.sourceRedraws[key];
         }
         if (timestamp) {
           if (typeof src.updateParams === 'function') {
@@ -666,29 +660,29 @@ export class Map extends React.Component {
     const map_proj = map_view.getProjection();
 
     // compare the centers
-    if (nextProps.map.center !== undefined) {
+    if (this.props.map.center !== undefined) {
       // center has not been set yet or differs
-      if (this.props.map.center === undefined ||
-        (nextProps.map.center[0] !== this.props.map.center[0]
-        || nextProps.map.center[1] !== this.props.map.center[1])) {
+      if (prevProps.map.center === undefined ||
+        (prevProps.map.center[0] !== this.props.map.center[0]
+        || prevProps.map.center[1] !== this.props.map.center[1])) {
         // convert the center point to map coordinates.
-        const center = Proj.transform(nextProps.map.center, 'EPSG:4326', map_proj);
+        const center = Proj.transform(this.props.map.center, 'EPSG:4326', map_proj);
         map_view.setCenter(center);
       }
     }
     // compare the zoom
-    if (nextProps.map.zoom !== undefined && (nextProps.map.zoom !== this.props.map.zoom)) {
-      map_view.setZoom(nextProps.map.zoom + 1);
+    if (this.props.map.zoom !== undefined && (this.props.map.zoom !== prevProps.map.zoom)) {
+      map_view.setZoom(this.props.map.zoom + 1);
     }
     // compare the rotation
-    if (nextProps.map.bearing !== undefined && nextProps.map.bearing !== this.props.map.bearing) {
-      const rotation = degreesToRadians(nextProps.map.bearing);
+    if (this.props.map.bearing !== undefined && this.props.map.bearing !== prevProps.map.bearing) {
+      const rotation = degreesToRadians(this.props.map.bearing);
       map_view.setRotation(-rotation);
     }
 
     // check the sources diff
-    const next_sources_version = getVersion(nextProps.map, SOURCE_VERSION_KEY);
-    const next_layer_version = getVersion(nextProps.map, LAYER_VERSION_KEY);
+    const next_sources_version = getVersion(this.props.map, SOURCE_VERSION_KEY);
+    const next_layer_version = getVersion(this.props.map, LAYER_VERSION_KEY);
 
     // default to the source-configuration promise to being resolved.
     let sources_promise = new Promise((resolve, reject) => {
@@ -696,22 +690,22 @@ export class Map extends React.Component {
     });
 
     if (this.sourcesVersion !== next_sources_version || force_redraw) {
-      sources_promise = this.configureSources(nextProps.map.sources, next_sources_version)
+      sources_promise = this.configureSources(this.props.map.sources, next_sources_version, prevProps)
         .then(() => {
-          this.configureLayers(nextProps.map.sources, nextProps.map.layers, next_layer_version, nextProps.map.sprite, this.props.declutter);
+          this.configureLayers(this.props.map.sources, this.props.map.layers, next_layer_version, this.props.map.sprite, this.props.declutter, prevProps);
         }).catch((error) => {
           console.error('An error occured.', error);
         });
     } else if (this.layersVersion !== next_layer_version) {
-      this.configureLayers(nextProps.map.sources, nextProps.map.layers, next_layer_version, nextProps.map.sprite, this.props.declutter);
+      this.configureLayers(this.props.map.sources, this.props.map.layers, next_layer_version, this.props.map.sprite, this.props.declutter, prevProps);
     }
 
     // wait for the sources to be ready.
-    const props = this.props;
+    const props = prevProps;
     sources_promise
       .then(() => {
         // check the vector sources for data changes
-        const src_names = Object.keys(nextProps.map.sources);
+        const src_names = Object.keys(this.props.map.sources);
         for (let i = 0, ii = src_names.length; i < ii; i++) {
           const src_name = src_names[i];
           const src = props.map.sources[src_name];
@@ -720,8 +714,8 @@ export class Map extends React.Component {
 
 
             if (force_redraw || (props.map.metadata !== undefined &&
-                props.map.metadata[version_key] !== nextProps.map.metadata[version_key])) {
-              const next_src = nextProps.map.sources[src_name];
+                props.map.metadata[version_key] !== this.props.map.metadata[version_key])) {
+              const next_src = this.props.map.sources[src_name];
               updateGeojsonSource(this.sources[src_name], next_src, map_view, props.mapbox.baseUrl, props.fetchOptions);
             }
           }
@@ -736,16 +730,16 @@ export class Map extends React.Component {
     this.updatePopups();
 
     // change the current interaction as needed
-    if (nextProps.drawing) {
-      if (nextProps.drawing.interaction !== this.props.drawing.interaction || nextProps.drawing.sourceName !== this.props.drawing.sourceName) {
-        this.updateInteraction(nextProps.drawing);
+    if (this.props.drawing) {
+      if (this.props.drawing.interaction !== prevProps.drawing.interaction || this.props.drawing.sourceName !== prevProps.drawing.sourceName) {
+        this.updateInteraction(this.props.drawing);
       }
-      if (nextProps.drawing.measureFinishGeometry) {
+      if (this.props.drawing.measureFinishGeometry) {
         this.finishMeasureGeometry();
       }
     }
 
-    if (nextProps.print && nextProps.print.exportImage) {
+    if (this.props.print && this.props.print.exportImage) {
       // this uses the canvas api to get the map image
       this.map.once('postcompose', (evt) => {
         evt.context.canvas.toBlob(this.props.onExportImage);
@@ -753,7 +747,7 @@ export class Map extends React.Component {
       this.map.renderSync();
     }
 
-    if (force_redraw || !jsonEquals(this.props.size, nextProps.size)) {
+    if (force_redraw || !jsonEquals(this.props.size, prevProps.size)) {
       this.map.updateSize();
     }
   }
@@ -804,10 +798,11 @@ export class Map extends React.Component {
    *  OpenLayers source definitions.
    *  @param {Object} sourcesDef All sources defined in the Mapbox GL stylesheet.
    *  @param {number} sourceVersion Counter for the source metadata updates.
+   *  @param {Object} prevProps Previous properties of the component.
    *
    *  @returns {Promise} When all sources are done, the promise is resolved.
    */
-  configureSources(sourcesDef, sourceVersion) {
+  configureSources(sourcesDef, sourceVersion, prevProps) {
     const promises = [];
     // TODO: Update this to check "diff" configurations
     //       of sources.  Currently, this will only detect
@@ -861,7 +856,7 @@ export class Map extends React.Component {
           this.props.mapbox.accessToken, this.props.mapbox.baseUrl, time, this.props.wrapX, this.props.fetchOptions)
           .then(addSource.bind(this, src_name)));
       }
-      const src = this.props.map.sources[src_name];
+      const src = prevProps ? prevProps.map.sources[src_name] : this.props.map.sources[src_name];
       if (src && src.type !== 'geojson' && !jsonEquals(src, sourcesDef[src_name])) {
         // reconfigure source and tell layers about it
         promises.push(configureSource(
@@ -1110,8 +1105,9 @@ export class Map extends React.Component {
    *  @param {number} layerVersion The value of state.map.metadata[LAYER_VERSION_KEY].
    *  @param {string} sprite The sprite of the map.
    *  @param {boolean} declutter Should we declutter labels and symbols?
+   *  @param {Object} prevProps Previous properties of the component.
    */
-  configureLayers(sourcesDef, layersDef, layerVersion, sprite, declutter) {
+  configureLayers(sourcesDef, layersDef, layerVersion, sprite, declutter, prevProps) {
     // update the internal version counter.
     this.layersVersion = layerVersion;
     // bin layers into groups based on their source.
@@ -1176,7 +1172,7 @@ export class Map extends React.Component {
         // is defined by filter and paint elements.
         const current_layers = [];
         for (let j = 0, jj = lyr_group.length; j < jj; j++) {
-          current_layers.push(getLayerById(this.props.map.layers, lyr_group[j].id));
+          current_layers.push(getLayerById(prevProps ? prevProps.map.layers : this.props.map.layers, lyr_group[j].id));
         }
         if (!jsonEquals(lyr_group, current_layers)) {
           this.applyStyle(ol_layer, hydrateLayerGroup(layersDef, lyr_group), sprite);
