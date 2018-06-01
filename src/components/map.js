@@ -125,15 +125,39 @@ function getVersion(obj, key) {
   return obj.metadata[key];
 }
 
+/**
+ * Load a tile with full fetchOptions.
+ *
+ * This is only used when the Authorization header has been set
+ * in the fetchOptions.
+ *
+ * @param {Object} fetchOptions Options to use for fetch calls.
+ *
+ * @returns {Function} Tile loading function which uses fetch.
+ */
+function authTileLoader(fetchOptions) {
+  return function(tile, src) {
+    fetch(src, fetchOptions)
+      .then(r => r.blob())
+      .then((imgData) => {
+        tile.getImage().src = URL.createObjectURL(imgData);
+      })
+      .catch(() => {
+        console.error('Error fetchimg image at:', src);
+      });
+  };
+}
+
 /** Configures an OpenLayers TileWMS or XyzSource object from the provided
  * Mapbox GL style object.
  * @param {Object} glSource The Mapbox GL map source containing a 'tiles' property.
  * @param {Object} mapProjection The OpenLayers projection object.
  * @param {string} time TIME parameter.
+ * @param {Object} fetchOptions Options to use for fetch calls.
  *
  * @returns {Object} Configured OpenLayers TileWMSSource or XyzSource.
  */
-function configureTileSource(glSource, mapProjection, time) {
+function configureTileSource(glSource, mapProjection, time, fetchOptions) {
   const tile_url = glSource.tiles[0];
   const commonProps = {
     attributions: glSource.attribution,
@@ -143,6 +167,10 @@ function configureTileSource(glSource, mapProjection, time) {
     crossOrigin: 'crossOrigin' in glSource ? glSource.crossOrigin : 'anonymous',
     projection: mapProjection,
   };
+  // when there is an authorization header, enable the async loader.
+  if (fetchOptions.headers && fetchOptions.headers.get('Authorization')) {
+    commonProps.tileLoadFunction = authTileLoader(fetchOptions);
+  }
   // check to see if the url is a wms request.
   if (tile_url.toUpperCase().indexOf('SERVICE=WMS') >= 0) {
     const urlParts = glSource.tiles[0].split('?');
@@ -461,7 +489,7 @@ function configureSource(glSource, mapView, accessToken, baseUrl, time, wrapX, f
   // tiled raster layer.
   if (glSource.type === 'raster') {
     if ('tiles' in glSource) {
-      src = configureTileSource(glSource, mapView.getProjection(), time);
+      src = configureTileSource(glSource, mapView.getProjection(), time, fetchOptions);
     } else if (glSource.url) {
       src = configureTileJSONSource(glSource, accessToken);
     }
