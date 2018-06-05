@@ -732,7 +732,7 @@ describe('MapboxGL component', () => {
     map.map = createMapMock();
     const popupId = 'foo';
     // mock overlay and popup
-    const setMap = (map) => {};
+    const setMap = () => {};
     const popup = {
       setMap,
       state: {
