@@ -838,10 +838,10 @@ export class Map extends React.Component {
     let src_names = Object.keys(sourcesDef);
     const map_view = this.map.getView();
 
-    const setSourceError = this.props.setSourceError;
+    const sourceError = this.props.setSourceError;
     const listenForError = (src_name, source) => {
       source.on('tileloaderror', () => {
-        setSourceError(src_name);
+        sourceError(src_name);
       });
     };
 
