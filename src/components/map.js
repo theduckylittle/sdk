@@ -148,6 +148,35 @@ function authTileLoader(fetchOptions) {
   };
 }
 
+/**
+ * Load a vector tile with full fetchOptions
+ * This is only used when the Authorization header has been set
+ * in the fetchOptions.
+ *
+ * @param {Object} fetchOptions Options to use for fetch calls.
+ *
+ * @returns {Function} Tile loading function which uses fetch.
+ */
+function authVectorTileLoader(fetchOptions) {
+  return function(tile, url) {
+    const loader = () => {
+      fetch(url, fetchOptions)
+        .then(r => r.arrayBuffer())
+        .then((source) => {
+          const format = tile.getFormat();
+          tile.setProjection(format.readProjection(source));
+          tile.setFeatures(format.readFeatures(source));
+          tile.setExtent(format.getLastExtent());
+        })
+        .catch((err) => {
+          tile.onError();
+        });
+    };
+
+    tile.setLoader(loader);
+  };
+}
+
 /** Configures an OpenLayers TileWMS or XyzSource object from the provided
  * Mapbox GL style object.
  * @param {Object} glSource The Mapbox GL map source containing a 'tiles' property.
@@ -292,6 +321,7 @@ function configureMvtSource(glSource, accessToken, fetchOptions) {
       // predefine the source in-case since it's needed for the tile_url_fn
       let source;
       let tile_url_fn;
+      let tile_load_fn;
       // check the first tile to see if we need to do BBOX subsitution
       if (glSource.tiles[0].indexOf(BBOX_STRING) !== -1) {
         tile_url_fn = function(urlTileCoord, pixelRatio, projection) {
@@ -306,6 +336,9 @@ function configureMvtSource(glSource, accessToken, fetchOptions) {
           return img_src.replace(BBOX_STRING, bbox.toString());
         };
       }
+      if (fetchOptions.headers && fetchOptions.headers.get('Authorization')) {
+        tile_load_fn = authVectorTileLoader(fetchOptions);
+      }
       source = new VectorTileSource({
         urls: glSource.tiles,
         tileGrid: TileGrid.createXYZ({
@@ -317,6 +350,7 @@ function configureMvtSource(glSource, accessToken, fetchOptions) {
         format: new MvtFormat(),
         crossOrigin: 'crossOrigin' in glSource ? glSource.crossOrigin : 'anonymous',
         tileUrlFunction: tile_url_fn,
+        tileLoadFunction: tile_load_fn,
       });
       resolve(source);
     });
