@@ -58,7 +58,7 @@ describe('WfsController component.', () => {
 
   it('handles exception reports', (done) => {
     // eslint-disable-next-lint
-    const error = '<ows:ExceptionReport xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/ows https://demo.boundlessgeo.com/geoserver/schemas/ows/1.0.0/owsExceptionReport.xsd"><ows:Exception exceptionCode="NoApplicableCode"><ows:ExceptionText>Transaction support is not enabled</ows:ExceptionText></ows:Exception></ows:ExceptionReport>';
+    const exception = '<ows:ExceptionReport xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/ows https://demo.boundlessgeo.com/geoserver/schemas/ows/1.0.0/owsExceptionReport.xsd"><ows:Exception exceptionCode="NoApplicableCode"><ows:ExceptionText>Transaction support is not enabled</ows:ExceptionText></ows:Exception></ows:ExceptionReport>';
 
     let message;
 
@@ -81,7 +81,7 @@ describe('WfsController component.', () => {
 
     nock('http://exception.com')
       .post('/wfs')
-      .reply(200, error, {
+      .reply(200, exception, {
         'Content-Type': 'application/xml',
       });
     store.dispatch(actions.updateFeature('exception-source', feature));

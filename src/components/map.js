@@ -1376,7 +1376,7 @@ export class Map extends React.Component {
               srsName: 'EPSG:4326',
               'cql_filter': `BBOX(${geomName},${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]},'${this.props.projection}')`,
             }, layer.metadata[QUERY_PARAMS_KEY]);
-            const url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
+            url = `${layer.metadata[QUERY_ENDPOINT_KEY]}?${encodeQueryObject(params)}`;
             fetch(url, fetchOptions).then(
               response => response.json(),
               error => console.error('An error occured.', error),
