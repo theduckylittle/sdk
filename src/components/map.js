@@ -1403,6 +1403,7 @@ export class Map extends React.Component {
             const coord = evt.coordinate;
             const bbox = [coord[0] - tolerance, coord[1] - tolerance, coord[0] + tolerance, coord[1] + tolerance];
             const params = Object.assign({}, {
+              service: 'WFS',
               request: 'GetFeature',
               version: '1.0.0',
               typename: layer.source,
