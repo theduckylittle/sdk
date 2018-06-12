@@ -1438,7 +1438,7 @@ describe('Map component', () => {
     // eslint-disable-next-line
     const response = {"type":"FeatureCollection","totalFeatures":1,"features":[{"type":"Feature","id":"ogrgeojson_92929c5c.48","geometry":{"type":"Polygon",'coordinates': [[[-100.0, -100.0], [100.0, -100.0], [100.0, 100.0], [-100.0, 100.0], [-100.0, -100.0] ]]},"geometry_name":"wkb_geometry","properties":{"id":"states.11","state_name":"Arizona","state_fips":"04","sub_region":"Mtn","state_abbr":"AZ","land_km":294333.462,"water_km":942.772,"persons":3665228,"families":940106,"houshold":1368843,"male":1810691,"female":1854537,"workers":1358263,"drvalone":1178320,"carpool":239083,"pubtrans":32856,"employed":1603896,"unemploy":123902,"service":455896,"manual":185109,"p_male":0.494,"p_female":0.506,"samp_pop":468178}}],"crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG::4326"}}};
     nock('http://example.com')
-      .get('/geoserver?request=GetFeature&version=1.0.0&typename=mywms&outputformat=JSON&srsName=EPSG%3A4326&cql_filter=BBOX(wkb_geometry%2C-52.87405657035609%2C-52.87405657035609%2C252.8740565703561%2C252.8740565703561%2C%27EPSG%3A3857%27)')
+      .get('/geoserver?service=WFS&request=GetFeature&version=1.0.0&typename=mywms&outputformat=JSON&srsName=EPSG%3A4326&cql_filter=BBOX(wkb_geometry%2C-52.87405657035609%2C-52.87405657035609%2C252.8740565703561%2C252.8740565703561%2C%27EPSG%3A3857%27)')
       .reply(200, response);
 
     sdk_map.sources = {
