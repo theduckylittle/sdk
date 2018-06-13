@@ -1867,6 +1867,8 @@ Map.defaultProps = {
   },
   clearSourceErrors: () => {
   },
+  setSourceError: () => {
+  },
 };
 
 function mapStateToProps(state) {
