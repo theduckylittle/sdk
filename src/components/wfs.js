@@ -89,16 +89,16 @@ class WfsController extends Component {
         options);
 
       // convert the XML to a string.
-      let payload = (new XMLSerializer()).serializeToString(xml);
+      const payload = '<?xml version="1.0" encoding="UTF-8"?>' + (new XMLSerializer()).serializeToString(xml);
 
       // get the target_url from the service
       const target_url = src.onlineResource;
 
       // attempt the action,
-      fetch(target_url, {
-        method: 'POST',
-        body: payload,
-      }).then((response) => {
+      const fetchOptions = this.props.fetchOptions;
+      fetchOptions.method = 'POST';
+      fetchOptions.body = payload;
+      fetch(target_url, fetchOptions).then((response) => {
         if (response.ok) {
           return response.text();
         } else {
@@ -171,6 +171,8 @@ WfsController.propTypes = {
   onFinishTransaction: PropTypes.func,
   /** onRequestError callback function, called when a request fails. */
   onRequestError: PropTypes.func,
+  /** Options to use for fetch calls */
+  fetchOptions: PropTypes.object,
 };
 
 WfsController.defaultProps = {
@@ -178,6 +180,9 @@ WfsController.defaultProps = {
   sources: {},
   onFinishTransaction: () => {},
   onRequestError: () => {},
+  fetchOptions: {
+    credentials: 'same-origin',
+  },
 };
 
 function mapStateToProps(state) {
