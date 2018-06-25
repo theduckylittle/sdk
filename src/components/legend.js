@@ -24,6 +24,7 @@ import VectorLayer from 'ol/layer/vector';
 import {applyStyle} from 'ol-mapbox-style';
 import {jsonEquals, jsonClone, getLayerById, parseQueryString, encodeQueryObject} from '../util';
 import {getFakeStyle, hydrateLayer} from './map';
+import AsyncImage from './async-img';
 
 /** @module components/legend
  * @desc React Component to render the legend data.
@@ -142,10 +143,12 @@ export function getPolygonGeometry(size) {
  *
  *  @param {Object} layer Mapbox GL layer object.
  *  @param {Object} layer_src Mapbox GL source object.
+ *  @param {boolean} async Should we fetch async?
+ *  @param {Object} fetchOptions Options to use for fetch call if async.
  *
  *  @returns {(Object[]|Object)} An array of <img> elements or a <div> element.
  */
-export function getRasterLegend(layer, layer_src) {
+export function getRasterLegend(layer, layer_src, async, fetchOptions) {
   if (layer_src.tiles && layer_src.tiles.length > 0) {
     const tile_url = layer_src.tiles[0];
     // check to see if the url is a wms request.
@@ -201,7 +204,7 @@ export function getRasterLegend(layer, layer_src) {
           LAYER: layers[i],
         });
         const src = `${url}?${encodeQueryObject(params)}`;
-        images.push((<img alt={layers[i]} key={layers[i]} className="sdk-legend-image" src={src} />));
+        images.push((<AsyncImage async={async} fetchOptions={fetchOptions} alt={layers[i]} key={layers[i]} className="sdk-legend-image" src={src} />));
       }
 
       return images;
@@ -348,7 +351,7 @@ export class Legend extends React.Component {
 
     switch (layer_src.type) {
       case 'raster':
-        return getRasterLegend(layer, layer_src);
+        return getRasterLegend(layer, layer_src, this.props.async, this.props.fetchOptions);
       // while this may seem pretty verbose,
       //  it was intentionally left here to make it
       //  easy to implement other legend handlers as
@@ -426,6 +429,10 @@ Legend.propTypes = {
   style: PropTypes.object,
   /** Css classname to apply. */
   className: PropTypes.string,
+  /** Do we need to fetch the WMS GetLegendGraphic images asynchronous? */
+  async: PropTypes.bool,
+  /** Options to use for fetch calls if async is true */
+  fetchOptions: PropTypes.object,
 };
 
 Legend.defaultProps = {
