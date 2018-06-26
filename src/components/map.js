@@ -1370,7 +1370,7 @@ export class Map extends React.Component {
       if (source instanceof TileWMSSource) {
         promises.push(new Promise((resolve) => {
           features_by_layer = {};
-          layer_name = layer.id;
+          layer_name = layer['source-layer'] || layer.id;
           url = this.sources[layer.source].getGetFeatureInfoUrl(
             evt.coordinate, map_resolution, map_prj, {
               INFO_FORMAT: 'application/json',
