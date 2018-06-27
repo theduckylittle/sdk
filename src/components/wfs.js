@@ -97,6 +97,10 @@ class WfsController extends Component {
       // attempt the action,
       const fetchOptions = this.props.fetchOptions;
       fetchOptions.method = 'POST';
+      if (!fetchOptions.headers) {
+        fetchOptions.headers = new Headers();
+      }
+      fetchOptions.headers.set('Content-Type', 'text/xml');
       fetchOptions.body = payload;
       fetch(target_url, fetchOptions).then((response) => {
         if (response.ok) {
