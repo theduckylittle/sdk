@@ -13,7 +13,7 @@ import SdkMap from '@boundlessgeo/sdk/components/map';
 import MapReducer from '@boundlessgeo/sdk/reducers/map';
 import * as MapActions from '@boundlessgeo/sdk/actions/map';
 import SdkSpriteStyle from '@boundlessgeo/sdk/style/sprite';
-import Feature from 'ol/feature';
+import Feature from 'ol/Feature';
 
 import canvas from 'canvas';
 

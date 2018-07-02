@@ -17,10 +17,10 @@ import PropTypes from 'prop-types';
 import {Component} from 'react';
 import {connect} from 'react-redux';
 
-import WfsFormat from 'ol/format/wfs';
-import GeoJsonFormat from 'ol/format/geojson';
-import Projection from 'ol/proj/projection';
-import Proj from 'ol/proj';
+import WfsFormat from 'ol/format/WFS';
+import GeoJsonFormat from 'ol/format/GeoJSON';
+import Projection from 'ol/proj/Projection';
+import {addEquivalentProjections, get} from 'ol/proj';
 
 import {finishedAction} from '../actions/wfs';
 
@@ -41,7 +41,7 @@ class WfsController extends Component {
       code: 'http://www.opengis.net/gml/srs/epsg.xml#4326',
       axisOrientation: 'enu',
     });
-    Proj.addEquivalentProjections([Proj.get('EPSG:4326'), this.wfs_proj]);
+    addEquivalentProjections([get('EPSG:4326'), this.wfs_proj]);
   }
 
   /** Runs the WFS request.

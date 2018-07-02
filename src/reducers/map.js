@@ -538,7 +538,7 @@ function removeFeatures(state, action) {
   if (data.type === 'Feature') {
     // if the feature should be removed, return an empty
     //  FeatureCollection
-    if (match(data)) {
+    if (match(undefined, data)) {
       return changeData(state, action.sourceName, {
         type: 'FeatureCollection',
         features: [],
@@ -548,7 +548,7 @@ function removeFeatures(state, action) {
     const new_features = [];
     for (let i = 0, ii = data.features.length; i < ii; i++) {
       const feature = data.features[i];
-      if (!match(feature)) {
+      if (!match(undefined, feature)) {
         new_features.push(feature);
       }
     }

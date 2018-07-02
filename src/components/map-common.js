@@ -118,6 +118,10 @@ MapCommon.propTypes = {
    * @ignore
    */
   clearMeasureFeature: PropTypes.func,
+  /**
+   * Should we be interactive? I.e. respond to mouse and keyboard events?
+   */
+  interactive: PropTypes.bool,
 };
 
 MapCommon.defaultProps = {
@@ -161,4 +165,5 @@ MapCommon.defaultProps = {
   },
   clearMeasureFeature: () => {
   },
+  interactive: true,
 };

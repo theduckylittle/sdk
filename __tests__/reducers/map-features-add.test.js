@@ -2,7 +2,7 @@
 
 import deepFreeze from 'deep-freeze';
 
-import proj from 'ol/proj';
+import {toLonLat} from 'ol/proj';
 import reducer from '@boundlessgeo/sdk/reducers/map';
 import {MAP} from '@boundlessgeo/sdk/action-types';
 
@@ -232,11 +232,11 @@ describe('map reducer add features', () => {
     deepFreeze(source);
     const geom1 = [2000, 2000];
     deepFreeze(geom1);
-    const reprojectedGeom1 = proj.toLonLat(geom1);
+    const reprojectedGeom1 = toLonLat(geom1);
     deepFreeze(reprojectedGeom1);
     const geom2 = [2000000, 200000];
     deepFreeze(geom2);
-    const reprojectedGeom2 = proj.toLonLat(geom2);
+    const reprojectedGeom2 = toLonLat(geom2);
     deepFreeze(reprojectedGeom2);
     const action = {
       type: MAP.ADD_FEATURES,

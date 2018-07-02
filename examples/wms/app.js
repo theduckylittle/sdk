@@ -9,7 +9,7 @@ import thunkMiddleware from 'redux-thunk';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import WMSCapabilitiesFormat from 'ol/format/wmscapabilities';
+import WMSCapabilitiesFormat from 'ol/format/WMSCapabilities';
 
 import RendererSwitch from '../rendererswitch';
 import SdkZoomControl from '@boundlessgeo/sdk/components/map/zoom-control';

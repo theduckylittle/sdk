@@ -24,57 +24,53 @@ import {connect} from 'react-redux';
 
 import {applyBackground, applyStyle} from 'ol-mapbox-style';
 
-import OlMap from 'ol/pluggablemap';
-import View from 'ol/view';
-import Overlay from 'ol/overlay';
-import MapRenderer from 'ol/renderer/canvas/map';
-import interaction from 'ol/interaction';
-import plugins from 'ol/plugins';
-import PluginType from 'ol/plugintype';
-import TileLayerRenderer from 'ol/renderer/canvas/tilelayer';
+import OlMap from 'ol/Map';
+import View from 'ol/View';
+import Overlay from 'ol/Overlay';
+import {defaults as interactionDefaults} from 'ol/interaction';
 
-import PolygonGeom from 'ol/geom/polygon';
-import MultiPolygonGeom from 'ol/geom/multipolygon';
+import PolygonGeom from 'ol/geom/Polygon';
+import MultiPolygonGeom from 'ol/geom/MultiPolygon';
 
-import Observable from 'ol/observable';
+import {unByKey} from 'ol/Observable';
 
-import Proj from 'ol/proj';
-import Coordinate from 'ol/coordinate';
-import Sphere from 'ol/sphere';
+import {transform, transformExtent, toLonLat} from 'ol/proj';
+import {toStringHDMS} from 'ol/coordinate';
+import {getDistance, getArea} from 'ol/sphere';
 
-import TileLayer from 'ol/layer/tile';
-import XyzSource from 'ol/source/xyz';
-import TileWMSSource from 'ol/source/tilewms';
-import TileJSON from 'ol/source/tilejson';
-import TileGrid from 'ol/tilegrid';
+import TileLayer from 'ol/layer/Tile';
+import XyzSource from 'ol/source/XYZ';
+import TileWMSSource from 'ol/source/TileWMS';
+import TileJSON from 'ol/source/TileJSON';
+import {createXYZ} from 'ol/tilegrid';
 
-import VectorTileLayer from 'ol/layer/vectortile';
-import VectorTileSource from 'ol/source/vectortile';
+import VectorTileLayer from 'ol/layer/VectorTile';
+import VectorTileSource from 'ol/source/VectorTile';
 
-import MvtFormat from 'ol/format/mvt';
-import RenderFeature from 'ol/render/feature';
+import MvtFormat from 'ol/format/MVT';
+import RenderFeature from 'ol/render/Feature';
 
-import ImageLayer from 'ol/layer/image';
-import ImageStaticSource from 'ol/source/imagestatic';
+import ImageLayer from 'ol/layer/Image';
+import ImageStaticSource from 'ol/source/ImageStatic';
 
-import VectorLayer from 'ol/layer/vector';
-import VectorSource from 'ol/source/vector';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
 
-import GeoJsonFormat from 'ol/format/geojson';
-import EsriJsonFormat from 'ol/format/esrijson';
+import GeoJsonFormat from 'ol/format/GeoJSON';
+import EsriJsonFormat from 'ol/format/EsriJSON';
 
-import DrawInteraction from 'ol/interaction/draw';
-import ModifyInteraction from 'ol/interaction/modify';
-import SelectInteraction from 'ol/interaction/select';
+import DrawInteraction, {createBox} from 'ol/interaction/Draw';
+import ModifyInteraction from 'ol/interaction/Modify';
+import SelectInteraction from 'ol/interaction/Select';
 
 import mb2olstyle from 'ol-mapbox-style/stylefunction';
 
-import Style from 'ol/style/style';
+import Style from 'ol/style/Style';
 import SpriteStyle from '../style/sprite';
 
-import AttributionControl from 'ol/control/attribution';
+import AttributionControl from 'ol/control/Attribution';
 
-import LoadingStrategy from 'ol/loadingstrategy';
+import {bbox as bboxStrategy, all as allStrategy} from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection, setSourceError, clearSourceErrors, setMapLoaded, setMapLoading} from '../actions/mapinfo';
@@ -100,15 +96,11 @@ import 'ol/ol.css';
 
 const GEOJSON_FORMAT = new GeoJsonFormat();
 const ESRIJSON_FORMAT = new EsriJsonFormat();
-const WGS84_SPHERE = new Sphere(6378137);
 const MAPBOX_PROTOCOL = 'mapbox://';
 const MAPBOX_HOST = 'api.mapbox.com/v4';
 const BBOX_STRING = '{bbox-epsg-3857}';
 const START = 'start';
 const END = 'end';
-
-plugins.register(PluginType.MAP_RENDERER, MapRenderer);
-plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
 
 /** This variant of getVersion() differs as it allows
  *  for undefined values to be returned.
@@ -341,7 +333,7 @@ function configureMvtSource(glSource, accessToken, fetchOptions) {
       }
       source = new VectorTileSource({
         urls: glSource.tiles,
-        tileGrid: TileGrid.createXYZ({
+        tileGrid: createXYZ({
           tileSize: 512,
           maxZoom: 'maxzoom' in glSource ? glSource.maxzoom : 22,
           minZoom: glSource.minzoom,
@@ -366,7 +358,7 @@ function configureMvtSource(glSource, accessToken, fetchOptions) {
           crossOrigin: 'crossOrigin' in glSource ? glSource.crossOrigin : 'anonymous',
           attributions: json.attribution,
           format: new MvtFormat(),
-          tileGrid: TileGrid.createXYZ({
+          tileGrid: createXYZ({
             minZoom: json.minzoom,
             maxZoom: json.maxzoom,
             tileSize: 512
@@ -481,7 +473,7 @@ function updateGeojsonSource(olSource, glSource, mapView, baseUrl, fetchOptions)
 function configureGeojsonSource(glSource, mapView, baseUrl, wrapX, fetchOptions) {
   const use_bbox = (typeof glSource.data === 'string' && glSource.data.indexOf(BBOX_STRING) >= 0);
   const vector_src = new VectorSource({
-    strategy: use_bbox ? LoadingStrategy.bbox : LoadingStrategy.all,
+    strategy: use_bbox ? bboxStrategy : allStrategy,
     loader: getLoaderFunction(glSource, mapView.getProjection(), baseUrl, fetchOptions),
     useSpatialIndex: true,
     wrapX: wrapX,
@@ -728,7 +720,7 @@ export class Map extends React.Component {
         (prevProps.map.center[0] !== this.props.map.center[0]
         || prevProps.map.center[1] !== this.props.map.center[1])) {
         // convert the center point to map coordinates.
-        const center = Proj.transform(this.props.map.center, 'EPSG:4326', map_proj);
+        const center = transform(this.props.map.center, 'EPSG:4326', map_proj);
         map_view.setCenter(center);
       }
     }
@@ -983,19 +975,18 @@ export class Map extends React.Component {
         layer.filter = createFilter(layer.filter);
       }
     }
-    const onPostCompose = function(e) {
-      this.update(e);
-    };
     olLayer.setStyle((feature, resolution) => {
       // loop over the layers to see which one matches
       for (let l = 0, ll = layers.length; l < ll; ++l) {
         const layer = layers[l];
-        if (!layer.filter || layer.filter({properties: feature.getProperties()})) {
+        if (!layer.filter || layer.filter(undefined, {properties: feature.getProperties()})) {
           if (!spriteOptions[layer.id].rotation || (spriteOptions[layer.id].rotation && !spriteOptions[layer.id].rotation.property)) {
             if (!styleCache[layer.id]) {
               const sprite = new SpriteStyle(spriteOptions[layer.id]);
               styleCache[layer.id] = new Style({image: sprite});
-              this.map.on('postcompose', onPostCompose, sprite);
+              this.map.on('postcompose', (e) => {
+                sprite.update(e);
+              });
             }
             return styleCache[layer.id];
           } else {
@@ -1009,7 +1000,9 @@ export class Map extends React.Component {
               options.rotation = rotation;
               const sprite = new SpriteStyle(options);
               const style = new Style({image: sprite});
-              this.map.on('postcompose', onPostCompose, sprite);
+              this.map.on('postcompose', (e) => {
+                sprite.update(e);
+              });
               styleCache[layer.id][rotation] = style;
             }
             return styleCache[layer.id][rotation];
@@ -1341,7 +1334,7 @@ export class Map extends React.Component {
     // reset the position after the popup has been added to the map.
     // assumes the popups coordinate is 4326
     const wgs84 = [popup.props.coordinate[0], popup.props.coordinate[1]];
-    const xy = Proj.transform(wgs84, 'EPSG:4326', this.map.getView().getProjection());
+    const xy = transform(wgs84, 'EPSG:4326', this.map.getView().getProjection());
     overlay.setPosition(xy);
 
     // do not trigger an update if silent is
@@ -1423,7 +1416,7 @@ export class Map extends React.Component {
                   const feature = features[i];
                   const geom = feature.getGeometry();
                   if (geom instanceof PolygonGeom || geom instanceof MultiPolygonGeom) {
-                    if (geom.intersectsCoordinate(Proj.toLonLat(coord))) {
+                    if (geom.intersectsCoordinate(toLonLat(coord))) {
                       intersection.push(feature);
                     }
                   } else {
@@ -1564,7 +1557,7 @@ export class Map extends React.Component {
     // reproject the initial center based on that projection.
     let center;
     if (this.props.map.center !== undefined) {
-      center = Proj.transform(this.props.map.center, 'EPSG:4326', map_proj);
+      center = transform(this.props.map.center, 'EPSG:4326', map_proj);
     } else {
       center = [0, 0];
     }
@@ -1578,7 +1571,7 @@ export class Map extends React.Component {
     const minZoom = getKey(this.props.map.metadata, MIN_ZOOM_KEY);
     const maxZoom = getKey(this.props.map.metadata, MAX_ZOOM_KEY);
     this.map = new OlMap({
-      interactions: this.props.interactive ? interaction.defaults() : [],
+      interactions: this.props.interactive ? interactionDefaults() : [],
       controls: [new AttributionControl()],
       target: this.mapdiv,
       logo: false,
@@ -1593,7 +1586,7 @@ export class Map extends React.Component {
     });
     if (this.props.hover) {
       this.map.on('pointermove', (evt) => {
-        const lngLat = Proj.toLonLat(evt.coordinate);
+        const lngLat = toLonLat(evt.coordinate);
         this.props.setMousePosition({lng: lngLat[0], lat: lngLat[1]}, evt.coordinate);
       });
     }
@@ -1640,12 +1633,12 @@ export class Map extends React.Component {
         }
 
         // ensure the coordinate is also in 4326
-        const pt = Proj.transform(evt.coordinate, map_prj, 'EPSG:4326');
+        const pt = transform(evt.coordinate, map_prj, 'EPSG:4326');
         const coordinate = {
           0: pt[0],
           1: pt[1],
           xy: evt.coordinate,
-          hms: Coordinate.toStringHDMS(pt),
+          hms: toStringHDMS(pt),
         };
 
         // send the clicked-on coordinate and the list of features
@@ -1746,7 +1739,7 @@ export class Map extends React.Component {
     } else if (INTERACTIONS.drawing.includes(drawingProps.interaction)) {
       let drawObj = {};
       if (drawingProps.interaction === INTERACTIONS.box) {
-        const geometryFunction = DrawInteraction.createBox();
+        const geometryFunction = createBox();
         drawObj = {
           type: 'Circle',
           geometryFunction
@@ -1789,7 +1782,7 @@ export class Map extends React.Component {
 
       measure.on('drawend', () => {
         // remove the listener
-        Observable.unByKey(measure_listener);
+        unByKey(measure_listener);
         this.props.finalizeMeasureFeature();
       });
 
@@ -1840,15 +1833,10 @@ Map.propTypes = {
    * Should we stop events in the popup overlay?
    */
   stopEvent: PropTypes.bool,
-  /**
-   * Should we be interactive? I.e. respond to mouse and keyboard events?
-   */
-  interactive: PropTypes.bool,
 };
 
 Map.defaultProps = {
   ...MapCommon.defaultProps,
-  interactive: true,
   stopEvent: false,
   fetchOptions: {
     credentials: 'same-origin',
@@ -1888,7 +1876,7 @@ export function getMapExtent(view, size) {
   const projection = view.getProjection();
   const targetProj = 'EPSG:4326';
   const view_extent = view.calculateExtent(size);
-  return Proj.transformExtent(view_extent, projection, targetProj);
+  return transformExtent(view_extent, projection, targetProj);
 }
 
 function mapDispatchToProps(dispatch) {
@@ -1900,7 +1888,7 @@ function mapDispatchToProps(dispatch) {
       const view = map.getView();
       const projection = view.getProjection();
       // transform the center to 4326 before dispatching the action.
-      const center = Proj.transform(view.getCenter(), projection, 'EPSG:4326');
+      const center = transform(view.getCenter(), projection, 'EPSG:4326');
       const rotation = radiansToDegrees(view.getRotation());
       const zoom = view.getZoom() - 1;
       const size = map.getSize();
@@ -1928,10 +1916,12 @@ function mapDispatchToProps(dispatch) {
         for (let i = 0, ii = geom.coordinates.length - 1; i < ii; i++) {
           const a = geom.coordinates[i];
           const b = geom.coordinates[i + 1];
-          segments.push(WGS84_SPHERE.haversineDistance(a, b));
+          segments.push(getDistance(a, b));
         }
       } else if (geom.type === 'Polygon' && geom.coordinates.length > 0) {
-        segments.push(Math.abs(WGS84_SPHERE.geodesicArea(geom.coordinates[0])));
+        const clone = geometry.clone();
+        clone.transform(projection, 'EPSG:4326');
+        segments.push(getArea(clone));
       }
 
 

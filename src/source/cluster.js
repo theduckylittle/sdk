@@ -11,7 +11,8 @@
  * under the License.
  */
 
-import ClusterSource from 'ol/source/cluster';
+import ClusterSource from 'ol/source/Cluster';
+
 /** @module source/cluster
  * @desc ClusterSource class for Boundless SDK,
  *  extends OpenLayers ClusterSource,

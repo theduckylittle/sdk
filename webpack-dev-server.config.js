@@ -47,7 +47,7 @@ const config = {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        exclude: /node_modules\/(?!(@mapbox\/mapbox-gl-style-spec)\/).*/,
         loader: 'babel-loader',
         query: {
           cacheDirectory: true,
