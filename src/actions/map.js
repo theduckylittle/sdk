@@ -507,7 +507,7 @@ export function moveGroup(group, layerId) {
  * @param {string} sourceId - new ID for the source.
  * @param {string} serverUrl - URL for the service.
  * @param {string} layerName - WFS feature type.
- * @param {Object} options - Optional settings. Honors: accessToken, projection, asVector, tileSize
+ * @param {Object} options - Optional settings. Honors: accessToken, projection, asVector, tileSize, extraParams
  *
  * @returns {Object} Action to create a new source.
  */
@@ -517,7 +517,7 @@ export function addWmsSource(sourceId, serverUrl, layerName, options = {}) {
   // default behaviour is vector
   const format = (options.asVector !== false) ? 'application/x-protobuf;type=mapbox-vector' : 'image/png';
 
-  const params = {
+  let params = {
     'SERVICE': 'WMS',
     'VERSION': '1.3.0',
     'REQUEST': 'GetMap',
@@ -531,6 +531,10 @@ export function addWmsSource(sourceId, serverUrl, layerName, options = {}) {
 
   if (options.accessToken) {
     params['ACCESS_TOKEN'] = options.accessToken;
+  }
+
+  if (options.extraParams) {
+    params = Object.assign(params, options.extraParams);
   }
 
   // the BBOX is not escaped because the "{" and "}" are used for string
