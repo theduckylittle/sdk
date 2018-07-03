@@ -539,6 +539,20 @@ describe('async actions', () => {
     });
   });
 
+  it('should generate a WMS source with extraParams', () => {
+    const sourceName = 'my-source';
+    const sourceDef = {
+      type: 'vector',
+      tiles: ['http://localhost/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=application%2Fx-protobuf%3Btype%3Dmapbox-vector&TRANSPARENT=TRUE&LAYERS=my-layer&WIDTH=256&HEIGHT=256&CRS=EPSG%3A3857&TILED=TRUE&BBOX={bbox-epsg-3857}'],
+    };
+    const options = {extraParams: {TILED: 'TRUE'}};
+    expect(actions.addWmsSource(sourceName, 'http://localhost/geoserver/wms', 'my-layer', options)).toEqual({
+      type: MAP.ADD_SOURCE,
+      sourceName,
+      sourceDef,
+    });
+  });
+
   it('should generate a WMS source with tileSize, accessToken and projection specified', () => {
     const sourceName = 'my-source';
     const sourceDef = {
