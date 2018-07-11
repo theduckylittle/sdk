@@ -451,11 +451,15 @@ function updateGeojsonSource(olSource, glSource, mapView, baseUrl, fetchOptions)
   // update the loader function based on the glSource definition
   src.loader_ = getLoaderFunction(glSource, mapView.getProjection(), baseUrl, fetchOptions);
 
+  const numFeatures = src.getFeatures().length;
+
   // clear the layer WITHOUT dispatching remove events.
   src.clear(true);
 
-  // force a refresh
-  src.loadFeatures(mapView.calculateExtent(), mapView.getResolution(), mapView.getProjection());
+  if (numFeatures === 0) {
+    // force a refresh
+    src.loadFeatures(mapView.calculateExtent(), mapView.getResolution(), mapView.getProjection());
+  }
 }
 
 
