@@ -70,6 +70,11 @@ class WfsController extends Component {
         dataProjection: 'EPSG:4326',
         featureProjection: this.wfs_proj,
       });
+      // the GeoJSON format will create a feature with a null geometry
+      // but to exclude it from the transaction we need undefined
+      if (feature.getGeometry() === null) {
+        feature.setGeometry(undefined);
+      }
 
       const actions = {};
       actions[action.type] = [feature];
