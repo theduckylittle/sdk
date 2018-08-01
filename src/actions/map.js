@@ -616,6 +616,7 @@ export function addOsmSource(sourceId) {
   return addSource(sourceId, {
     type: 'raster',
     tileSize: 256,
+    maxzoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.',
     tiles: [
       'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
