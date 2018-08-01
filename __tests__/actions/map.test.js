@@ -633,6 +633,7 @@ describe('async actions', () => {
     const sourceDef = {
       type: 'raster',
       tileSize: 256,
+      maxzoom: 19,
       tiles: [
         'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
         'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',

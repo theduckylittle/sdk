@@ -1240,10 +1240,10 @@ export class Map extends React.Component {
         // update the min/maxzooms
         const view = this.map.getView();
         if (source.minzoom) {
-          ol_layer.setMinResolution(view.getResolutionForZoom(source.minzoom));
+          ol_layer.setMaxResolution(view.getResolutionForZoom(source.minzoom));
         }
         if (source.maxzoom) {
-          ol_layer.setMaxResolution(view.getResolutionForZoom(source.maxzoom));
+          ol_layer.setMinResolution(view.getResolutionForZoom(source.maxzoom));
         }
 
         // update the display order.
