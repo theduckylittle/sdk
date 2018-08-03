@@ -2,14 +2,14 @@
 
 import configureMockStore from 'redux-mock-store';
 import nock from 'nock';
-import thunk from 'redux-thunk';
-
+import createSagaMiddleware from 'redux-saga';
+import * as ContextSagas from '@boundlessgeo/sdk/sagas/context';
 import * as actions from '@boundlessgeo/sdk/actions/map';
-import {MAP} from '@boundlessgeo/sdk/action-types';
+import {MAP, CONTEXT} from '@boundlessgeo/sdk/action-types';
 import {TITLE_KEY, TIME_KEY} from '@boundlessgeo/sdk/constants';
 
-const middlewares = [thunk];
-const mockStore = configureMockStore(middlewares);
+const sagaMiddleware = createSagaMiddleware();
+const mockStore = configureMockStore([sagaMiddleware]);
 
 describe('actions', () => {
   it('should create an action to set the view', () => {
@@ -360,7 +360,7 @@ describe('async actions', () => {
     nock.cleanAll();
   });
 
-  it('creates RECEIVE_CONTEXT when fetching context has been done', () => {
+  it('creates CONTEXT.RECEIVE when fetching context has been done', (done) => {
     const body = {
       version: 8,
       name: 'states-wms',
@@ -396,16 +396,19 @@ describe('async actions', () => {
       .get('/context')
       .reply(200, body);
 
-    const expectedAction = {type: MAP.RECEIVE_CONTEXT, context: body};
+    const expectedAction = {type: CONTEXT.RECEIVE, context: body};
     const store = mockStore({});
 
-    return store.dispatch(actions.setContext({url: 'http://example.com/context'})).then(() => {
-      // return of async actions
-      expect(store.getActions()).toEqual([expectedAction]);
-    });
+    sagaMiddleware.run(ContextSagas.handleContext);
+
+    store.dispatch(actions.fetchContext({url: 'http://example.com/context'}));
+    window.setTimeout(() => {
+      expect(store.getActions()[1]).toEqual(expectedAction);
+      done();
+    }, 200);
   });
 
-  it('setContext action prints error on FetchError', () => {
+  it('fetchContext action prints error on FetchError', (done) => {
     spyOn(console, 'error');
     nock('http://example.com/')
       .get('/context')
@@ -413,13 +416,16 @@ describe('async actions', () => {
 
     const store = mockStore({});
 
-    return store.dispatch(actions.setContext({url: 'http://example.com/context'})).then(() => {
-      // return of async actions
+    sagaMiddleware.run(ContextSagas.handleContext);
+
+    store.dispatch(actions.fetchContext({url: 'http://example.com/context'}));
+    window.setTimeout(() => {
       expect(console.error).toHaveBeenCalled();
-    });
+      done();
+    }, 200);
   });
 
-  it('creates RECEIVE_CONTEXT when promise object is resolved', () => {
+  it('creates CONTEXT.RECEIVE when promise object is resolved', () => {
     const body = {
       version: 8,
       name: 'states-wms',
@@ -452,19 +458,13 @@ describe('async actions', () => {
       ],
     };
 
-    const expectedAction = {type: MAP.RECEIVE_CONTEXT, context: body};
+    const expectedAction = {type: CONTEXT.RECEIVE, context: body};
     const store = mockStore({});
 
-    return store.dispatch(actions.setContext({json: body})).then(() => {
-      // return of async actions
-      expect(store.getActions()).toEqual([expectedAction]);
-    });
-  });
+    sagaMiddleware.run(ContextSagas.handleContext);
 
-  it('setContext action rejects argument not containing a url or json', () => {
-    const store = mockStore({});
-
-    return expect(store.dispatch(actions.setContext('foo'))).rejects.toEqual('Invalid option for setContext. Specify either json or url.');
+    store.dispatch(actions.fetchContext({json: body}));
+    expect(store.getActions()[1]).toEqual(expectedAction);
   });
 
   it('should create an action to cluster points', () => {

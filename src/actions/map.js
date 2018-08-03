@@ -17,7 +17,7 @@ import fetch from 'isomorphic-fetch';
  * @desc Action Defintions for the map.
  */
 
-import {MAP} from '../action-types';
+import {MAP, CONTEXT} from '../action-types';
 import {TITLE_KEY, TIME_KEY} from '../constants';
 import {encodeQueryObject} from '../util';
 
@@ -333,6 +333,20 @@ export function setLayerTime(layerId, time) {
   return setLayerMetadata(layerId, TIME_KEY, time);
 }
 
+/** Fetch a Mapbox GL style object.
+ *
+ *  @param {Object} options A context object that must provide a Mapbox GL json
+ *  object either via a json property or a from a url fetch.
+ *
+ *  @returns {Object} Action object to pass to reducer.
+ */
+export function fetchContext(options) {
+  return {
+    type: CONTEXT.FETCH,
+    options,
+  };
+}
+
 /** Receive a Mapbox GL style object.
  *
  *  @param {Object} context Mapbox GL style object to populate the map state.
@@ -341,7 +355,7 @@ export function setLayerTime(layerId, time) {
  */
 export function receiveContext(context) {
   return {
-    type: MAP.RECEIVE_CONTEXT,
+    type: CONTEXT.RECEIVE,
     context,
   };
 }

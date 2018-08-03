@@ -4,7 +4,7 @@
  */
 
 import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -24,19 +24,25 @@ import AddBookmarkComponent from './addBookmark';
 import bookmarkReducer from './reducer';
 import * as bookmarkAction from './action';
 
+import * as ContextSagas from '@boundlessgeo/sdk/sagas/context';
 
 // This will have webpack include all of the SDK styles.
 import '@boundlessgeo/sdk/stylesheet/sdk.scss';
+
+// create the saga middleware
+const saga_middleware = createSagaMiddleware();
 
 /* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer, bookmark: bookmarkReducer,
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+applyMiddleware(saga_middleware));
+
+saga_middleware.run(ContextSagas.handleContext);
 
 function main() {
   // load in the map style from a external .json
-  store.dispatch(mapActions.setContext({url: './bookmarks.json'}));
+  store.dispatch(mapActions.fetchContext({url: './bookmarks.json'}));
 
   // This is the name of the source that the bookmark component will iterate over
   const SOURCENAMES = ['paris-bakeries', 'saint-louis-bakeries'];

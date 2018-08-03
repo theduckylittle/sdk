@@ -4,7 +4,7 @@
  */
 
 import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -18,19 +18,26 @@ import SdkPrintReducer from '@boundlessgeo/sdk/reducers/print';
 import * as mapActions from '@boundlessgeo/sdk/actions/map';
 import * as printActions from '@boundlessgeo/sdk/actions/print';
 
+import * as ContextSagas from '@boundlessgeo/sdk/sagas/context';
+
 // This will have webpack include all of the SDK styles.
 import '@boundlessgeo/sdk/stylesheet/sdk.scss';
+
+// create the saga middleware
+const saga_middleware = createSagaMiddleware();
 
 /* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer,
   print: SdkPrintReducer,
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+applyMiddleware(saga_middleware));
+
+saga_middleware.run(ContextSagas.handleContext);
 
 function main() {
   const url = 'wms.json';
-  store.dispatch(mapActions.setContext({url}));
+  store.dispatch(mapActions.fetchContext({url}));
 
   const exportMapImage = (blob) => {
     saveAs(blob, 'map.png');

@@ -4,8 +4,7 @@
  */
 
 import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
-
+import createSagaMiddleware from 'redux-saga';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -20,9 +19,12 @@ import SdkPrintReducer from '@boundlessgeo/sdk/reducers/print';
 import SdkMapboxReducer from '@boundlessgeo/sdk/reducers/mapbox';
 import * as mapActions from '@boundlessgeo/sdk/actions/map';
 import * as mapboxActions from '@boundlessgeo/sdk/actions/mapbox';
-
+import * as ContextSagas from '@boundlessgeo/sdk/sagas/context';
 // This will have webpack include all of the SDK styles.
 import '@boundlessgeo/sdk/stylesheet/sdk.scss';
+
+// create the saga middleware
+const saga_middleware = createSagaMiddleware();
 
 /* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
@@ -30,7 +32,9 @@ const store = createStore(combineReducers({
   print: SdkPrintReducer,
   mapbox: SdkMapboxReducer,
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+applyMiddleware(saga_middleware));
+
+saga_middleware.run(ContextSagas.handleContext);
 
 class LegendControl extends React.Component {
   render() {
@@ -59,7 +63,7 @@ function main() {
   store.dispatch(mapboxActions.configure({baseUrl, accessToken: MAPBOX_API_KEY}));
 
   const url = `https://api.mapbox.com/styles/v1/mapbox/bright-v8?access_token=${MAPBOX_API_KEY}`;
-  store.dispatch(mapActions.setContext({url}));
+  store.dispatch(mapActions.fetchContext({url}));
 
   // place the map on the page.
   ReactDOM.render(<Provider store={store}>

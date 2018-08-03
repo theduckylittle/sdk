@@ -3,25 +3,29 @@
 import React from 'react';
 import {mount, configure} from 'enzyme';
 import  Adapter from 'enzyme-adapter-react-16';
-
+import createSagaMiddleware from 'redux-saga';
 import TileLayer from 'ol/layer/Tile';
 import TileWMSSource from 'ol/source/TileWMS';
 import XYZSource from 'ol/source/XYZ';
 
 import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
 
 import ConnectedMap from '@boundlessgeo/sdk/components/map';
 import MapReducer from '@boundlessgeo/sdk/reducers/map';
 import * as MapActions from '@boundlessgeo/sdk/actions/map';
+import * as ContextSagas from '@boundlessgeo/sdk/sagas/context';
 
 configure({adapter: new Adapter()});
+
+const sagaMiddleware = createSagaMiddleware();
 
 describe('Map component context documents', () => {
   it('should correctly reload context documents', (done) => {
     const store = createStore(combineReducers({
       map: MapReducer,
-    }), applyMiddleware(thunkMiddleware));
+    }), applyMiddleware(sagaMiddleware));
+
+    sagaMiddleware.run(ContextSagas.handleContext);
 
     const wrapper = mount(<ConnectedMap store={store} />);
     const map = wrapper.instance().getWrappedInstance();
@@ -46,7 +50,7 @@ describe('Map component context documents', () => {
         },
       ],
     };
-    store.dispatch(MapActions.setContext({json: wmsJson}));
+    store.dispatch(MapActions.fetchContext({json: wmsJson}));
     window.setTimeout(() => {
       let layers = map.map.getLayers().getArray();
       expect(layers[0]).toBeInstanceOf(TileLayer);
@@ -75,7 +79,7 @@ describe('Map component context documents', () => {
           },
         ],
       };
-      store.dispatch(MapActions.setContext({json: osmJson}));
+      store.dispatch(MapActions.fetchContext({json: osmJson}));
       window.setTimeout(() => {
         layers = map.map.getLayers().getArray();
         expect(layers[0]).toBeInstanceOf(TileLayer);
