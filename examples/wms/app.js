@@ -4,8 +4,7 @@
  *
  */
 
-import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import {createStore, combineReducers} from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
@@ -21,11 +20,9 @@ import '@boundlessgeo/sdk/stylesheet/sdk.scss';
 import WMSPopup from './wmspopup';
 import AddWMSLayer from './addwmslayer';
 
-/* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer,
-}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 function main() {
   // start in the middle of america

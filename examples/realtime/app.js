@@ -2,8 +2,7 @@
 /** Realtime data example.
  */
 
-import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import {createStore, combineReducers} from 'redux';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -20,12 +19,10 @@ import * as mapboxActions from '@boundlessgeo/sdk/actions/mapbox';
 // This will have webpack include all of the SDK styles.
 import '@boundlessgeo/sdk/stylesheet/sdk.scss';
 
-/* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer,
   mapbox: SdkMapboxReducer,
-}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 function main() {
   const baseUrl = 'https://api.mapbox.com/styles/v1/mapbox/bright-v8';

@@ -126,7 +126,7 @@ ContextSelector.defaultProps = {
 function mapDispatch(dispatch) {
   return {
     setContext: (context) => {
-      dispatch(mapActions.setContext(context));
+      dispatch(mapActions.fetchContext(context));
     },
   };
 }

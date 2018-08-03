@@ -3,7 +3,7 @@
 import deepFreeze from 'deep-freeze';
 
 import reducer from '@boundlessgeo/sdk/reducers/map';
-import {MAP} from '@boundlessgeo/sdk/action-types';
+import {MAP, CONTEXT} from '@boundlessgeo/sdk/action-types';
 import * as MapActions from '@boundlessgeo/sdk/actions/map';
 
 
@@ -503,7 +503,7 @@ describe('map reducer', () => {
     });
   });
 
-  it('should handle RECEIVE_CONTEXT', () => {
+  it('should handle CONTEXT.RECEIVE', () => {
     const state = {
       version: 8,
       name: 'default',
@@ -528,14 +528,14 @@ describe('map reducer', () => {
       },
     };
     const action = {
-      type: MAP.RECEIVE_CONTEXT,
+      type: CONTEXT.RECEIVE,
       context,
     };
     deepFreeze(action);
     expect(reducer(state, action)).toEqual(context);
   });
 
-  it('should handle RECEIVE_CONTEXT with no metadata in context', () => {
+  it('should handle CONTEXT.RECEIVE with no metadata in context', () => {
     const state = {
       version: 8,
       name: 'default',
@@ -556,7 +556,7 @@ describe('map reducer', () => {
       },
     };
     const action = {
-      type: MAP.RECEIVE_CONTEXT,
+      type: CONTEXT.RECEIVE,
       context,
     };
     deepFreeze(action);

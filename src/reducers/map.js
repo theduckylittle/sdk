@@ -17,7 +17,7 @@
 
 import createFilter from '@mapbox/mapbox-gl-style-spec/feature_filter';
 import {getGroup, getLayerIndexById, reprojectGeoJson, getResolutionForExtent, getZoomForResolution} from '../util';
-import {MAP} from '../action-types';
+import {MAP, CONTEXT} from '../action-types';
 import {DEFAULT_ZOOM, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TITLE_KEY, DATA_VERSION_KEY, GROUP_KEY, GROUPS_KEY} from '../constants';
 
 function defaultMetadata() {
@@ -785,7 +785,7 @@ export default function MapReducer(state = defaultState, action) {
       return setVisibility(state, action);
     case MAP.SET_LAYER_IN_GROUP_VISIBLE:
       return setLayerInGroupVisible(state, action);
-    case MAP.RECEIVE_CONTEXT:
+    case CONTEXT.RECEIVE:
       return setContext(state, action);
     case MAP.ORDER_LAYER:
       return orderLayer(state, action);

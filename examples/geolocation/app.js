@@ -4,8 +4,7 @@
  *
  */
 
-import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import {createStore, combineReducers} from 'redux';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -23,11 +22,9 @@ import '@boundlessgeo/sdk/stylesheet/sdk.scss';
 import TrackPosition from './track-position';
 
 
-/* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer,
-}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 function main() {
   // Start with a reasonable global view of the map.

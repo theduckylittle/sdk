@@ -4,7 +4,7 @@
  */
 
 import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -21,11 +21,17 @@ import '@boundlessgeo/sdk/stylesheet/sdk.scss';
 
 import ContextSelector from './context-selector';
 
+import * as ContextSagas from '@boundlessgeo/sdk/sagas/context';
+
+const saga_middleware = createSagaMiddleware();
+
 /* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer,
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+applyMiddleware(saga_middleware));
+
+saga_middleware.run(ContextSagas.handleContext);
 
 function main() {
   // add a background layer

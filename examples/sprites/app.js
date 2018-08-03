@@ -4,8 +4,7 @@
  *
  */
 
-import {createStore, combineReducers, applyMiddleware} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import {createStore, combineReducers} from 'redux';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -20,11 +19,9 @@ import * as mapActions from '@boundlessgeo/sdk/actions/map';
 // This will have webpack include all of the SDK styles.
 import '@boundlessgeo/sdk/stylesheet/sdk.scss';
 
-/* eslint-disable no-underscore-dangle */
 const store = createStore(combineReducers({
   map: SdkMapReducer,
-}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-applyMiddleware(thunkMiddleware));
+}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 function main() {
   // setup the map sprites.
