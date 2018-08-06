@@ -2,6 +2,42 @@
 
 ### Next Release
 
+#### redux-thunk has been replaced with redux-saga
+If you were using the setContext map action, before, you needed to have your store setup with the redux-thunk middleware:
+
+```
+import thunkMiddleware from 'redux-thunk';
+
+const store = createStore(combineReducers({
+  map: SdkMapReducer, 
+}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  applyMiddleware(thunkMiddleware)
+);
+
+store.dispatch(mapActions.setContext({url: './bookmarks.json'}));
+```
+
+In the new situation, this code needs to be replaced with:
+
+```
+import createSagaMiddleware from 'redux-saga';
+import * as ContextSagas from '@boundlessgeo/sdk/sagas/context';
+
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(combineReducers({
+  map: SdkMapReducer,
+}), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  applyMiddleware(sagaMiddleware)
+);
+
+sagaMiddleware.run(ContextSagas.handleContext);
+
+store.dispatch(mapActions.fetchContext({url: './bookmarks.json'}));
+```
+
+Also note that the action has been renamed to fetchContext from setContext.
+
 ### v2.3.1
 
 #### onFeatureDrawn, onFeatureModified

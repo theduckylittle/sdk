@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch';
 import {CONTEXT} from '../action-types';
 import {receiveContext} from '../actions/map';
 import {takeEvery, put} from 'redux-saga/effects';
