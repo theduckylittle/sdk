@@ -1923,9 +1923,7 @@ function mapDispatchToProps(dispatch) {
           segments.push(getDistance(a, b));
         }
       } else if (geom.type === 'Polygon' && geom.coordinates.length > 0) {
-        const clone = geometry.clone();
-        clone.transform(projection, 'EPSG:4326');
-        segments.push(getArea(clone));
+        segments.push(getArea(geometry, {projection}));
       }
 
 
