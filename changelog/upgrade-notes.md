@@ -2,6 +2,8 @@
 
 ### Next Release
 
+### v2.6.0
+
 #### redux-thunk has been replaced with redux-saga
 If you were using the setContext map action, before, you needed to have your store setup with the redux-thunk middleware:
 
