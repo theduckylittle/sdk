@@ -11,8 +11,6 @@
  * under the License.
  */
 
-import fetch from 'isomorphic-fetch';
-
 /** @module actions/map
  * @desc Action Defintions for the map.
  */
@@ -357,36 +355,6 @@ export function receiveContext(context) {
   return {
     type: CONTEXT.RECEIVE,
     context,
-  };
-}
-
-/** Thunk action creator to set the map state from a provided context object.
- *
- *  @param {Object} options A context object that must provide a Mapbox GL json
- *  object either via a json property or a from a url fetch.
- *
- *  @returns {Promise} A Promise object.
- */
-export function setContext(options) {
-  return (dispatch) => {
-    if (options.url) {
-      return fetch(options.url)
-        .then(
-          response => response.json(),
-          error => console.error('An error occured.', error),
-        )
-        .then(json =>
-          dispatch(receiveContext(json)),
-        );
-    } else if (options.json) {
-      return new Promise((resolve) => {
-        dispatch(receiveContext(options.json));
-        resolve();
-      });
-    }
-    return new Promise((resolve, reject) => {
-      reject('Invalid option for setContext. Specify either json or url.');
-    });
   };
 }
 
