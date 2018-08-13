@@ -14,7 +14,7 @@ module.exports = {
     },
   },
   entry: entry,
-  devtool: 'eval',
+  devtool: false,
   node: {fs: "empty"},
   output: {
     path: __dirname, // Path of output file
@@ -39,7 +39,7 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: /node_modules\/(?!(@mapbox\/mapbox-gl-style-spec)\/).*/,
+        exclude: /node_modules\/(?!(ol|ol-mapbox-style|@mapbox\/mapbox-gl-draw|@mapbox\/mapbox-gl-style-spec)\/).*/,
         loader: 'babel-loader',
         query: {
           cacheDirectory: true,
