@@ -194,7 +194,7 @@ function configureTileSource(glSource, mapProjection, time, fetchOptions) {
   }
   // check to see if the url is a wms request.
   if (tile_url.toUpperCase().indexOf('SERVICE=WMS') >= 0) {
-    const params = parseQueryString(tile_url.substring(tile_url.indexOf('?') + 1));
+    const params = parseQueryString(tile_url.substring(tile_url.lastIndexOf('?') + 1));
     const keys = Object.keys(params);
     for (let i = 0, ii = keys.length; i < ii; ++i) {
       if (keys[i].toUpperCase() === 'REQUEST') {

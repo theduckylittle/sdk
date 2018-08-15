@@ -1027,6 +1027,59 @@ describe('Map component', () => {
     }, 100);
   });
 
+  it('addWmsSource should handle extra ?', (done) => {
+    const store = createStore(combineReducers({
+      map: MapReducer,
+      mapinfo: MapInfoReducer,
+    }));
+
+    const props = {
+      store,
+    };
+
+    store.dispatch(MapActions.addWmsSource('wms', 'http://dummy/wms?', 'dummy', {asVector: false}));
+    store.dispatch(MapActions.addLayer({
+      id: 'mywms',
+      source: 'wms',
+      type: 'raster',
+    }));
+    const wrapper = mount(<ConnectedMap {...props} />);
+
+    const sdk_map = wrapper.instance().getWrappedInstance();
+
+    setTimeout(() => {
+      const source = sdk_map.map.getLayers().item(0).getSource();
+      expect(source.getParams().SERVICE).toBe('WMS');
+      done();
+    }, 100);
+  });
+
+  it('addWmsSource should handle layer projection', (done) => {
+    const store = createStore(combineReducers({
+      map: MapReducer,
+      mapinfo: MapInfoReducer,
+    }));
+
+    const props = {
+      store,
+    };
+
+    store.dispatch(MapActions.addWmsSource('wms', 'http://dummy/wms?', 'dummy', {asVector: false, projection: 'EPSG:4326'}));
+    store.dispatch(MapActions.addLayer({
+      id: 'mywms',
+      source: 'wms',
+      type: 'raster',
+    }));
+    const wrapper = mount(<ConnectedMap {...props} />);
+
+    const sdk_map = wrapper.instance().getWrappedInstance();
+
+    setTimeout(() => {
+      const source = sdk_map.map.getLayers().item(0).getSource();
+      expect(source.getParams().CRS).toBe('EPSG:4326');
+      done();
+    }, 100);
+  });
 
   it('should update the source url', (done) => {
     const store = createStore(combineReducers({
