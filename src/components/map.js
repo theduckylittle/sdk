@@ -194,8 +194,7 @@ function configureTileSource(glSource, mapProjection, time, fetchOptions) {
   }
   // check to see if the url is a wms request.
   if (tile_url.toUpperCase().indexOf('SERVICE=WMS') >= 0) {
-    const urlParts = glSource.tiles[0].split('?');
-    const params = parseQueryString(urlParts[1]);
+    const params = parseQueryString(tile_url.substring(tile_url.lastIndexOf('?') + 1));
     const keys = Object.keys(params);
     for (let i = 0, ii = keys.length; i < ii; ++i) {
       if (keys[i].toUpperCase() === 'REQUEST') {
@@ -205,10 +204,14 @@ function configureTileSource(glSource, mapProjection, time, fetchOptions) {
     if (time) {
       params.TIME = time;
     }
+    let layerProjection;
+    if (params.CRS !== mapProjection.getCode()) {
+      layerProjection = params.CRS;
+    }
     return new TileWMSSource(Object.assign({
-      url: urlParts[0],
+      url: tile_url.split('?')[0],
       params,
-    }, commonProps));
+    }, commonProps, {projection: layerProjection}));
   } else {
     const source = new XyzSource(Object.assign({
       urls: glSource.tiles,
