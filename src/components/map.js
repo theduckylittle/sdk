@@ -205,10 +205,14 @@ function configureTileSource(glSource, mapProjection, time, fetchOptions) {
     if (time) {
       params.TIME = time;
     }
+    let layerProjection;
+    if (params.CRS !== mapProjection.getCode()) {
+      layerProjection = params.CRS;
+    }
     return new TileWMSSource(Object.assign({
       url: urlParts[0],
       params,
-    }, commonProps));
+    }, commonProps, {projection: layerProjection}));
   } else {
     const source = new XyzSource(Object.assign({
       urls: glSource.tiles,
