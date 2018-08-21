@@ -39,7 +39,7 @@ SDK-based apps do require additional dependencies. These include Redux for
 managing state and node-sass for preprocessing CSS.
 
 ```
-yarn add node-sass-chokidar redux react-redux ol ol-mapbox-style@^2.11.2
+yarn add node-sass-chokidar redux react-redux ol ol-mapbox-style
 ```
 
 ### Add sass-building scripts to package.json
@@ -75,7 +75,7 @@ and do not need the latest features from the master branch.
 It will install the dist-version of the library.
 
 ```bash
-yarn add @boundlessgeo/sdk@^2.0.0
+yarn add @boundlessgeo/sdk
 ```
 
 #### From GitHub
@@ -165,6 +165,34 @@ After the last `</p>` tag add the following to add an SDK map:
 <SdkMap store={store} />
 ```
 
+### Eject and change the webpack configuration
+
+Because there are some dependencies that are published as ES6, we need to have `babel-loader` process them in webpack. Unfortunately this currently requires ejecting our app.
+
+1. `yarn eject`
+2. `yarn add babel-loader`
+3. Modify `config/webpack.config.dev.js` and `config/webpack.config.prod.js`.
+
+    This section defines which files Babel will transform (search for `babel-loader`):
+    ```javascript
+      // Process JS with Babel.
+      {
+        test: /\.(js|jsx|mjs)$/,
+        include: paths.appSrc,
+        loader: require.resolve('babel-loader'),
+        ...
+      },
+    ```
+
+    The include path must be changed from:
+    ```
+    include: paths.appSrc,
+    ```
+    To:
+    ```
+    include: [paths.appSrc, path.resolve(__dirname, '../node_modules/@mapbox/mapbox-gl-style-spec'), path.resolve(__dirname, '../node_modules/ol-mapbox-style')],
+    ```
+
 ### Fire up the browser
 
 The create-react-app creates a built-in hot-compiler and server.
@@ -179,81 +207,3 @@ Congratulations! You should have a fully operational Boundless SDK React app!
 ### Unit testing
 If you want to write unit tests in your application that use the SDK, make sure you have ```canvas``` installed as a ```devDependency```.
 See [here](https://github.com/boundlessgeo/sdk/blob/master/DEVELOPING.md#testing-and-the-canvas-module) for more details.
-
-### Doing a production build
-In the current state, `yarn build``` will fail with something like:
-
-    ```bash
-    yarn build v1.0.1
-    $ react-scripts build
-    Creating an optimized production build...
-    Failed to compile.
-
-    Failed to minify the code from this file:
-
-         ./node_modules/@mapbox/mapbox-gl-style-spec/feature_filter/index.js:15
-
-    Read more here: http://bit.ly/2tRViJ9
-
-    error Command failed with exit code 1.
-    ```
-
-This is because some of the dependencies are not published to npm as ES5.
-In order to fix this, we need to eject our application and make changes to `config/webpack/config.prod.js`. See the instructions in the next section.
-
-### Ejecting Create React App
-
-1. `yarn eject`
-2. `yarn add webpack-cli`
-3. Modify `config/webpack.config.prod.js`.
-
-    This section defines which files Babel will transform (on or about line 149):
-    ```javascript
-      // Process JS with Babel.
-      {
-        test: /\.(js|jsx)$/,
-        include: paths.appSrc,
-        loader: require.resolve('babel-loader'),
-        options: {
-
-          compact: true,
-        },
-      },
-    ```
-
-    The include path must be changed from: 
-    ```
-    include: paths.appSrc,
-    ```
-    To:
-    ```
-    include: [paths.appSrc, path.resolve(__dirname, '../node_modules/')],
-    ```
-4. Modify `config/webpack.config.dev.js`, to disable hot-reloading.
-   Hot reloading will not work inside of webpack-dev-server and will simply
-   throw additional errors when served from a static webserver.
-
-   Change this line (on or about line 46):
-
-   ```
-    require.resolve('react-dev-utils/webpackHotDevClient'),
-   ```
-
-   To:
-   ```
-    // require.resolve('react-dev-utils/webpackHotDevClient'),
-
-   ```
-
-5. Modify `package.json` by adding the following line after `"scripts": {`:
-    ```
-    "watch": "NODE_ENV=development webpack --watch --config ./config/webpack.config.dev.js",
-    ```
-6. Serving content.
-
-    After the watch task has been setup the `build/` directory will need to be
-    served using a HTTP server. The create-react-app documentation recommends using
-    `serve` but this can be problematic as `serve` does not support proxying.
-
-    As an alternative, [http-server](https://github.com/indexzero/http-server) does support
-    proxying and is also a light weight install.
