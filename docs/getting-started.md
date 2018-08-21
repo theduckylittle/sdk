@@ -18,18 +18,10 @@ of performance features over npm.
 npm install -g yarn
 ```
 
-### Install the React dependencies
-
-`create-react-app` installs itself as a global dependency.
-
-```
-npm install -g create-react-app
-```
-
 ### Initialize the new app
 
 ```
-create-react-app ./sdk-starter
+npx create-react-app sdk-starter
 cd sdk-starter
 ```
 
