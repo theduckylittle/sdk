@@ -15,7 +15,7 @@
  * @desc Reducer to implement mapbox style document.
  */
 
-import createFilter from '@mapbox/mapbox-gl-style-spec/feature_filter';
+import {featureFilter as createFilter} from '@mapbox/mapbox-gl-style-spec';
 import {getGroup, getLayerIndexById, reprojectGeoJson, getResolutionForExtent, getZoomForResolution} from '../util';
 import {MAP, CONTEXT} from '../action-types';
 import {DEFAULT_ZOOM, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TITLE_KEY, DATA_VERSION_KEY, GROUP_KEY, GROUPS_KEY} from '../constants';

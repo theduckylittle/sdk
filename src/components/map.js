@@ -15,7 +15,7 @@ import fetch from 'isomorphic-fetch';
 
 import uuid from 'uuid';
 
-import createFilter from '@mapbox/mapbox-gl-style-spec/feature_filter';
+import {featureFilter as createFilter} from '@mapbox/mapbox-gl-style-spec';
 
 import PropTypes from 'prop-types';
 import React from 'react';
