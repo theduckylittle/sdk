@@ -16,6 +16,7 @@ import MapboxReducer from '@boundlessgeo/sdk/reducers/mapbox';
 import MapInfoReducer from '@boundlessgeo/sdk/reducers/mapinfo';
 import * as MapActions from '@boundlessgeo/sdk/actions/map';
 import * as MapboxActions from '@boundlessgeo/sdk/actions/mapbox';
+import {SOURCES_FETCH_OPTIONS_KEY} from '@boundlessgeo/sdk/constants';
 
 configure({adapter: new Adapter()});
 
@@ -130,6 +131,25 @@ describe('tests for the geojson-type map sources', () => {
       .reply(200, JSON.stringify(feature_collection));
 
     testGeojsonData(done, 'http://example.com/test.geojson', 2);
+  });
+
+  it('uses fetch options from map metadata', (done) => {
+    const metadata = {};
+    metadata[SOURCES_FETCH_OPTIONS_KEY] = {
+      'test-source': {
+        headers: {
+          'Authorization': 'foo',
+        },
+      }
+    };
+    store.dispatch(MapActions.updateMetadata(metadata));
+    // mock up the url to call
+    nock('http://example.com')
+      .get('/base/test.geojson')
+      .matchHeader('Authorization', 'foo')
+      .reply(200, JSON.stringify(feature_collection));
+
+    testGeojsonData(done, './test.geojson', 2);
   });
 
   it('adds a geojson feature collection from a relative url', (done) => {

@@ -74,7 +74,7 @@ import {bbox as bboxStrategy, all as allStrategy} from 'ol/loadingstrategy';
 
 import {updateLayer, setView, setBearing} from '../actions/map';
 import {setMapSize, setMousePosition, setMapExtent, setResolution, setProjection, setSourceError, clearSourceErrors, setMapLoaded, setMapLoading} from '../actions/mapinfo';
-import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY} from '../constants';
+import {INTERACTIONS, LAYER_VERSION_KEY, SOURCE_VERSION_KEY, TIME_KEY, TIME_START_KEY, QUERYABLE_KEY, QUERY_ENDPOINT_KEY, QUERY_TYPE_KEY, QUERY_PARAMS_KEY, MIN_ZOOM_KEY, MAX_ZOOM_KEY, QUERY_TYPE_WFS, GEOMETRY_NAME_KEY, SOURCES_FETCH_OPTIONS_KEY} from '../constants';
 import {dataVersionKey} from '../reducers/map';
 import MapCommon, {MapRender} from './map-common';
 
@@ -777,7 +777,7 @@ export class Map extends React.Component {
             if (force_redraw || (props.map.metadata !== undefined &&
                 props.map.metadata[version_key] !== this.props.map.metadata[version_key])) {
               const next_src = this.props.map.sources[src_name];
-              updateGeojsonSource(this.sources[src_name], next_src, map_view, props.mapbox.baseUrl, props.fetchOptions);
+              updateGeojsonSource(this.sources[src_name], next_src, map_view, props.mapbox.baseUrl, this.getFetchOptions(props, src_name));
             }
           }
         }
@@ -855,6 +855,17 @@ export class Map extends React.Component {
     }
   }
 
+  getFetchOptions(props, src_name) {
+    let fetchOptions = props.fetchOptions;
+    if (props.map.metadata[SOURCES_FETCH_OPTIONS_KEY] && props.map.metadata[SOURCES_FETCH_OPTIONS_KEY][src_name]) {
+      fetchOptions = Object.assign({}, props.map.metadata[SOURCES_FETCH_OPTIONS_KEY][src_name]);
+      if (fetchOptions.headers) {
+        fetchOptions.headers = new Headers(fetchOptions.headers);
+      }
+    }
+    return fetchOptions;
+  }
+
   /** Convert the GL source definitions into internal
    *  OpenLayers source definitions.
    *  @param {Object} sourcesDef All sources defined in the Mapbox GL stylesheet.
@@ -914,7 +925,7 @@ export class Map extends React.Component {
       if (!(src_name in this.sources)) {
         const time = getKey(this.props.map.metadata, TIME_KEY);
         promises.push(configureSource(sourcesDef[src_name], map_view,
-          this.props.mapbox.accessToken, this.props.mapbox.baseUrl, time, this.props.wrapX, this.props.fetchOptions)
+          this.props.mapbox.accessToken, this.props.mapbox.baseUrl, time, this.props.wrapX, this.getFetchOptions(this.props, src_name))
           .then(addSource.bind(this, src_name)));
       }
       const src = prevProps ? prevProps.map.sources[src_name] : this.props.map.sources[src_name];
@@ -927,7 +938,7 @@ export class Map extends React.Component {
           this.props.mapbox.baseUrl,
           undefined,
           this.props.wrapX,
-          this.props.fetchOptions,
+          this.getFetchOptions(this.props, src_name),
         )
           .then(addAndUpdateSource.bind(this, src_name)));
       }
@@ -946,7 +957,7 @@ export class Map extends React.Component {
           this.props.mapbox.baseUrl,
           undefined,
           this.props.wrapX,
-          this.props.fetchOptions,
+          this.getFetchOptions(this.props, src_name),
         ).then(addAndUpdateSource.bind(this, src_name)));
       }
     }
@@ -1544,7 +1555,7 @@ export class Map extends React.Component {
     // add other async queries here.
     for (let i = 0, ii = this.props.map.layers.length; i < ii; ++i) {
       const layer = this.props.map.layers[i];
-      this.handleAsyncGetFeatureInfo(layer, promises, evt, this.props.fetchOptions);
+      this.handleAsyncGetFeatureInfo(layer, promises, evt, this.getFetchOptions(this.props, layer.source));
     }
 
     return Promise.all(promises);

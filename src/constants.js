@@ -18,6 +18,7 @@
 
 export const LAYER_VERSION_KEY = 'bnd:layer-version';
 export const SOURCE_VERSION_KEY = 'bnd:source-version';
+export const SOURCES_FETCH_OPTIONS_KEY = 'bnd-sources-fetch-options';
 export const TITLE_KEY = 'bnd:title';
 export const TIME_KEY = 'bnd:time';
 export const TIME_START_KEY = 'bnd:start-time';
