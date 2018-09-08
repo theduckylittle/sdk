@@ -803,7 +803,11 @@ export class Map extends React.Component {
     if (this.props.print && this.props.print.exportImage) {
       // this uses the canvas api to get the map image
       this.map.once('postcompose', (evt) => {
-        evt.context.canvas.toBlob(this.props.onExportImage);
+        try {
+          evt.context.canvas.toBlob(this.props.onExportImage);
+        } catch (err) {
+          console.error('Failed To Export Map as Image', err);
+        }
       }, this);
       this.map.renderSync();
     }
