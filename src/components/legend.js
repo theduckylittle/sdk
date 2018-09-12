@@ -204,7 +204,7 @@ export function getRasterLegend(layer, layer_src, async, fetchOptions) {
           LAYER: layers[i],
         });
         const src = `${url}?${encodeQueryObject(params)}`;
-        images.push((<AsyncImage async={async} fetchOptions={fetchOptions} alt={layers[i]} key={layers[i]} className="sdk-legend-image" src={src} />));
+        images.push((<AsyncImage async={async} fetchOptions={fetchOptions} alt={layers[i]} key={layers[i]} className='sdk-legend-image' src={src} />));
       }
 
       return images;

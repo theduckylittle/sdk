@@ -103,7 +103,7 @@ function main() {
   ReactDOM.render((
     <div>
       <h3>Try it out</h3>
-      <button className="sdk-btn" onClick={runFetchGeoJSON}>Fetch Data</button>
+      <button className='sdk-btn' onClick={runFetchGeoJSON}>Fetch Data</button>
       <div>
         <SdkTable store={store} />
       </div>

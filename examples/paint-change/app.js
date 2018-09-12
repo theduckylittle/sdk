@@ -127,10 +127,10 @@ function main() {
     };
     color_controls.push((
       <div
-        role="button"
+        role='button'
         tabIndex={0}
         key={i}
-        className="colorChanger"
+        className='colorChanger'
         style={control_style}
         onClick={() => {
           changeColor(color, 'fill');
@@ -139,10 +139,10 @@ function main() {
     ));
     stroke_color_controls.push((
       <div
-        role="button"
+        role='button'
         tabIndex={0}
         key={i}
-        className="colorChanger"
+        className='colorChanger'
         style={control_style}
         onClick={() => {
           changeColor(color, 'stroke');
@@ -180,10 +180,10 @@ function main() {
     };
     size_controls.push((
       <div
-        role="button"
+        role='button'
         tabIndex={0}
         key={i}
-        className="colorChanger"
+        className='colorChanger'
         style={control_style}
         onClick={() => {
           changeSize(size);
@@ -197,7 +197,7 @@ function main() {
     <div>
       <h3>Try it out</h3>
       <h4>Legend</h4>
-      <div className="legend-label">Random points</div>
+      <div className='legend-label'>Random points</div>
       <SdkLegend store={store} layerId='random-points' />
       <div>
         <b>Choose a color for the points on the map:</b> <br />

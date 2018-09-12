@@ -7,7 +7,7 @@ export class EditField extends React.Component {
   render() {
     // If row is edited return input
     if (this.props.editRow) {
-      return (<input type="text" placeholder={this.props.value} onBlur={this.props.onBlur}/>);
+      return (<input type='text' placeholder={this.props.value} onBlur={this.props.onBlur}/>);
     } else {
       return (<span>{this.props.value}</span>);
     }
@@ -117,15 +117,15 @@ class Table extends React.Component {
       const editControls = (
         <div>
           <a className='actionButton'>
-            <i className="fa fa-check" onClick={() => this.updateRow(i)}></i>
+            <i className='fa fa-check' onClick={() => this.updateRow(i)}></i>
           </a>
           <a className='actionButton red'>
-            <i className="fa fa-times" onClick={() => this.setState({editRow: -1})}></i>
+            <i className='fa fa-times' onClick={() => this.setState({editRow: -1})}></i>
           </a>
         </div>
       );
       row.push(<td key={properties.length + 1}>
-        {this.state.editRow !== -1 || <i className="fa fa-pencil" onClick={() => this.setState({editRow: i})}></i>}
+        {this.state.editRow !== -1 || <i className='fa fa-pencil' onClick={() => this.setState({editRow: i})}></i>}
         {this.state.editRow !== i || editControls}
       </td>);
       // add the features properties to the list
@@ -158,10 +158,10 @@ class Table extends React.Component {
     });
 
     return (
-      <div className="feature-table">
+      <div className='feature-table'>
         <div className='table-header'>
-          <select className="input-control" name='key' value={this.state.selectedSource} onChange={(key) => this.setState({selectedSource: key.target.value})}>
-            <option value="">Select Source</option>
+          <select className='input-control' name='key' value={this.state.selectedSource} onChange={(key) => this.setState({selectedSource: key.target.value})}>
+            <option value=''>Select Source</option>
             {layerIds}
           </select>
         </div>

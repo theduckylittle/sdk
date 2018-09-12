@@ -125,10 +125,10 @@ class TrackPosition extends React.PureComponent {
     let currentLocation;
     if (this.state.locating === true) {
       status =
-        (<span className="tracking"><i className="ms ms-geolocation" /><i> Tracking... </i></span>);
+        (<span className='tracking'><i className='ms ms-geolocation' /><i> Tracking... </i></span>);
       if (this.props.showLocation && (this.state.latitude && this.state.longitude)) {
         currentLocation = (
-          <span className="tracking">
+          <span className='tracking'>
             -- Current Location: {rounded(this.state.latitude)}, {rounded(this.state.longitude)} --
           </span>
         );
@@ -140,10 +140,10 @@ class TrackPosition extends React.PureComponent {
     }
     return (
       <div>
-        <button className="sdk-btn" onClick={this.geolocate}>Geolocate</button>
+        <button className='sdk-btn' onClick={this.geolocate}>Geolocate</button>
         { status } { currentLocation } { errorText }
         <div>
-          <button className="sdk-btn" onClick={this.initialExtent}>Stop Locating and Zoom to Initial Extent</button>
+          <button className='sdk-btn' onClick={this.initialExtent}>Stop Locating and Zoom to Initial Extent</button>
         </div>
       </div>
     );

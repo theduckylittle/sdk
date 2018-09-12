@@ -16,21 +16,21 @@ class BookmarkComponent extends React.PureComponent {
         <div className='modal-window'>
           <div className='interior'>
             <h3>{feature.properties.title}</h3>
-            <div className="bookmarkItem">
+            <div className='bookmarkItem'>
               <div>
-                <span className="label">Name:</span> <span className="value">{feature.properties.name}</span>
+                <span className='label'>Name:</span> <span className='value'>{feature.properties.name}</span>
               </div>
               <div>
-                <span className="label">Address:</span> <span className="value">{feature.properties.address}</span>
+                <span className='label'>Address:</span> <span className='value'>{feature.properties.address}</span>
               </div>
               <div>
-                <span className="label">Phone:</span> <span className="value">{feature.properties.telephone}</span>
+                <span className='label'>Phone:</span> <span className='value'>{feature.properties.telephone}</span>
               </div>
               <div>
-                <span className="label">Web Site:</span> <span className="value"><a href={feature.properties.website}>{feature.properties.website}</a></span>
+                <span className='label'>Web Site:</span> <span className='value'><a href={feature.properties.website}>{feature.properties.website}</a></span>
               </div>
               <div>
-                <span className="label">Lat/Long:</span> <span className="value">
+                <span className='label'>Lat/Long:</span> <span className='value'>
                   <span className='coords'>{feature.geometry.coordinates[1]}</span>, <span className='coords'>{feature.geometry.coordinates[0]}</span>
                 </span>
               </div>

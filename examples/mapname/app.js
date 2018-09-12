@@ -58,15 +58,15 @@ function main() {
     }
     render() {
       return (
-        <div className="mapName">
+        <div className='mapName'>
           <form onSubmit={this.handleSubmit}>
-            <div className="mapForm">
-              <label className="nameLabel" htmlFor="nameField">Change Map Name in Redux store:</label>
-              <input className="nameField" placeholder="Enter new map name here" type="text" id="nameField" value={this.state.value} onChange={this.updateMapName} />
-              <button className="sdk-btn" type="submit">Update Map Name</button>
+            <div className='mapForm'>
+              <label className='nameLabel' htmlFor='nameField'>Change Map Name in Redux store:</label>
+              <input className='nameField' placeholder='Enter new map name here' type='text' id='nameField' value={this.state.value} onChange={this.updateMapName} />
+              <button className='sdk-btn' type='submit'>Update Map Name</button>
             </div>
           </form>
-          <div className="newName">New Redux state.map.name Value: {store.getState().map.name}</div>
+          <div className='newName'>New Redux state.map.name Value: {store.getState().map.name}</div>
         </div>
       );
     }

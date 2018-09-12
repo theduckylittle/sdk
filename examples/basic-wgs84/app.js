@@ -150,7 +150,7 @@ function main() {
   };
   // place the map on the page.
   ReactDOM.render(<Provider store={store}>
-    <SdkMap projection="EPSG:4326">
+    <SdkMap projection='EPSG:4326'>
       <SdkZoomControl />
     </SdkMap>
   </Provider>, document.getElementById('map'));
@@ -159,9 +159,9 @@ function main() {
   ReactDOM.render((
     <div>
       <h3>Try it out</h3>
-      <button className="sdk-btn" onClick={zoomToNullIsland}>Zoom to Null Island</button>
-      <button className="sdk-btn" onClick={addRandomPoints}>Add 10 random points</button>
-      <button className="sdk-btn blue" onClick={removeRandomPoints}>Remove random points</button>
+      <button className='sdk-btn' onClick={zoomToNullIsland}>Zoom to Null Island</button>
+      <button className='sdk-btn' onClick={addRandomPoints}>Add 10 random points</button>
+      <button className='sdk-btn blue' onClick={removeRandomPoints}>Remove random points</button>
 
       <SdkHashHistory store={store} />
     </div>

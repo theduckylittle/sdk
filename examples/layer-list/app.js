@@ -33,17 +33,17 @@ class LayerListItem extends SdkLayerListItem {
 
     const moveButtons = (
       <span>
-        <button className="sdk-btn" onClick={() => {
+        <button className='sdk-btn' onClick={() => {
           this.moveLayerUp();
         }}>
           { this.props.labels.up }
         </button>
-        <button className="sdk-btn" onClick={() => {
+        <button className='sdk-btn' onClick={() => {
           this.moveLayerDown();
         }}>
           { this.props.labels.down }
         </button>
-        <button className="sdk-btn" onClick={() => {
+        <button className='sdk-btn' onClick={() => {
           this.removeLayer();
         }}>
           { this.props.labels.remove }
@@ -52,10 +52,10 @@ class LayerListItem extends SdkLayerListItem {
     );
 
     return  this.props.connectDragSource(this.props.connectDropTarget((
-      <li className="layer">
-        <span className="checkbox">{checkbox}</span>
-        <span className="name">{layer.id}</span>
-        <span className="btn-container">{moveButtons}</span>
+      <li className='layer'>
+        <span className='checkbox'>{checkbox}</span>
+        <span className='name'>{layer.id}</span>
+        <span className='btn-container'>{moveButtons}</span>
       </li>
     )));
   }
@@ -230,7 +230,7 @@ function main() {
   ReactDOM.render((
     <div>
       <h3>Try it out</h3>
-      <div className="sdk-layerlist">
+      <div className='sdk-layerlist'>
         <Provider store={store}>
           <SdkLayerList layerClass={LayerListItem} />
         </Provider>

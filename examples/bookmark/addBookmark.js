@@ -51,40 +51,40 @@ class addBookmarkComponenet extends React.PureComponent {
       return (
         <div className='modal-window'>
           <div className='interior'>
-            <div className="bookmarkItem">
-              <div className="form-group">
+            <div className='bookmarkItem'>
+              <div className='form-group'>
                 <label>Name: </label>
-                <input className="input-control" type="text" name='name' value={this.state.name} onChange={this.handleChange} />
+                <input className='input-control' type='text' name='name' value={this.state.name} onChange={this.handleChange} />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Title: </label>
-                <input className="input-control" type="text" name='title' value={this.state.title} onChange={this.handleChange} />
+                <input className='input-control' type='text' name='title' value={this.state.title} onChange={this.handleChange} />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Address:</label>
-                <input className="input-control" type="text" name='address' value={this.state.address} onChange={this.handleChange} />
+                <input className='input-control' type='text' name='address' value={this.state.address} onChange={this.handleChange} />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Phone:</label>
-                <input className="input-control" type="number" name='phone' value={this.state.phone} onChange={this.handleChange} />
+                <input className='input-control' type='number' name='phone' value={this.state.phone} onChange={this.handleChange} />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Web Site:</label>
-                <input className="input-control" type="text" name='website' value={this.state.website} onChange={this.handleChange} />
+                <input className='input-control' type='text' name='website' value={this.state.website} onChange={this.handleChange} />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Latitude:</label>
-                <input className="input-control" type="number" name='lat' value={this.state.lat} onChange={this.handleChange} />
+                <input className='input-control' type='number' name='lat' value={this.state.lat} onChange={this.handleChange} />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Longitude:</label>
-                <input className="input-control" type="number" name='long' value={this.state.long} onChange={this.handleChange} />
+                <input className='input-control' type='number' name='long' value={this.state.long} onChange={this.handleChange} />
               </div>
-              <div className="form-group">
-                <button className="sdk-btn" onClick={() => {
+              <div className='form-group'>
+                <button className='sdk-btn' onClick={() => {
                   this.save();
                 }} >Save</button>
-                <button className="sdk-btn" onClick={() => {
+                <button className='sdk-btn' onClick={() => {
                   this.close();
                 }} >Cancel</button>
               </div>

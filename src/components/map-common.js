@@ -23,7 +23,7 @@ export function MapRender() {
     <div style={this.props.style} ref={(c) => {
       this.mapdiv = c;
     }} className={className}>
-      <div className="controls">
+      <div className='controls'>
         {this.props.children}
       </div>
     </div>

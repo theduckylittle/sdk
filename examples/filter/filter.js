@@ -101,39 +101,39 @@ class FilterComponent extends React.PureComponent {
     return (
       <div className='filter-box'>
         <div className='interior'>
-          <div className="form-group">
+          <div className='form-group'>
             <label>Key: </label>
-            <select className="input-control" name='key' value={this.state.key} onChange={this.handleChange}>
-              <option value="">Select</option>
+            <select className='input-control' name='key' value={this.state.key} onChange={this.handleChange}>
+              <option value=''>Select</option>
               {options}
             </select>
           </div>
-          <div className="form-group">
+          <div className='form-group'>
             <label>Operator: </label>
-            <select className="input-control" name='operator' value={this.state.operator} onChange={this.handleChange}>
-              <option value="==">equal</option>
-              <option value="!=">not equal</option>
-              <option value=">">greater than</option>
-              <option value=">=">greater than or equal</option>
-              <option value="<">less than</option>
-              <option value="<=">less than or equal</option>
+            <select className='input-control' name='operator' value={this.state.operator} onChange={this.handleChange}>
+              <option value='=='>equal</option>
+              <option value='!='>not equal</option>
+              <option value='>'>greater than</option>
+              <option value='>='>greater than or equal</option>
+              <option value='<'>less than</option>
+              <option value='<='>less than or equal</option>
             </select>
           </div>
-          <div className="form-group">
+          <div className='form-group'>
             <label>Value:</label>
-            <input className="input-control" type="text" name='filterValue' value={this.state.filterValue} onChange={this.handleChange} />
+            <input className='input-control' type='text' name='filterValue' value={this.state.filterValue} onChange={this.handleChange} />
           </div>
-          <div className="form-group info">
+          <div className='form-group info'>
             <h3>Current Filters: </h3><br/>
-            <ul className="filter-list">
+            <ul className='filter-list'>
               {currentFilters}
             </ul>
           </div>
-          <div className="form-group">
-            <button className="sdk-btn button-control" onClick={() => {
+          <div className='form-group'>
+            <button className='sdk-btn button-control' onClick={() => {
               this.addFilter();
             }} >Add Filter</button>
-            <button className="sdk-btn button-control" onClick={() => {
+            <button className='sdk-btn button-control' onClick={() => {
               this.reset();
             }} >Reset</button>
           </div>

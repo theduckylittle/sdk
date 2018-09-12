@@ -96,7 +96,7 @@ export default class SdkLayerListItem extends React.Component {
     if (this.props.exclusive) {
       return (
         <input
-          type="radio"
+          type='radio'
           name={this.props.groupId}
           onChange={() => {
             this.toggleVisibility();
@@ -107,7 +107,7 @@ export default class SdkLayerListItem extends React.Component {
     } else {
       return (
         <input
-          type="checkbox"
+          type='checkbox'
           onChange={() => {
             this.toggleVisibility();
           }}
@@ -122,8 +122,8 @@ export default class SdkLayerListItem extends React.Component {
     const error_class = this.props.error ? ' sdk-layer-error' : '';
     const markup = (
       <li className={`sdk-layer${error_class}`} key={layer.id}>
-        <span className="sdk-checkbox">{checkbox}</span>
-        <span className="sdk-name">{getLayerTitle(this.props.layer)}</span>
+        <span className='sdk-checkbox'>{checkbox}</span>
+        <span className='sdk-name'>{getLayerTitle(this.props.layer)}</span>
       </li>
     );
     if (this.props.enableDD) {

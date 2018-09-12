@@ -9,6 +9,7 @@
     },
     "extends": ["react-app", "openlayers"],
     "rules": {
+        "jsx-quotes": ["error", "prefer-single"],
         "no-shadow": "error",
         "comma-dangle": 0,
         "import/no-extraneous-dependencies": 0,

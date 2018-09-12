@@ -27,7 +27,7 @@ class Popup extends SdkPopup {
     const feature = this.props.features[0];
     const content = feature.properties.ROUTE ? `ROUTE: ${feature.properties.ROUTE}` : `STATE_NAME: ${feature.properties.STATE_NAME}`;
     return this.renderPopup((
-      <div className="sdk-popup-content">
+      <div className='sdk-popup-content'>
         <p>
           OBJECTID: { feature.properties.OBJECTID }<br/>
           {content}

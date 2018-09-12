@@ -58,10 +58,10 @@ function main() {
   ReactDOM.render((
     <div>
       <h3>Try it out</h3>
-      <button className="sdk-btn" onClick={() => {
+      <button className='sdk-btn' onClick={() => {
         rotate('neg');
       }}>Rotate Clockwise</button>
-      <button className="sdk-btn" onClick={() => {
+      <button className='sdk-btn' onClick={() => {
         rotate('pos');
       }}>Rotate Counter Clockwise</button>
     </div>

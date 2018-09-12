@@ -149,17 +149,17 @@ function main() {
   ReactDOM.render((
     <div>
       <h3>Try it out</h3>
-      <button className="sdk-btn" onClick={() => {
+      <button className='sdk-btn' onClick={() => {
         addRandomPoints();
       }}>Add 10 random points</button>
       <p>
-        <span className="input"><input type="checkbox" onChange={clusterPoints} /></span> Cluster Points
+        <span className='input'><input type='checkbox' onChange={clusterPoints} /></span> Cluster Points
       </p>
       <p>
-        <span className="input">
+        <span className='input'>
           <input
-            className="radius"
-            type="number"
+            className='radius'
+            type='number'
             defaultValue={getClusterRadius()}
             onChange={changeRadius}
           />
