@@ -1747,9 +1747,9 @@ export class Map extends React.Component {
 
       select.on('select', (evt) => {
         if (evt.selected.length > 0) {
-          this.onFeatureEvent('selected', drawingProps.sourcename, evt.selected);
+          this.onFeatureEvent('selected', drawingProps.sourceName, evt.selected);
         } else if (evt.deselected.length > 0) {
-          this.onFeatureEvent('deselected', drawingProps.sourcename, evt.deselected);
+          this.onFeatureEvent('deselected', drawingProps.sourceName, evt.deselected);
         }
       });
 
