@@ -25,13 +25,13 @@ class TestLayerListItem extends SdkLayerListItem {
   render() {
     return (
       <div>
-        <button className="btn-up" onClick={() => {
+        <button className='btn-up' onClick={() => {
           this.moveLayerUp();
         }}></button>
-        <button className="btn-down" onClick={() => {
+        <button className='btn-down' onClick={() => {
           this.moveLayerDown();
         }}></button>
-        <button className="btn-remove" onClick={() => {
+        <button className='btn-remove' onClick={() => {
           this.removeLayer();
         }}></button>
       </div>

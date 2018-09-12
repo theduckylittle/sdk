@@ -49,14 +49,14 @@ export default class Popup extends React.PureComponent {
   renderPopup(children) {
     let close_btn = false;
     if (this.props.closeable) {
-      close_btn = (<i tabIndex={0} role="link" onClick={() => {
+      close_btn = (<i tabIndex={0} role='link' onClick={() => {
         this.close();
       }} ref={(c) => {
         if (c) {
           c.addEventListener('click', this.close);
         }
       }
-      } className="sdk-popup-closer" />);
+      } className='sdk-popup-closer' />);
     }
     if (this.state.closed) {
       return false;
@@ -69,7 +69,7 @@ export default class Popup extends React.PureComponent {
     return (
       <div style={this.props.style} className={className}>
         { close_btn }
-        <div id="sdk-popup-container">
+        <div id='sdk-popup-container'>
           { React.Children.only(children) }
         </div>
       </div>

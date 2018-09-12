@@ -260,18 +260,18 @@ function main() {
   ReactDOM.render((
     <div>
       <h3>Try it out</h3>
-      <div className="control-panel">
+      <div className='control-panel'>
         <h4>Layers</h4>
         <select onChange={setLayer}>
-          <option value="points">Points</option>
-          <option value="lines">Lines</option>
-          <option value="polygons">Polygons</option>
+          <option value='points'>Points</option>
+          <option value='lines'>Lines</option>
+          <option value='polygons'>Polygons</option>
         </select>
       </div>
-      <div className="control-panel">
+      <div className='control-panel'>
         <h4>Drawing tools</h4>
         <select onChange={setDrawingTool}>
-          <option value="none">None</option>
+          <option value='none'>None</option>
           <option value={INTERACTIONS.measure_point}>Measure point</option>
           <option value={INTERACTIONS.measure_line}>Measure line</option>
           <option value={INTERACTIONS.measure_polygon}>Measure polygon</option>
@@ -283,10 +283,10 @@ function main() {
           <option value={INTERACTIONS.select}>Select feature</option>
         </select>
       </div>
-      <div className="control-panel">
+      <div className='control-panel'>
         <MeasureTable store={store} />
       </div>
-      <div className="control-panel">
+      <div className='control-panel'>
         <h4>Messages</h4>
         <div ref={(d) => {
           error_div = d;

@@ -116,8 +116,8 @@ function main() {
     <div>
       <h3>Try it out</h3>
       <Provider store={store}><ZoomLevel /></Provider>
-      <button className="sdk-btn" onClick={zoomToNullIsland}>Zoom to Null Island</button>
-      <button className="sdk-btn" onClick={updateMinzoom}>Change Minimum Zoom Level on Null Island to 5</button>
+      <button className='sdk-btn' onClick={zoomToNullIsland}>Zoom to Null Island</button>
+      <button className='sdk-btn' onClick={updateMinzoom}>Change Minimum Zoom Level on Null Island to 5</button>
     </div>
   ), document.getElementById('controls'));
 }

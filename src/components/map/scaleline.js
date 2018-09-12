@@ -144,7 +144,7 @@ export class ScaleLine extends React.Component {
       let html = count + ' ' + suffix;
       return (
         <div style={this.props.style} className={className}>
-          <div className="sdk-scale-line-inner" style={{width: width}} dangerouslySetInnerHTML={{__html: html}}></div>
+          <div className='sdk-scale-line-inner' style={{width: width}} dangerouslySetInnerHTML={{__html: html}}></div>
         </div>
       );
     } else {

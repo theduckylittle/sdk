@@ -65,7 +65,7 @@ function main() {
   // add some buttons to demo some actions.
   ReactDOM.render((
     <div>
-      <FilterComponent store={store} source="states"/>
+      <FilterComponent store={store} source='states'/>
     </div>
   ), document.getElementById('controls'));
 }

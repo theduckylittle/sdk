@@ -88,26 +88,26 @@ class ContextSelector extends React.PureComponent {
   render() {
     let errormsg;
     if (this.state.error === true) {
-      errormsg = (<p className="error"><strong>Error uploading map:</strong> <a href={this.state.badurl}>{this.state.badurl}</a> {this.state.message}</p>);
+      errormsg = (<p className='error'><strong>Error uploading map:</strong> <a href={this.state.badurl}>{this.state.badurl}</a> {this.state.message}</p>);
     }
     return (
       <div>
-        <div className="selector">
-          <h1 className="title">Upload a Map</h1>
+        <div className='selector'>
+          <h1 className='title'>Upload a Map</h1>
           { errormsg }
         </div>
-        <div className="selector">
-          <div className="url">
+        <div className='selector'>
+          <div className='url'>
             <h2>Via URL: </h2>
             <form onSubmit={this.handleSubmit}>
-              <input className="urlinput" id="urlField" placeholder="Provide a URL to render the map above" type="text" value={this.state.value} onChange={this.handleChange} />
-              <button className="sdk-btn" type="submit">Update Map</button>
+              <input className='urlinput' id='urlField' placeholder='Provide a URL to render the map above' type='text' value={this.state.value} onChange={this.handleChange} />
+              <button className='sdk-btn' type='submit'>Update Map</button>
             </form>
           </div>
-          <div className="drop">
+          <div className='drop'>
             <h2>Via File Upload:</h2>
-            <label htmlFor="file_upload" onClick={this.clearError}>Choose a file to upload (.json)</label>
-            <input id="file_upload" type="file" accept=".json" onChange={this.dropFiles}/>
+            <label htmlFor='file_upload' onClick={this.clearError}>Choose a file to upload (.json)</label>
+            <input id='file_upload' type='file' accept='.json' onChange={this.dropFiles}/>
           </div>
         </div>
       </div>

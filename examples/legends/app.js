@@ -137,14 +137,14 @@ function main() {
       <h4>Legends</h4>
       <Provider store={store}>
         <div>
-          <div className="legend-label">OSM Tiles (href-type legend)</div>
-          <SdkLegend layerId="osm" />
-          <div className="legend-label">Random Points (image-type legend)</div>
-          <SdkLegend layerId="random-points" />
-          <div className="legend-label">Null Island (html-type legend)</div>
-          <SdkLegend layerId="null-island" />
-          <div className="legend-label">U.S. States (wms legend)</div>
-          <SdkLegend layerId="states" />
+          <div className='legend-label'>OSM Tiles (href-type legend)</div>
+          <SdkLegend layerId='osm' />
+          <div className='legend-label'>Random Points (image-type legend)</div>
+          <SdkLegend layerId='random-points' />
+          <div className='legend-label'>Null Island (html-type legend)</div>
+          <SdkLegend layerId='null-island' />
+          <div className='legend-label'>U.S. States (wms legend)</div>
+          <SdkLegend layerId='states' />
         </div>
       </Provider>
     </div>

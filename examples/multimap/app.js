@@ -100,7 +100,7 @@ function main() {
     <div>
       <h3>Try it out</h3>
       <p>
-        <span className="input"><input type="checkbox" onChange={syncMaps} /></span> Synchronize maps
+        <span className='input'><input type='checkbox' onChange={syncMaps} /></span> Synchronize maps
       </p>
     </div>
   ), document.getElementById('controls'));

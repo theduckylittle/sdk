@@ -51,9 +51,9 @@ function main() {
       return (
         <div>
           <input
-            min="0"
-            max="100"
-            type="number"
+            min='0'
+            max='100'
+            type='number'
             defaultValue={opacity}
             ref={(me) => {
               this.opacityInput = me;
@@ -61,7 +61,7 @@ function main() {
           />
 
           <button
-            className="sdk-btn"
+            className='sdk-btn'
             onClick={() => {
               const new_opacity = this.opacityInput.value / 100;
 

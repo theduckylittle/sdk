@@ -19,7 +19,7 @@ class MeasureTable extends React.PureComponent {
       // other projections.
       const coords = this.props.feature.geometry.coordinates;
       rows.push((
-        <tr key="point">
+        <tr key='point'>
           <td><b>Point @</b></td>
           <td>{coords[0]}, {coords[1]}</td>
         </tr>
@@ -35,7 +35,7 @@ class MeasureTable extends React.PureComponent {
       }
 
       rows.push((
-        <tr key="polygon">
+        <tr key='polygon'>
           <td><b>Polygon area:</b></td>
           <td>{ area } { units }<span style={{verticalAlign: 'super'}}>2</span></td>
         </tr>
@@ -68,7 +68,7 @@ class MeasureTable extends React.PureComponent {
 
       // this puts the total at the top of the list.
       rows.unshift((
-        <tr key="total">
+        <tr key='total'>
           <td><b>Total</b></td><td>{ total } { units }</td>
         </tr>
       ));

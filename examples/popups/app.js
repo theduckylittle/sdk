@@ -60,7 +60,7 @@ class MarkFeaturesPopup extends SdkPopup {
     const feature_ids = this.props.features.map(f => f.properties.id);
 
     return this.renderPopup((
-      <div className="sdk-popup-content">
+      <div className='sdk-popup-content'>
         You clicked here:<br />
         <code>
           { this.props.coordinate.hms }
@@ -70,7 +70,7 @@ class MarkFeaturesPopup extends SdkPopup {
           Feature ID(s):<br />
           <code>{ feature_ids.join(', ') }</code>
           <br />
-          <button className="sdk-btn" ref={(c) => {
+          <button className='sdk-btn' ref={(c) => {
             if (c) {
               c.addEventListener('click', this.markFeatures);
             }
@@ -92,7 +92,7 @@ class NullIslandPopup extends SdkPopup {
       <div>
         Welcome to Null Island!
 
-        <button className="sdk-btn" ref={(c) => {
+        <button className='sdk-btn' ref={(c) => {
           if (c) {
             c.addEventListener('click', this.close);
           }

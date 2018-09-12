@@ -62,8 +62,8 @@ function main() {
       <h3>Try it out</h3>
       <ContextSelector store={store} />
       <h1>Save a Map</h1>
-      <h2>To <a href="https://www.mapbox.com/mapbox-gl-js/style-spec/">Mapbox Style Specification</a></h2>
-      <button className="sdk-btn" onClick={exportMapSpec}>Save Map</button>
+      <h2>To <a href='https://www.mapbox.com/mapbox-gl-js/style-spec/'>Mapbox Style Specification</a></h2>
+      <button className='sdk-btn' onClick={exportMapSpec}>Save Map</button>
     </div>
   ), document.getElementById('controls'));
 }

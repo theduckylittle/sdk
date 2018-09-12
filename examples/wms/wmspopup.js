@@ -14,12 +14,12 @@ export default class WMSPopup extends SdkPopup {
         const key = `${i}-${keys[j]}`;
         content.push(
           <li key={key}>
-            <span className="title">{keys[j]}</span> - <span className="value">{feature.properties[keys[j]]}</span>
+            <span className='title'>{keys[j]}</span> - <span className='value'>{feature.properties[keys[j]]}</span>
           </li>);
       }
     }
     return this.renderPopup((
-      <div className="sdk-popup-content">
+      <div className='sdk-popup-content'>
         <ul>
           { content }
         </ul>
