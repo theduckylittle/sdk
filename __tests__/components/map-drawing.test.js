@@ -288,10 +288,11 @@ describe('Map component with drawing', () => {
     select.dispatchEvent({
       type: 'select',
       selected: [features[0]],
+      deselected: [features[0]],
     });
 
-    // ensure onFeatureEvent was called.
-    expect(sdk_map.onFeatureEvent).toHaveBeenCalled();
+    // ensure onFeatureEvent was called twice.
+    expect(sdk_map.onFeatureEvent).toHaveBeenCalledTimes(2);
   });
 
   it('handles deselect', () => {
