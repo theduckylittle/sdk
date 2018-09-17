@@ -825,9 +825,10 @@ export class Map extends React.Component {
    *  @param {string} eventType One of 'drawn', 'modified', 'selected' or 'deselected'.
    *  @param {string} sourceName Name of the geojson source.
    *  @param {Object[]} features OpenLayers feature objects.
+   *  @param {string} interaction The interaction that triggered this event.
    *
    */
-  onFeatureEvent(eventType, sourceName, features) {
+  onFeatureEvent(eventType, sourceName, features, interaction) {
     // convert the features to GeoJson
     const proposed_geojson = GEOJSON_FORMAT.writeFeaturesObject(features, {
       dataProjection: 'EPSG:4326',
@@ -835,7 +836,7 @@ export class Map extends React.Component {
     });
     // Pass on this map object, the target source and the features.
     if (eventType === 'drawn') {
-      this.props.onFeatureDrawn(this, sourceName, proposed_geojson);
+      this.props.onFeatureDrawn(this, sourceName, proposed_geojson, interaction);
     } else if (eventType === 'modified') {
       this.props.onFeatureModified(this, sourceName, proposed_geojson);
     } else if (eventType === 'selected') {
@@ -1774,7 +1775,7 @@ export class Map extends React.Component {
       const draw = new DrawInteraction(styleDrawObj);
 
       draw.on('drawend', (evt) => {
-        this.onFeatureEvent('drawn', drawingProps.sourceName, [evt.feature]);
+        this.onFeatureEvent('drawn', drawingProps.sourceName, [evt.feature], drawingProps.interaction);
       });
 
       this.activeInteractions = [draw];
