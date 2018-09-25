@@ -23,6 +23,7 @@ import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import {applyStyle} from 'ol-mapbox-style';
 import {jsonEquals, jsonClone, getLayerById, parseQueryString, encodeQueryObject} from '../util';
+import {LEGEND_TYPE, LEGEND_CONTENT} from '../constants';
 import {getFakeStyle, hydrateLayer} from './map';
 import AsyncImage from './async-img';
 
@@ -81,9 +82,9 @@ export function getLegend(layer) {
   if (layer.metadata === undefined) {
     return null;
   }
-  const content = layer.metadata['bnd:legend-content'];
+  const content = layer.metadata[LEGEND_CONTENT];
 
-  switch (layer.metadata['bnd:legend-type']) {
+  switch (layer.metadata[LEGEND_TYPE]) {
     case 'image':
       return (<img alt={layer.id} src={content} />);
     case 'html':
@@ -256,7 +257,7 @@ export class Legend extends React.Component {
   getVectorLegend(layers, layer_src) {
     const props = this.props;
     const layer = layers[0];
-    if (!layer.metadata || !layer.metadata['bnd:legend-type']) {
+    if (!layer.metadata || !layer.metadata[LEGEND_TYPE]) {
       const size = props.size;
       return (<canvas ref={(c) => {
         if (c !== null) {
@@ -351,6 +352,10 @@ export class Legend extends React.Component {
 
     if (!layer_src) {
       return null;
+    }
+
+    if (layer.metadata && layer.metadata[LEGEND_TYPE] && layer.metadata[LEGEND_CONTENT]) {
+      return getLegend(layer);
     }
 
     switch (layer_src.type) {
