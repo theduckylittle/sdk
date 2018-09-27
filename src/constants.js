@@ -34,6 +34,8 @@ export const QUERY_PARAMS_KEY = 'bnd:query-params';
 export const GEOMETRY_NAME_KEY = 'bnd:geometry-name';
 export const MIN_ZOOM_KEY = 'bnd:minzoom';
 export const MAX_ZOOM_KEY = 'bnd:maxzoom';
+export const LEGEND_TYPE = 'bnd:legend-type';
+export const LEGEND_CONTENT = 'bnd:legend-content';
 
 export const QUERY_TYPE_WFS = 'WFS';
 
