@@ -64,7 +64,7 @@
     "jest-cli": "^21.2.1",
     "jest-css-modules": "^1.1.0",
     "jsdoc": "^3.5.4",
-    "mapbox-gl": "^0.44.0",
+    "mapbox-gl": "^0.44.2",
     "marked": "^0.3.6",
     "metalsmith": "^2.3.0",
     "metalsmith-layouts": "^1.8.1",
