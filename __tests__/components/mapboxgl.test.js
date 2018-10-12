@@ -43,7 +43,36 @@ const createMapMock = () => {
           id: 'foo',
         },
       }];
-    }
+    },
+    getCenter: () => {
+      return {
+        toArray: () => {
+          return [50, 45];
+        }
+      };
+    },
+    getZoom: () => {
+      return 3;
+    },
+    getBearing: () => {
+      return 0;
+    },
+    getBounds: () => {
+      return {
+        getSouthWest: () => {
+          return {
+            lng: -45,
+            lat: -50,
+          };
+        },
+        getNorthEast: () => {
+          return {
+            lng: -25,
+            lat: -20,
+          };
+        }
+      };
+    },
   };
 };
 
@@ -614,35 +643,6 @@ describe('MapboxGL component', () => {
     const map = wrapper.instance().getWrappedInstance();
     // mock up our GL map
     map.map = createMapMock();
-    map.map.getCenter = () => {
-      return {
-        toArray: () => {
-          return [50, 45];
-        }
-      };
-    };
-    map.map.getZoom = () => {
-      return 3;
-    };
-    map.map.getBearing = () => {
-      return 0;
-    };
-    map.map.getBounds = () => {
-      return {
-        getSouthWest: () => {
-          return {
-            lng: -45,
-            lat: -50,
-          };
-        },
-        getNorthEast: () => {
-          return {
-            lng: -25,
-            lat: -20,
-          };
-        }
-      };
-    };
     map.onMapMoveEnd();
     expect(store.getState().mapinfo.extent).toEqual([-45, -50, -25, -20]);
     expect(store.getState().map.center).toEqual([50, 45]);

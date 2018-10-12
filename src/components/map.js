@@ -1621,7 +1621,16 @@ export class Map extends React.Component {
 
     // when the map moves update the location in the state
     this.map.on('moveend', () => {
-      this.props.setView(this.map);
+      const view = this.map.getView();
+      const projection = view.getProjection();
+
+      this.props.setView({
+        center: transform(view.getCenter(), projection, 'EPSG:4326'),
+        zoom: view.getZoom() - 1,
+        bearing: -(radiansToDegrees(view.getRotation())),
+        extent: getMapExtent(view, this.map.getSize()),
+        resolution: view.getResolution(),
+      });
     });
 
     this.props.setSize(this.map);
@@ -1908,18 +1917,11 @@ function mapDispatchToProps(dispatch) {
     updateLayer: (layerId, layerConfig) => {
       dispatch(updateLayer(layerId, layerConfig));
     },
-    setView: (map) => {
-      const view = map.getView();
-      const projection = view.getProjection();
-      // transform the center to 4326 before dispatching the action.
-      const center = transform(view.getCenter(), projection, 'EPSG:4326');
-      const rotation = radiansToDegrees(view.getRotation());
-      const zoom = view.getZoom() - 1;
-      const size = map.getSize();
-      dispatch(setView(center, zoom));
-      dispatch(setBearing(-rotation));
-      dispatch(setMapExtent(getMapExtent(view, size)));
-      dispatch(setResolution(view.getResolution()));
+    setView: (view) => {
+      dispatch(setView(view.center, view.zoom));
+      dispatch(setBearing(view.bearing));
+      dispatch(setMapExtent(view.extent));
+      dispatch(setResolution(view.resolution));
     },
     setSize: (map) => {
       const size = map.getSize();

@@ -184,7 +184,19 @@ export class MapboxGL extends React.Component {
   }
 
   onMapMoveEnd() {
-    this.props.setView(this.map, this.props.projection);
+    const center = this.map.getCenter().toArray();
+    const bearing = this.map.getBearing();
+    const zoom = this.map.getZoom();
+
+    const view = {
+      center,
+      zoom,
+      bearing,
+      extent: getMapExtent(this.map),
+      resolution: getResolutionForZoom(zoom, this.props.projection),
+    };
+
+    this.props.setView(view);
   }
 
   onMouseMove(e) {
@@ -496,14 +508,11 @@ function mapDispatchToProps(dispatch) {
   return {
     updateLayer: (layerId, layerConfig) => {
     },
-    setView: (map, projection) => {
-      const center = map.getCenter().toArray();
-      const bearing = map.getBearing();
-      const zoom = map.getZoom();
-      dispatch(setView(center, zoom));
-      dispatch(setBearing(bearing));
-      dispatch(setMapExtent(getMapExtent(map)));
-      dispatch(setResolution(getResolutionForZoom(zoom, projection)));
+    setView: (view) => {
+      dispatch(setView(view.center, view.zoom));
+      dispatch(setBearing(view.bearing));
+      dispatch(setMapExtent(view.extent));
+      dispatch(setResolution(view.resolution));
     },
     setSize: (size, map) => {
       dispatch(setMapSize(size));
