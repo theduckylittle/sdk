@@ -220,6 +220,6 @@ function mapStateToProps(state) {
   };
 }
 
-SdkLayerList = DragDropContext(HTML5Backend)(SdkLayerList);
+// SdkLayerList = DragDropContext(HTML5Backend)(SdkLayerList);
 
 export default connect(mapStateToProps)(SdkLayerList);
